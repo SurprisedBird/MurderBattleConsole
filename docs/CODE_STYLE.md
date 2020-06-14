@@ -10,3 +10,14 @@ add code snippets
 
 
 https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/
+
+https://stackoverflow.com/questions/36814642/convert-spaces-to-tabs
+___
+
+
+``` python
+def func()
+{
+    
+}
+```

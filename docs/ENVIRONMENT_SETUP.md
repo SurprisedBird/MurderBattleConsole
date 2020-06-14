@@ -9,3 +9,5 @@
 (mb_venv) alex@alex-MS-7850:~/projects/MurderBattle$ python3.7 -m venv ./.venv
 
 https://stackoverflow.com/questions/39539110/pyvenv-not-working-because-ensurepip-is-not-available
+
+**aaa**
