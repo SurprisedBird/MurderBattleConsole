@@ -3,7 +3,7 @@ Contents
 - [Additional rules](#additional-rules)
   - [Docs file names](#docs-file-names)
   - [Type hints](#type-hints)
-  - [Underscores for protected and private class members](#underscores-for-protected-and-private-class-members)
+  - [Protected and private class members](#protected-and-private-class-members)
 - [Recomendation](#recomendation)
 
 
@@ -44,7 +44,7 @@ docs/code_style.md
 
 ## Type hints
 
-## Underscores for protected and private class members
+## Protected and private class members
 
 
 # Recomendation
