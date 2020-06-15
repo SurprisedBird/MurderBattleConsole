@@ -3,9 +3,9 @@
 GameController *-- Game
 GameController *-- ActionManager
 GameController *-- UserInteraction
-GameController --- TextConfig
+GameController --- MessageTextConf
 Effect o-- GameController
-UserInteraction --- TextScope
+UserInteraction --- MessageScope
 Game *-- Citizen
 Game *-- Player
 Game *-- Spy
@@ -16,7 +16,7 @@ ActionManager o-- Effect
 Effect *-- EffectStatus
 
 
-class Game{
+class Game {
     Citizen [] citizens
     Player [] players
     Spy spy
@@ -24,7 +24,7 @@ class Game{
     int round_number
 }
 
-class TextConfig {
+class MessageTextConf {
 }
 
 class ActionManager {
@@ -35,7 +35,7 @@ class ActionManager {
 }
 
 class UserInteraction {
-   String{TextScope : text} message_queue
+   String{MessageScope : text} message_queue
 
    +print_all()
 
@@ -189,20 +189,20 @@ class NoneEffect {
 
 }
 
-enum ActionType{
+enum ActionType {
     KILL,
     STEAL,
     STAGING,
     CARD_USAGE
 }
 
-enum EffectStatus{
+enum EffectStatus {
     CREATED,
     ACTIVATED,
     FINISHED
 }
 
-enum TextScope{
+enum MessageScope {
     GLOBAL,
     ACTIVE,
     PASSIVE

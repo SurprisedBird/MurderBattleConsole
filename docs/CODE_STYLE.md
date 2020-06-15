@@ -89,3 +89,10 @@ def func()
     
 }
 ```
+
+type hints - when collections or when init by none (not obvious which type
+it will be)
+
+Import order
+
+Create standard commit message
