@@ -1,0 +1,211 @@
+@startuml murder_battle_architecture
+
+GameController *-- Game
+GameController *-- ActionManager
+GameController *-- UserInteraction
+GameController --- MessageTextConf
+Effect o-- Game
+UserInteraction --- MessageScope
+Game *-- Citizen
+Game *-- Player
+Game *-- Spy
+Player *-- Card
+Player *-- ActionType
+Card o-- Effect
+ActionManager o-- Effect
+Effect *-- EffectStatus
+
+
+class Game {
+    Citizen [] citizens
+    Player [] players
+    Spy spy
+    Player first_player
+    int round_number
+
+    'Will be calculated by round number (even or odd)
+    +get_active_player()
+    +get_passive_player()
+
+}
+
+class MessageTextConf {
+}
+
+class ActionManager {
+   Effect[] pre_actions
+   Effect{round_number : pre_actions} actions_history
+
+   +save_action()
+}
+
+class UserInteraction {
+   String{MessageScope : text} message_queue
+
+   +print_all()
+
+   +print_global_instant()
+   +print_active_instant()
+   +print_passive_instant()
+
+   +save_global()
+   +save_active()
+   +save_passive()
+
+   +read_message()
+}
+
+class GameController {
+    Game game
+    ActionManager action_manager
+    UserInteraction user_interaction
+    --
+    +start_game()
+    --
+    -prepare_game()
+    --
+    -create_citizens()
+    -set_order()
+    -create_player()
+    -create_spy()
+    -show_game_state()
+    --
+    -proceed_game()
+    --
+    -show_night_state()
+    -create_action()
+    -create_card_action()
+    -confirm_actions()
+    'Find relevant citizens for each effect and add relevant effect into the citizen's Effects list from pre_actions list. Move pre_actions list to actions_history dictionary under the active_round key.
+    -save_actions()
+    -clear_finished_effects()
+    -resolve_effects()
+    -check_win()
+    -count_round()
+    --
+    -finish_game()
+}
+
+class Citizen {
+    String name
+    int hp
+    @boolean is_alive
+    Effect [] effects
+    Card citizen_card
+}
+
+class Player extends Citizen {
+    boolean staging
+    Card [] stolen_cards
+    ActionType[] allowed_actions
+
+    +create_action()
+    -validate_action()
+
+    +create_card_action()
+    -validate_card_action()
+}
+
+class Spy extends Citizen {
+
+}
+
+class Card {
+    String name
+    Effect effect
+}
+
+class Effect {
+    Game game
+    String name
+    Player creator
+    Citizen[] targets
+    int activation_round
+    int PRIORITY
+    EffectStatus state
+
+    +activate()
+    -validate()
+    +resolve()
+    +on_clear()
+}
+
+class DBEffect {
+
+}
+
+class GossipsEffect {
+
+}
+
+class CameraEffect {
+
+}
+
+class BitchEffect {
+
+}
+
+class AlarmEffect {
+
+}
+
+class TrapEffect {
+
+}
+
+class WitnessDefenceEffect {
+
+}
+
+class TheatreEffect {
+
+}
+
+class DrugEffect {
+
+}
+
+class AnonymusCallEffect {
+
+}
+
+class TaxesEffect {
+
+}
+
+class AntidoteEffect {
+
+}
+
+class GangEffect {
+
+}
+
+class FirstNightEffect {
+
+}
+
+class NoneEffect {
+
+}
+
+enum ActionType {
+    KILL,
+    STEAL,
+    STAGING,
+    CARD_USAGE
+}
+
+enum EffectStatus {
+    CREATED,
+    ACTIVATED,
+    FINISHED
+}
+
+enum MessageScope {
+    GLOBAL,
+    ACTIVE,
+    PASSIVE
+}
+@enduml
