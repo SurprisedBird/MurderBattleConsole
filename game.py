@@ -19,4 +19,3 @@ class Game:
 
     def get_passive_player(self) -> Player:
         pass
-
