@@ -7,7 +7,26 @@ class MessageScope(Enum):
     PASSIVE = 3
 
 
-class UserInteraction:
+def save_global(text: str) -> None:
+    pass
 
-    def __init__(self) -> None:
-        pass
+
+def save_active(text: str) -> None:
+    pass
+
+
+def save_passive(text: str) -> None:
+    pass
+
+
+def show_active_instant(text: str) -> None:
+    print(text)
+
+
+def read_index(text: str) -> int:
+    """Reading and validating inputs.
+
+    If input value is valid - return int
+    If input value is NOT valie - return None
+    """
+    return 0
