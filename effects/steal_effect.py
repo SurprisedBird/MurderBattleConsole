@@ -1,7 +1,6 @@
 from game import Game
 from effects.effect import Effect
 from citizens.citizen import Citizen
-from citizens.spy import Spy
 import user_interaction
 import utils
 
@@ -25,7 +24,9 @@ class StealEffect(Effect):
             self.creator.stolen_cards.append(self.targets[0].citizen_card)
             self.targets[0].citizen_card = None
             user_interaction.save_active("config.card_stolen")
-            user_interaction.save_passive("config.lost_card")
+
+            if self.target is self.game.get_passive_player():
+                user_interaction.save_passive("config.lost_card")
 
         else:
             user_interaction.save_active("config.no_card")
