@@ -56,40 +56,43 @@ class UserInteraction {
 }
 
 class GameController {
-    Game game
-    ActionManager action_manager
-    UserInteraction user_interaction
+    +Game game
+    +ActionManager action_manager
+    +UserInteraction user_interaction
     --
     +start_game()
     --
-    -prepare_game()
+    #_prepare_game()
     --
-    -create_citizens()
-    -set_order()
-    -create_player()
-    -create_spy()
-    -show_game_state()
+    #_create_citizens()
+    #_set_order()
+    #_create_player()
+    #_create_spy()
+    #_show_game_state()
     --
-    -proceed_game()
+    #_proceed_game()
     --
-    -show_night_state()
-    -create_action()
-    -create_card_action()
-    -confirm_actions()
+    #_show_night_state()
+    #_create_action()
+    #_create_card_action()
+    #_confirm_actions()
     'Find relevant citizens for each effect and add relevant effect into the citizen's Effects list from pre_actions list. Move pre_actions list to actions_history dictionary under the active_round key.
-    -save_actions()
-    -clear_finished_effects()
-    -resolve_effects()
-    -check_win()
-    -count_round()
+    #_save_actions()
+    #_clear_finished_effects()
+    #_resolve_effects()
+    #_check_win()
+    #_count_round()
     --
-    -finish_game()
+    #_finish_game()
 }
 
 class Citizen {
     String name
     int hp
-    @boolean is_alive
+
+    ' Property (checks if hp > 0)
+    +bool is_alive
+    
     Effect [] effects
     Card citizen_card
 }
@@ -115,18 +118,27 @@ class Card {
     Effect effect
 }
 
+class utils {
+
+}
+
 class Effect {
-    Game game
-    String name
-    Player creator
-    Citizen[] targets
-    int activation_round
-    int PRIORITY
-    EffectStatus state
+    #Game _game
+    #str _name
+    #Player _creator
+    #Citizen[] _targets
+    #int _activation_round
+    #EffectStatus _state
+    #int _PRIORITY
+
+    ' Property name (getter for _name variable)
+    +str name
 
     +activate()
-    -validate()
+    #_activate_impl()
+    #_validate()
     +resolve()
+    #_resolve_impl()
     +on_clear()
 }
 

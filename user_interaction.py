@@ -1,5 +1,8 @@
 from enum import Enum
 
+# TODO: implement user_interaction as a class. And pass instance of this class\
+# to every effect as argument
+
 
 class MessageScope(Enum):
     GLOBAL = 1
@@ -23,7 +26,7 @@ def show_active_instant(text: str) -> None:
     print(text)
 
 
-def read_index(text: str) -> int:
+def read_number(text: str) -> int:
     """Reading and validating inputs.
 
     If input value is valid - return int
