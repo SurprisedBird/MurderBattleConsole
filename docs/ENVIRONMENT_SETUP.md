@@ -1,4 +1,4 @@
-TODO list:
+## TODO list:
 
 1. Install VSCode
 2. Install Python extention
@@ -16,28 +16,36 @@ TODO list:
 
 ---
 
-### Python VSCode extention
-*ms-python.python*
+## Python VSCode extention
+`ms-python.python`
 
-### Useful VSCode extentions
-*jebbs.plantuml*<br>
-*TabNine.tabnine-vscode*<br>
-*yzhang.markdown-all-in-one*
+## Useful VSCode extentions
+`jebbs.plantuml`<br>
+`TabNine.tabnine-vscode`<br>
+`yzhang.markdown-all-in-one`
 
-### VSCode interpreter creation
-`python3 -m venv ./venv`
+## Virtual environment creation
+Navigate to project directory and use commands:<br>
+``` bash
+cd MurderBattleConsole
+python3 -m venv ./venv
+```
 
-### Dependencies installation
+## Dependencies installation
 Use command:<br>
-`pip3 install -r requirements.txt`
+``` bash
+pip3 install -r requirements.txt
+```
 
-### Code formatting on save
-Add to a global VSCode "settings.json" file following line:<br>
-`"editor.formatOnSave": true`<br>
+## Code formatting on save
+Enable this settings on UI preferences<br>
 OR<br>
-enable this settings on UI preferences.
+Add to a global VSCode "settings.json" file following line:<br>
+``` json
+"editor.formatOnSave": true
+```
 
-### Enable sort imports on save
+## Enable sort imports on save
 Add to a global VSCode "settings.json" file following snippet:
 ``` json
 "[python]": {
