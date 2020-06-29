@@ -7,16 +7,12 @@ from game import Game
 
 
 class StealEffect(Effect):
-
-    def __init__(self,
-                 game: Game,
-                 name: str,
-                 creator: Citizen) -> None:
+    def __init__(self, game: Game, name: str, creator: Citizen) -> None:
         Effect.__init__(self, game, name, creator, 0)
 
     def _activate_impl(self) -> bool:
         target_number = user_interaction.read_number("config.type_target")
-        while(not self._validate(target_number)):
+        while (not self._validate(target_number)):
             user_interaction.show_active_instant("config.type_error")
             target_number = user_interaction.read_number("config.type_target")
 

@@ -1,11 +1,10 @@
-from effects.effect import Effect
-from card import Card
-
 from typing import List
+
+from card import Card
+from effects.effect import Effect
 
 
 class Citizen:
-
     def __init__(self, name: str, citizen_card: Card, hp: int = 1) -> None:
         self._name = name
         self._hp = hp
