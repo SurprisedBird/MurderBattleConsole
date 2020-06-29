@@ -14,13 +14,8 @@ class EffectStatus(Enum):
 
 
 class Effect(ABC):
-
-    def __init__(self,
-                 game: Game,
-                 name: str,
-                 creator: Citizen,
+    def __init__(self, game: Game, name: str, creator: Citizen,
                  priority: int) -> None:
-
         self._game = game
         self._name = name
         self._creator = creator
@@ -31,7 +26,7 @@ class Effect(ABC):
         self._activation_round: int
 
     def activate(self) -> None:
-        if self._status == EffectStatus.CREATED:
+        if (self._status == EffectStatus.CREATED):
             is_activated = self._activate_impl()
 
             if (is_activated):
@@ -60,13 +55,13 @@ class Effect(ABC):
         pass
 
     def resolve(self) -> None:
-        if self._status == EffectStatus.ACTIVATED:
+        if (self._status == EffectStatus.ACTIVATED):
             is_finished = self._resolve_impl()
 
             if (is_finished):
                 self._status = EffectStatus.FINISHED
 
-        else if self._status == EffectStatus.CREATED:
+        elif (self._status == EffectStatus.CREATED):
             # logging.warning(f'Unexpected resolve call for {self._name}.
             #                 Current stauts: {self._status}')
             pass
