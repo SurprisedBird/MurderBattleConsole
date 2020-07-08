@@ -9,6 +9,7 @@ TODO list:
 - [Enable code formatting in VSCode](#enable-code-formatting-in-vscode)
 - [Reload VSCode](#reload-vscode)
 - [Check VSCode funtionality](#check-vscode-funtionality)
+- [Setup unit tests](#setup-unit-tests)
 
 ---
 
@@ -74,3 +75,21 @@ Also, these settings enables code formatting and import sorting on Save.*
 ## Reload VSCode
 
 ## Check VSCode funtionality
+
+## Setup unit tests
+Add to a local `.vscode/settings.json` file following snippet:<br>
+``` json
+"python.testing.unittestArgs": [
+    "-v",
+    "-s",
+    "./tests",
+    "-p",
+    "*_test.py"
+],
+"python.testing.pytestEnabled": false,
+"python.testing.nosetestsEnabled": false,
+"python.testing.unittestEnabled": true
+```
+
+*Also you can review:
+[how to write and setup unit tests](HOW_TO_WRITE_UNIT_TESTS.md)*

@@ -1,6 +1,7 @@
 Contents
 - [Project code style](#project-code-style)
 - [Naming Conventions](#naming-conventions)
+- [Quotes](#quotes)
 - [Comments](#comments)
 - [Docstring conventions](#docstring-conventions)
 - [Commit messages](#commit-messages)
@@ -71,22 +72,20 @@ class ModelClass:
 
 ```
 
+## Quotes
+You should use only double quotes "" against the Type hints.
 
 ## Comments
-
 You should follow pep8 [Comments](https://www.python.org/dev/peps/pep-0008/#comments) conventions.
 
 ## Docstring conventions
-
 You should follow [Docstring conventions](https://www.python.org/dev/peps/pep-0257/).
 
 ## Commit messages
-
 You should follow: [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/)
 for every commit message.
 
 ## Type hints
-
 You should use [Type hints](https://docs.python.org/3/library/typing.html) in code.
 
 Additional notes:
@@ -133,6 +132,5 @@ class ExampleClass:
 ```
 
 ## Recomendations
-
 It is much easier to write clean and consistent code with code formatting tools.
 Please, use [this instruction](ENVIRONMENT_SETUP.md#enable-code-formatting-in-vscode) to set up it properly.
