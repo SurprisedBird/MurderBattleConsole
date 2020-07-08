@@ -1,5 +1,5 @@
 # import logging
-from abc import ABC
+from abc import ABC, abstractmethod
 from enum import Enum
 from typing import List
 
@@ -31,7 +31,7 @@ class Effect(ABC):
 
             if (is_activated):
                 self._status = EffectStatus.ACTIVATED
-                self._activation_round = self.game.round_number
+                self._activation_round = self._game.round_number
             else:
                 # logging.warning(f'Actovatoion FAILED for {self._name}.')
                 pass
@@ -40,7 +40,7 @@ class Effect(ABC):
             #                 Current stauts: {self._status}')
             pass
 
-    @abastractmethod
+    @abstractmethod
     def _activate_impl(self) -> bool:
         """
         Setup effect's targets.
@@ -50,7 +50,7 @@ class Effect(ABC):
         """
         pass
 
-    @abastractmethod
+    @abstractmethod
     def _validate(self, target_number: int) -> bool:
         pass
 
@@ -66,7 +66,7 @@ class Effect(ABC):
             #                 Current stauts: {self._status}')
             pass
 
-    @abastractmethod
+    @abstractmethod
     def _resolve_impl(self) -> bool:
         """
         Implements core logic of each effect. It's interaction with
@@ -78,7 +78,7 @@ class Effect(ABC):
         """
         pass
 
-    @abastractmethod
+    @abstractmethod
     def on_clear(self) -> None:
         pass
 
