@@ -11,10 +11,10 @@ class StealEffect(Effect):
         Effect.__init__(self, game, name, creator, 0)
 
     def _activate_impl(self) -> bool:
-        target_number = user_interaction.read_number("config.type_target")
+        target_number = user_interaction.read_index("config.type_target")
         while (not self._validate(target_number)):
             user_interaction.show_active_instant("config.type_error")
-            target_number = user_interaction.read_number("config.type_target")
+            target_number = user_interaction.read_index("config.type_target")
 
         self._targets.append(self._game.citizens[target_number - 1])
 

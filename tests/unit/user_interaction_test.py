@@ -55,7 +55,7 @@ class UserInteractionTest(TestCase):
         self.print_test(user_interaction.show_all, asserted_text)
 
     def test_read_index(self):
-        for i in range(100):
+        for _ in range(100):
             valid_test_data_list = [random.randint(1, 1000), 0]
             for test_data_item in valid_test_data_list:
                 print(test_data_item)
@@ -65,7 +65,7 @@ class UserInteractionTest(TestCase):
                     self.assertEqual(user_interaction.read_index(
                         test_to_string), test_data_item)
 
-        for i in range(100):
+        for _ in range(100):
             invalid_test_data_list = [random.randint(-1000, -1), *self.get_text_data(), random.random(), random.choice([
                 True, False]), None]
             for test_data_item in invalid_test_data_list:
