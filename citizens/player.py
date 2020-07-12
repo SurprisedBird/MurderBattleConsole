@@ -1,7 +1,6 @@
 from enum import Enum
 from typing import List
 
-from card import Card
 from citizens.citizen import Citizen
 
 
@@ -13,8 +12,12 @@ class ActionType(Enum):
 
 
 class Player(Citizen):
-    def __init__(self, name: str, citizen_card: Card, hp: int = 3) -> None:
-        Citizen.__init__(name, citizen_card, hp)
+    def __init__(self,
+                 user_name: str,
+                 name: str,
+                 citizen_card: 'Card',
+                 hp: int = 3) -> None:
+        Citizen.__init__(self, name, citizen_card, hp)
 
         self._staging_available = True
-        self._stolen_cards: List[Card] = []
+        self._stolen_cards: List['Card'] = []
