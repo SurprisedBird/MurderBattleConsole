@@ -11,8 +11,11 @@ class MessageScope(Enum):
     PASSIVE = 3
 
 
-prepared_messages = {MessageScope.GLOBAL: [],
-                     MessageScope.ACTIVE: [], MessageScope.PASSIVE: []}
+prepared_messages = {
+    MessageScope.GLOBAL: [],
+    MessageScope.ACTIVE: [],
+    MessageScope.PASSIVE: []
+}
 
 
 def save_global(text: str) -> None:
@@ -53,7 +56,7 @@ def read_index(text: str) -> Optional[int]:
     """
     index = input(text)
     if index.isnumeric():
-        index = int(text)
+        index = int(index)
     else:
         index = None
 

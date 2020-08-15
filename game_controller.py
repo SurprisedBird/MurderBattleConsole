@@ -30,6 +30,7 @@ class GameController:
         self._show_game_state()
 
     def _create_citizens(self, avilable_citizens):
+
         for name, card in self.citizens_dict.items():
             self.game.citizens.append(Citizen(name=name, citizen_card=card))
             avilable_citizens.extend(self.game.citizens)
