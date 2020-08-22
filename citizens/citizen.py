@@ -4,10 +4,10 @@ from typing import List
 class Citizen:
     def __init__(self, name: str, citizen_card: 'Card', hp: int = 1) -> None:
         self.name = name
-        self._hp = hp
+        self.hp = hp
         self.citizen_card = citizen_card
-        self._effects: List['Effect'] = []
+        self.effects: List['Effect'] = []
 
     @property
     def is_alive(self) -> bool:
-        return self._hp > 0
+        return self.hp > 0

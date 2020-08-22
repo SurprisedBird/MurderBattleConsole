@@ -9,7 +9,7 @@ class Game:
         self.round_number = 0
 
     @property
-    def get_active_player(self) -> 'Player':
+    def active_player(self) -> 'Player':
         active_player = None
         if self.round_number % 2 != 0:
             active_player = self.players[0]
@@ -19,7 +19,7 @@ class Game:
         return active_player
 
     @property
-    def get_passive_player(self) -> 'Player':
+    def passive_player(self) -> 'Player':
         passive_player = None
         if self.round_number % 2 == 0:
             passive_player = self.players[0]

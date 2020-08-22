@@ -1,6 +1,6 @@
 # import logging
 from abc import ABC, abstractmethod
-from enum import Enum
+from enum import Enum, auto
 from typing import List
 
 from citizens.citizen import Citizen
@@ -8,9 +8,9 @@ from game import Game
 
 
 class EffectStatus(Enum):
-    CREATED = 1
-    ACTIVATED = 2
-    FINISHED = 3
+    CREATED = auto()
+    ACTIVATED = auto()
+    FINISHED = auto()
 
 
 class Effect(ABC):
@@ -78,10 +78,22 @@ class Effect(ABC):
         """
         pass
 
-    @abstractmethod
     def on_clear(self) -> None:
+        if (self._status == EffectStatus.FINISHED):
+            is_finished = self._on_clear_impl()
+
+    @abstractmethod
+    def _on_clear_impl(self) -> None:
         pass
 
     @property
     def name(self) -> str:
         return self._name
+
+    @property
+    def status(self) -> EffectStatus:
+        return self._status
+
+    @property
+    def targets(self) -> List[Citizen]:
+        return self._targets
