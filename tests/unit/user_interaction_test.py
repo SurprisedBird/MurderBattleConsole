@@ -1,8 +1,9 @@
-from unittest import TestCase
-import user_interaction
-from unittest.mock import patch
 import random
 import string
+from unittest import TestCase
+from unittest.mock import patch
+
+import user_interaction
 
 
 class UserInteractionTest(TestCase):
@@ -54,7 +55,7 @@ class UserInteractionTest(TestCase):
 
         self.print_test(user_interaction.show_all, asserted_text)
 
-    def test_read_index(self):
+    def test_read_number(self):
         for _ in range(100):
             valid_test_data_list = [random.randint(1, 1000), 0]
             for test_data_item in valid_test_data_list:
@@ -62,16 +63,20 @@ class UserInteractionTest(TestCase):
                 test_to_string = str(test_data_item)
 
                 with patch('builtins.input', return_value=test_to_string):
-                    self.assertEqual(user_interaction.read_index(
-                        test_to_string), test_data_item)
+                    self.assertEqual(
+                        user_interaction.read_number(test_to_string),
+                        test_data_item)
 
         for _ in range(100):
-            invalid_test_data_list = [random.randint(-1000, -1), *self.get_text_data(), random.random(), random.choice([
-                True, False]), None]
+            invalid_test_data_list = [
+                random.randint(-1000, -1), *self.get_text_data(),
+                random.random(),
+                random.choice([True, False]), None
+            ]
             for test_data_item in invalid_test_data_list:
                 test_to_string = str(test_data_item)
                 print(test_to_string)
 
                 with patch('builtins.input', return_value=test_to_string):
-                    self.assertEqual(user_interaction.read_index(
-                        test_to_string), None)
+                    self.assertEqual(
+                        user_interaction.read_number(test_to_string), None)
