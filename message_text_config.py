@@ -1,27 +1,51 @@
+class UserActions:
+    TYPE_NONE = "Пропустить"
+    TYPE_STEAL = "Украсть"
+    TYPE_KILL = "Убить"
+    TYPE_STAGING = "Совершить инсценировку"
+    TYPE_CARD_USAGE = "Использовать карту"
+
+
 class PreparePhase:
     GLOBAL_LOAD_GAME = "Загрузка игры"
     GLOBAL_FIRST_TURN = "Первым будет ходить {}"
+    ACT_FIRST_TURN = "Вы будете ходить первым"
     ACT_PASS_YOUR_ROLE = "Ваша роль – {}. Ваша задача, обнаружить вашего противника и нейтрализовать его раньше, чем это сделает он. Будьте расчетливым, непредсказуемым и коварным убийцей. Удачи!"
     GLOBAL_START_GAME = "Игра началась!"
+
+
+class FinishPhase:
+    GLOBAL_DRAW = "Ничья!"
+    GLOBAL_PLAYER_WON = "Игрок {} победил"
 
 
 class NightStatus:
     ACT_PASS_NIGHT_NUMBER = "НОЧЬ {}"
     PASS_ENEMY_TURN = "Ход противника"
     ACT_YOUR_TURN = "Ваш ход"
-    ACT_HP_COUNT = "HP"
-    ACT_IS_STAGING = "Наличие Инсценировки: "
-    ACT_PERSONAL_CARD = "Личная карта: "
-    ACT_STOLEN_CARDS = "Украденные карты: "
-    ACT_DIE = " (мертв)"
+    ACT_HP_COUNT = "HP = {}"
+    ACT_IS_STAGING = "Наличие Инсценировки: {}"
+    ACT_STAGING_AVAILABLE = "присутствует"
+    ACT_STAGING_UNAVAILABLE = "отсутствует"
+    ACT_PERSONAL_CARD = "Личная карта: {}"
+    ACT_NO_CARD = " - "
+    ACT_STOLEN_CARDS = "Украденные карты:\n {}"
+    ACT_CITY_STATUS = "Город:\n {}"
+    ACT_CITIZEN_LIST_OPTION = "{}. {} {}"
+    ACT_YOU = "(Вы)"
+    ACT_DEAD = "(мертв)"
 
 
 class NightActionTarget:
-    ACT_ACTION = "Введите номер действия: \n 1. [Убийство]” / “2. [Кража]” / “3. [Инсценировка]"
+    ACT_ACTION = "Введите номер действия:"
+    ACT_OPTION = "{}. {}"
     ACT_KILL = "Выберите цель, на которую будет совершено покушение на убийство в эту ночь:"
     ACT_STEAL = "Выберите цель, которую вы попытаетесь ограбить в эту ночь:"
     ACT_STAGING = "Выберите цель, с которой вы поменяетесь ролями в эту ночь (в новостях объявят о гибели гражданина с вашей предыдущей ролью):"
     ACT_CARD = "Введите номер карты:"
+    ACT_CHOISE_INFO = "Вы выбрали действие '{}'. Вы выбрали карту '{}'."
+    ACT_CONFIRM_ACTION = "Подтвердить действие"
+    ACT_CANCEL_ACTION = "Отменить действие"
 
 
 class CardTarget:
@@ -106,3 +130,4 @@ class Errors:
     CARDS_ONE_TARGET = "Ошибка! Введите одну цель для выбранной карты."
     DATA_BASE_TARGETS = "Ошибка! Введите три цели для выбранной карты."
     TALES_TARGET = "Ошибка! Целью для карты Сплетни является номер ночи. Введите номер доступной ночи."
+    CONFIRM_CHOICE = "Ошибка! Введите номер доступного действия."
