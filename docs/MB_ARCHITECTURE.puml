@@ -87,20 +87,20 @@ class GameController {
 }
 
 class Citizen {
-    String name
-    int hp
+    #String name
+    #int hp
 
     ' Property (checks if hp > 0)
     +bool is_alive
     
-    Effect [] effects
-    Card citizen_card
+    #Effect [] effects
+    #Card citizen_card
 }
 
 class Player extends Citizen {
-    boolean staging
-    Card [] stolen_cards
-    ActionType[] allowed_actions
+    +Card [] stolen_cards
+    +ActionType[] allowed_actions
+    +ActionType[] allowed_card_actions
 
     +create_action()
     -validate_action()
