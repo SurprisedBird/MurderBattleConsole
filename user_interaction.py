@@ -1,18 +1,18 @@
-from enum import Enum
+from enum import Enum, auto
 from typing import Optional
-
-# TODO: implement user_interaction as a class. And pass instance of this class\
-# to every effect as argument
 
 
 class MessageScope(Enum):
-    GLOBAL = 1
-    ACTIVE = 2
-    PASSIVE = 3
+    GLOBAL = auto()
+    ACTIVE = auto()
+    PASSIVE = auto()
 
 
-prepared_messages = {MessageScope.GLOBAL: [],
-                     MessageScope.ACTIVE: [], MessageScope.PASSIVE: []}
+prepared_messages = {
+    MessageScope.GLOBAL: [],
+    MessageScope.ACTIVE: [],
+    MessageScope.PASSIVE: []
+}
 
 
 def save_global(text: str) -> None:
@@ -41,19 +41,31 @@ def show_passive_instant(text: str) -> None:
 
 def show_all() -> None:
     for scope, text_list in prepared_messages.items():
-        print(f"{scope.name}: {text_list}")
-    prepared_messages.clear()
+        print(f"{scope.name}:")
+        for text in text_list:
+            print(f"\t{text}")
+
+    _celar_messages()
 
 
-def read_index(text: str) -> Optional[int]:
+def _celar_messages() -> None:
+    global prepared_messages
+    prepared_messages = {
+        MessageScope.GLOBAL: [],
+        MessageScope.ACTIVE: [],
+        MessageScope.PASSIVE: []
+    }
+
+
+def read_number(text: str = "") -> Optional[int]:
     """Reading and validating inputs.
 
     If input value is valid - return int
     If input value is NOT valid - return None
     """
-    index = input(text)
-    if index.isnumeric():
-        index = int(text)
+    index_str = input(text)
+    if index_str.isnumeric():
+        index = int(index_str)
     else:
         index = None
 
