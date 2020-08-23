@@ -1,6 +1,18 @@
-from typing import List
+from typing import Callable, List
 
+import message_text_config as msg
+import user_interaction
 from citizens.citizen import Citizen
+
+
+def read_target_number(message: str, validate_method: Callable[[int],
+                                                               bool]) -> int:
+    target_number = user_interaction.read_number(message)
+    while (not validate_method(target_number)):
+        user_interaction.show_active_instant(msg.Errors.TARGET)
+        target_number = user_interaction.read_number(message)
+
+    return target_number
 
 
 def is_citizen_in_range(target_index: int, citizens: List[Citizen]) -> bool:
