@@ -12,12 +12,8 @@ class StealEffect(Effect):
         super().__init__(game, name, creator, 0)
 
     def _activate_impl(self) -> bool:
-        target_number = user_interaction.read_number(
-            msg.NightActionTarget.ACT_STEAL)
-        while (not self._validate(target_number)):
-            user_interaction.show_active_instant(msg.Errors.TARGET)
-            target_number = user_interaction.read_number(
-                msg.NightActionTarget.ACT_STEAL)
+        target_number = utils.read_target_number(
+            msg.NightActionTarget.ACT_STEAL, self._validate)
 
         self._targets.append(self._game.citizens[target_number - 1])
 
