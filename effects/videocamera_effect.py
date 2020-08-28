@@ -40,7 +40,7 @@ class VideoCameraEffect(Effect):
         enemy_name = self._game.active_player.name
         citizen_name = self._targets[0].name
 
-        camera_message = msg.EffectsResolved.ACT_CAMERA.format(
+        camera_message = msg.EffectsResolved.PASS_CAMERA.format(
             enemy_name, citizen_name)
         user_interaction.save_passive(camera_message)
 
