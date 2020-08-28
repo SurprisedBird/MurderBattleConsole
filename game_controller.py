@@ -62,8 +62,9 @@ class GameController:
             self.game.players.append(player)
 
             # Replace citizen by player
+            replacing_index = self.game.citizens.index(random_citizen)
             self.game.citizens.remove(random_citizen)
-            self.game.citizens.append(player)
+            self.game.citizens.insert(replacing_index, player)
 
     def _set_order(self) -> None:
         random.shuffle(self.game.players)
@@ -87,8 +88,9 @@ class GameController:
         self.game.spy = Spy(name=random_citizen.name)
 
         # Replace citizen by spy
+        replacing_index = self.game.citizens.index(random_citizen)
         self.game.citizens.remove(random_citizen)
-        self.game.citizens.append(self.game.spy)
+        self.game.citizens.insert(replacing_index, self.game.spy)
 
     def _show_game_state(self) -> None:
         user_interaction.save_global(msg.PreparePhase.GLOBAL_START_GAME)
