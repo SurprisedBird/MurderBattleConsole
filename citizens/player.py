@@ -51,6 +51,8 @@ class Player(Citizen):
         self._allowed_actions: Dict[int, ActionData]
         self._allowed_card_actions: Dict[int, ActionData]
 
+        self._staging_disabled_forever = False
+
         self.stolen_cards: List['Card'] = []
 
     @property
@@ -166,3 +168,29 @@ class Player(Citizen):
                 (number >= 0) and \
                 (number < len(self._allowed_card_actions))
         return valid
+
+    def disable_steal_action(self) -> None:
+        self.actions_common_list[ActionType.STEAL].available = False
+
+    def disable_kill_action(self) -> None:
+        self.actions_common_list[ActionType.KILL].available = False
+
+    def disable_staging_action(self, disable_forever: bool = False) -> None:
+        self._staging_disabled_forever = disable_forever
+        self.actions_common_list[ActionType.STAGING].available = False
+
+    def disable_card_usage_action(self) -> None:
+        self.actions_common_list[ActionType.CARD_USAGE].available = False
+
+    def enable_steal_action(self) -> None:
+        self.actions_common_list[ActionType.STEAL].available = True
+
+    def enable_kill_action(self) -> None:
+        self.actions_common_list[ActionType.KILL].available = True
+
+    def enable_staging_action(self) -> None:
+        if (not self._staging_disabled_forever):
+            self.actions_common_list[ActionType.STAGING].available = True
+
+    def enable_card_usage_action(self) -> None:
+        self.actions_common_list[ActionType.CARD_USAGE].available = True
