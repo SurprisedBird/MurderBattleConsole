@@ -86,6 +86,9 @@ class Effect(ABC):
     def _on_clear_impl(self) -> None:
         pass
 
+    def __lt__(self, other) -> bool:
+        return self._PRIORITY < other._PRIORITY
+
     @property
     def name(self) -> str:
         return self._name
@@ -97,3 +100,7 @@ class Effect(ABC):
     @property
     def targets(self) -> List[Citizen]:
         return self._targets
+
+    @property
+    def priority(self) -> int:
+        return self._PRIORITY

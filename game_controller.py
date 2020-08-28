@@ -116,9 +116,15 @@ class GameController:
         self.game.action_manager.clear_pre_actions()
 
     def _apply_pre_actions(self) -> None:
+        updated_targets = []
         for effect in self.game.action_manager.pre_actions:
             for target in effect.targets:
                 target.effects.append(effect)
+                updated_targets.append(target)
+
+        # Sort all effects by priority for each updated target
+        for target in updated_targets:
+            target.effects.sort(reverse=True)
 
         self.game.action_manager.store_actions_history(self.game.round_number)
 
