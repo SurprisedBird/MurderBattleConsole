@@ -16,22 +16,22 @@ class EffectStatus(Enum):
 class Effect(ABC):
     def __init__(self, game: Game, name: str, creator: Citizen,
                  priority: int) -> None:
-        self._game = game
-        self._name = name
-        self._creator = creator
-        self._PRIORITY = priority
+        self.game = game
+        self.name = name
+        self.creator = creator
+        self.priority = priority
 
-        self._targets: List[Citizen] = []
-        self._status = EffectStatus.CREATED
-        self._activation_round: int
+        self.targets: List[Citizen] = []
+        self.status = EffectStatus.CREATED
+        self.activation_round: int
 
     def activate(self) -> None:
-        if (self._status == EffectStatus.CREATED):
+        if (self.status == EffectStatus.CREATED):
             is_activated = self._activate_impl()
 
             if (is_activated):
-                self._status = EffectStatus.ACTIVATED
-                self._activation_round = self._game.round_number
+                self.status = EffectStatus.ACTIVATED
+                self.activation_round = self.game.round_number
             else:
                 # logging.warning(f'Actovatoion FAILED for {self._name}.')
                 pass
@@ -55,13 +55,13 @@ class Effect(ABC):
         pass
 
     def resolve(self) -> None:
-        if (self._status == EffectStatus.ACTIVATED):
+        if (self.status == EffectStatus.ACTIVATED):
             is_finished = self._resolve_impl()
 
             if (is_finished):
-                self._status = EffectStatus.FINISHED
+                self.status = EffectStatus.FINISHED
 
-        elif (self._status == EffectStatus.CREATED):
+        elif (self.status == EffectStatus.CREATED):
             # logging.warning(f'Unexpected resolve call for {self._name}.
             #                 Current stauts: {self._status}')
             pass
@@ -79,31 +79,15 @@ class Effect(ABC):
         pass
 
     def on_clear(self) -> None:
-        if (self._status == EffectStatus.FINISHED):
+        if (self.status == EffectStatus.FINISHED):
             is_finished = self._on_clear_impl()
 
     @abstractmethod
     def _on_clear_impl(self) -> None:
         pass
 
-    def __lt__(self, other) -> bool:
-        return self._PRIORITY < other._PRIORITY
+    def __lt__(self, other: 'Effect') -> bool:
+        return self.priority < other.priority
 
     def deactivate(self) -> None:
-        self._status = EffectStatus.FINISHED
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def status(self) -> EffectStatus:
-        return self._status
-
-    @property
-    def targets(self) -> List[Citizen]:
-        return self._targets
-
-    @property
-    def priority(self) -> int:
-        return self._PRIORITY
+        self.status = EffectStatus.FINISHED

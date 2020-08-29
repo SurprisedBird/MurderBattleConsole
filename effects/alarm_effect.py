@@ -16,10 +16,10 @@ class AlarmEffect(Effect):
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(msg.CardTarget.ACT_ALARM,
                                                  self._validate)
-        self._targets.append(self._game.citizens[target_number - 1])
+        self.targets.append(self.game.citizens[target_number - 1])
 
         user_interaction.save_active(
-            msg.EffectsActivated.ACT_ALARM.format(self._targets[0].name))
+            msg.EffectsActivated.ACT_ALARM.format(self.targets[0].name))
 
         return True
 
@@ -30,7 +30,7 @@ class AlarmEffect(Effect):
             effect.deactivate()
 
             user_interaction.save_active(msg.EffectsResolved.ACT_ALARM)
-            utils.save_message_for_player(self._game, self._creator,
+            utils.save_message_for_player(self.game, self.creator,
                                           msg.EffectsResolved.PASS_ALARM)
 
             return True
@@ -38,7 +38,7 @@ class AlarmEffect(Effect):
         return False
 
     def _is_alarm_triggered(self) -> Tuple[bool, Effect]:
-        for effect in self._targets[0].effects:
+        for effect in self.targets[0].effects:
             # TODO: uncomment when KillEffect and StagingEffect will be available
             alarm_triggered = type(effect) is StealEffect  #or \
             #type(effect) is KillEffect or \
@@ -51,7 +51,7 @@ class AlarmEffect(Effect):
 
     def _validate(self, target_number: int) -> bool:
         return utils.validate_citizen_target_number(target_number,
-                                                    self._game.citizens)
+                                                    self.game.citizens)
 
     def _on_clear_impl(self) -> None:
         pass
