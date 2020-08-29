@@ -9,7 +9,7 @@ from game import Game
 
 class StealEffect(Effect):
     def __init__(self, game: Game, name: str, creator: Citizen) -> None:
-        super().__init__(game, name, creator, 0)
+        super().__init__(game, name, creator, 1)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
