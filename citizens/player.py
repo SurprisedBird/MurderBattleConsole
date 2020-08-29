@@ -135,6 +135,7 @@ class Player(Citizen):
             self._allowed_card_actions[i] = ActionData(True, stolen_card.name,
                                                        stolen_card.effect)
 
+    # TODO: REMOVE CARD FROM PLAYER AFTER IT WAS USSED (!!!)
     def create_card_action(self, game: 'Game'):
         self._update_allowed_card_actions()
 
