@@ -89,6 +89,9 @@ class Effect(ABC):
     def __lt__(self, other) -> bool:
         return self._PRIORITY < other._PRIORITY
 
+    def deactivate(self) -> None:
+        self._status = EffectStatus.FINISHED
+
     @property
     def name(self) -> str:
         return self._name

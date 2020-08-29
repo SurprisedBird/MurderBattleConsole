@@ -15,6 +15,22 @@ def read_target_number(message: str, validate_method: Callable[[int],
     return target_number
 
 
+def save_message_for_player(game: 'Game', player: 'Player',
+                            message: str) -> None:
+    if player is game.active_player:
+        user_interaction.save_active(message)
+    else:
+        user_interaction.save_passive(message)
+
+
+# def save_message_for_oposite_player(game: 'Game', player: 'Player',
+#                                     message: str) -> None:
+#     if player is game.active_player:
+#         user_interaction.save_passive(message)
+#     else:
+#         user_interaction.save_active(message)
+
+
 def is_citizen_in_range(target_index: int, citizens: List[Citizen]) -> bool:
     return target_index >= 0 and target_index < len(citizens)
 
