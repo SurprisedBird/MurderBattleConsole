@@ -24,15 +24,10 @@ Info about these conventions could be found below.
 You should follow pep8 [Naming Conventions](https://www.python.org/dev/peps/pep-0008/#naming-conventions).
 
 Additional notes:
-- You should use a single underscore prefix for every protected field or method in class.
-  - For every protected field that should be accessed outside of the class - create property without an underscore in its name
-  - Don't create property setter for field if it shouldn't be changed outside the class
-  - You should refer to protected fields inside this class directly (without using properties). The only exception - if getter or setter property contains some additional logic.
-  - Note that if protected field is accessed by another object of the SAME class - it should NOT be treated as "access outside of the class". 
-- All class fields should be treated as protected by default
-  - An exception of this rule: model classes which doesn't contain any sophisticated logic and created only to store data.
-  In this case - internal fields could remain public.  
-- All class methods which are not used outside of the class should be treated as protected
+- Single underscore prefix for every protected field or method in class should be used.
+- Utility fields which are used ONLY inside the current class and SHOULD NOT be accessed any way outside of current class - should be treated as protected.
+- Fields which are accessed from outside of the current class or COULD BE accessed outside of the current class - should be treated as public.
+- All class methods which are not used and SHOULD NOT be used outside the current class - should be treated as protected.
 - Try to avoid using double underscore prefix for protected/private fields and methods in class.
   - An exception of this rule: fields or methods that should not be inherited by child classes 
 
@@ -40,40 +35,33 @@ Example:
 ``` python
 class ExampleClass:
     def __init__(self) -> None:
+        self.public_field = SomeType()
         # Protected field have a single underscore prefix
-        self._protected_field = SomeType()
-        # Try to AVOID such prefix
+        self._utility_protected_field = SomeType()
+        # WRONG! Try to AVOID such prefix
         self.__private_field = SomeType()
-    
-    # Protected field is accessed outside the class, so getter property
-    # was created. 
+
+    # WRONG! If field is accessed from outside 
+    # (even through getter and event if it is read-only), 
+    # this field should be treated as public - not protected.
     @property
-    def protected_field(self) -> SomeType:
-        return self._protected_field
+    def utility_protected_field(self) -> 'SomeType':
+        return self._utility_protected_field
 
-    # Setter should NOT be crated if field is not changed ounside this class
-    @property.setter
-    def protected_field(self, some_value: SomeType) -> None: 
-        self._protected_field = some_value
-
+    # Public method which is used outside the class
     def some_method(self) -> None:
-        # Field inside the class is reffered by it's name directly. 
-        # Not by property
-        self._protected_field = SomeType()
+        pass
+        
+    # Protected method which is used ONLY inside the class    
+    def _utility_protected_methos(self) -> None:
+        pass  
 
-# This is a model class.
-# Getter and setter properties should NOT be used for fields of this class
-# sinse it just stores the data.
-class ModelClass:
-    def __init__(self):
-        self.data_field_1 = DataType()
-        self.data_field_2 = DataType()
-        self.data_field_3 = DataType()
 
 ```
 
 ## Quotes
-You should use only double quotes "" against the Type hints.
+You should use only double quotes "" for each string in project, except the Type hints.
+For type hints should be used single quotes.
 
 ## Comments
 You should follow pep8 [Comments](https://www.python.org/dev/peps/pep-0008/#comments) conventions.

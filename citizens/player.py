@@ -23,16 +23,8 @@ class ActionData:
     def __init__(self, available: bool, message: str,
                  effect: Type[Effect]) -> None:
         self.available = available
-        self._message = message
-        self._effect = effect
-
-    @property
-    def message(self) -> str:
-        return self._message
-
-    @property
-    def effect(self) -> Type[Effect]:
-        return self._effect
+        self.message = message
+        self.effect = effect
 
 
 class Player(Citizen):
