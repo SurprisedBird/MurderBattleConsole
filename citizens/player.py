@@ -45,6 +45,7 @@ class Player(Citizen):
         super().__init__(name, citizen_card, hp)
 
         self.user_name = user_name
+        self.stolen_cards: List[Card] = []
 
         self.actions_common_list: Dict[ActionType, ActionData]
         self._init_action_common_list()
@@ -54,7 +55,7 @@ class Player(Citizen):
 
         self._staging_disabled_forever = False
 
-        self.stolen_cards: List[Card] = []
+        self._chosen_card: Card
 
     @property
     def is_staging_used(self):
@@ -150,9 +151,18 @@ class Player(Citizen):
 
         index = self._read_chosen_card_action()
 
-        effect = self._allowed_card_actions[index].effect
+        self._chosen_card = self._allowed_card_actions[index].card
+        effect = self._chosen_card.effect
         action = effect(game, self._allowed_card_actions[index].name, self)
         return action
+
+    def remove_chosen_card(self) -> None:
+        if self._chosen_card is self.citizen_card:
+            self.citizen_card = None
+        elif self._chosen_card in self.stolen_cards:
+            self.stolen_cards.remove(self._chosen_card)
+
+        self._chosen_card = None
 
     def _show_available_card_actions(self) -> None:
         self._show_available_options(msg.NightActionTarget.ACT_CARD_ACTION,
