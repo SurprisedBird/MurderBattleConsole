@@ -117,6 +117,7 @@ class GameController:
             action_confirmed = self._confirm_actions()
 
         self._apply_pre_actions()
+        self.game.active_player.remove_chosen_card()
 
         self._resolve_effects()
         self._clear_effects()
