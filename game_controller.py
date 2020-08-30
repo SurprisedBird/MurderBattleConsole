@@ -29,6 +29,10 @@ class GameController:
 
         self._finish_game()
 
+# =================================================================
+# Prepare game phase
+# =================================================================
+
     def _prepare_game(self) -> None:
         self.game = Game()
         self.game.action_manager = ActionManager()
@@ -96,6 +100,10 @@ class GameController:
         user_interaction.save_global(msg.PreparePhase.GLOBAL_START_GAME)
         user_interaction.show_all()
 
+# =================================================================
+# Proceed game phase
+# =================================================================
+
     def _proceed_game(self) -> None:
         self._count_round()
         self._show_night_state()
@@ -140,7 +148,7 @@ class GameController:
             self.game.active_player.hp)
 
         staging_available = msg.NightStatus.ACT_STAGING_AVAILABLE \
-            if self.game.active_player.is_staging_available \
+            if self.game.active_player.is_staging_used \
             else msg.NightStatus.ACT_STAGING_UNAVAILABLE
         staging_active_str = msg.NightStatus.ACT_IS_STAGING.format(
             staging_available)
@@ -236,6 +244,11 @@ class GameController:
 
         number = user_interaction.read_number()
         return number
+
+
+# =================================================================
+# Finish game phase
+# =================================================================
 
     def _check_win(self) -> bool:
         return (not self.game.players[0].is_alive) or \

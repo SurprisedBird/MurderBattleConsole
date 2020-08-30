@@ -1,8 +1,11 @@
+from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Dict, List, Type
+from typing import Callable, Dict, List, Type
 
 import message_text_config as msg
 import user_interaction
+from card import Card
+from citizens.citizen import Citizen
 from effects.effect import Effect
 from effects.kill_effect import KillEffect
 from effects.none_effect import NoneEffect
@@ -19,19 +22,25 @@ class ActionType(Enum):
     CARD_USAGE = auto()
 
 
+@dataclass
 class ActionData:
-    def __init__(self, available: bool, message: str,
-                 effect: Type[Effect]) -> None:
-        self.available = available
-        self.message = message
-        self.effect = effect
+    available: bool
+    card: Card
+
+    @property
+    def name(self) -> Effect:
+        return self.card.name
+
+    @property
+    def effect(self) -> Effect:
+        return self.card.effect
 
 
 class Player(Citizen):
     def __init__(self,
                  user_name: str,
                  name: str,
-                 citizen_card: 'Card',
+                 citizen_card: Card,
                  hp: int = 3) -> None:
         super().__init__(name, citizen_card, hp)
 
@@ -45,110 +54,84 @@ class Player(Citizen):
 
         self._staging_disabled_forever = False
 
-        self.stolen_cards: List['Card'] = []
+        self.stolen_cards: List[Card] = []
 
     @property
-    def is_staging_available(self):
-        return self.actions_common_list[ActionType.STAGING].available
+    def is_staging_used(self):
+        return self._staging_disabled_forever
 
     def _init_action_common_list(self):
         self.actions_common_list = {}
 
-        self.actions_common_list[ActionType.NONE] = ActionData(
-            True, msg.UserActions.TYPE_NONE, NoneEffect)
-        self.actions_common_list[ActionType.STEAL] = ActionData(
-            True, msg.UserActions.TYPE_STEAL, StealEffect)
-        self.actions_common_list[ActionType.KILL] = ActionData(
-            True, msg.UserActions.TYPE_KILL, KillEffect)
-        self.actions_common_list[ActionType.STAGING] = ActionData(
-            True, msg.UserActions.TYPE_STAGING,
-            NoneEffect)  # TODO: change None
-        self.actions_common_list[ActionType.CARD_USAGE] = ActionData(
-            True, msg.UserActions.TYPE_CARD_USAGE, None)
+        create_action_data = lambda message, effect: ActionData(
+            True, Card(message, effect))
+        self.actions_common_list[ActionType.NONE] = \
+            create_action_data(msg.UserActions.TYPE_NONE, NoneEffect)
+        self.actions_common_list[ActionType.STEAL] = \
+            create_action_data(msg.UserActions.TYPE_STEAL, StealEffect)
+        self.actions_common_list[ActionType.KILL] = \
+            create_action_data(msg.UserActions.TYPE_KILL, NoneEffect)  # TODO: change NoneEffect
+        self.actions_common_list[ActionType.STAGING] = \
+            create_action_data(msg.UserActions.TYPE_STAGING, NoneEffect)  # TODO: change NoneEffect
+        self.actions_common_list[ActionType.CARD_USAGE] = \
+            create_action_data(msg.UserActions.TYPE_CARD_USAGE, None)
+
+# =================================================================
+# Utility functions
+# =================================================================
+
+    def _show_available_options(
+            self, message: str, allowed_options: Dict[int,
+                                                      ActionData]) -> None:
+        user_interaction.save_active(message)
+        for index, action_data in allowed_options.items():
+            message_str = msg.NightActionTarget.ACT_OPTION.format(
+                index, action_data.name)
+
+            user_interaction.save_active(message_str)
+
+        user_interaction.show_all()
+
+    def _read_chosen_option(self, error_message: str,
+                            validate_method: Callable[[int], bool]) -> int:
+        index = user_interaction.read_number()
+        while (not validate_method(index)):
+            index = user_interaction.read_number(error_message)
+
+        return index
+
+# =================================================================
+# Create action
+# =================================================================
+
+    def create_action(self, game: 'Game') -> Effect:
+        self._update_allowed_actions()
+
+        self._show_available_actions()
+
+        index = self._read_chosen_action()
+
+        effect = self._allowed_actions[index].effect
+        action = effect(game, self._allowed_actions[index].name, self)
+        return action
+
+    def _show_available_actions(self) -> None:
+        self._show_available_options(msg.NightActionTarget.ACT_ACTION,
+                                     self._allowed_actions)
+
+    def _read_chosen_action(self) -> int:
+        return self._read_chosen_option(msg.Errors.ACTION_CHOICE,
+                                        self._validate_action)
 
     def _update_allowed_actions(self) -> None:
         self._allowed_actions = {}
 
         index = 0
-        self._allowed_actions[index] = self.actions_common_list[
-            ActionType.NONE]
-        if self.actions_common_list[ActionType.STEAL].available:
-            index += 1
-            self._allowed_actions[index] = \
-                self.actions_common_list[ActionType.STEAL]
-        if self.actions_common_list[ActionType.KILL].available:
-            index += 1
-            self._allowed_actions[index] = \
-                self.actions_common_list[ActionType.KILL]
-        if self.actions_common_list[ActionType.STAGING].available:
-            index += 1
-            self._allowed_actions[index] = \
-                self.actions_common_list[ActionType.STAGING]
-
-    def create_action(self, game: 'Game') -> Effect:
-        self._update_allowed_actions()
-
-        user_interaction.save_active(msg.NightActionTarget.ACT_ACTION)
-        for index, action_data in self._allowed_actions.items():
-            message_str = msg.NightActionTarget.ACT_OPTION.format(
-                index, action_data.message)
-
-            user_interaction.save_active(message_str)
-
-        user_interaction.show_all()
-
-        index = user_interaction.read_number()
-        while (not self._validate_action(index)):
-            # TODO: add correct text to message_text_config
-            index = user_interaction.read_number(msg.Errors.ACTION_CHOICE)
-
-        # TODO: replace "Dummy_name" by actual name
-        # TODO: move name initialization inside Effect class (not external)
-        return self._allowed_actions[index].effect(
-            game, self._allowed_actions[index].message, self)
-
-    def _update_allowed_card_actions(self) -> None:
-        self._allowed_card_actions = {}
-
-        index = 0
-        self._allowed_card_actions[index] = self.actions_common_list[
-            ActionType.NONE]
-
-        if not self.actions_common_list[ActionType.CARD_USAGE].available:
-            return
-
-        if self.citizen_card is not None:
-            index += 1
-            self._allowed_card_actions[index] = ActionData(
-                True, self.citizen_card.name, self.citizen_card.effect
-            )  # TODO: add mark in citizen card name - that it is a personal card
-
-        for i, stolen_card in enumerate(self.stolen_cards, start=(index + 1)):
-            self._allowed_card_actions[i] = ActionData(True, stolen_card.name,
-                                                       stolen_card.effect)
-
-    # TODO: REMOVE CARD FROM PLAYER AFTER IT WAS USSED (!!!)
-    def create_card_action(self, game: 'Game'):
-        self._update_allowed_card_actions()
-
-        user_interaction.save_active(msg.NightActionTarget.ACT_CARD)
-        for index, action_data in self._allowed_card_actions.items():
-            message_str = msg.NightActionTarget.ACT_OPTION.format(
-                index, action_data.message)
-
-            user_interaction.save_active(message_str)
-
-        user_interaction.show_all()
-
-        index = user_interaction.read_number()
-        while (not self._validate_card_action(index)):
-            # TODO: add correct text to message_text_config
-            index = user_interaction.read_number(msg.Errors.CARD_CHOICE)
-
-        # TODO: replace "Dummy_name" by actual name
-        # TODO: move name initialization inside Effect class (not external)
-        return self._allowed_card_actions[index].effect(
-            game, self._allowed_card_actions[index].message, self)
+        for action_type, action_data in self.actions_common_list.items():
+            if action_data.available and \
+                (action_type is not ActionType.CARD_USAGE):
+                self._allowed_actions[index] = action_data
+                index += 1
 
     def _validate_action(self, number: int) -> bool:
         valid = (number is not None) and \
@@ -156,11 +139,56 @@ class Player(Citizen):
                 (number < len(self._allowed_actions))
         return valid
 
+# =================================================================
+# Create card action
+# =================================================================
+
+    def create_card_action(self, game: 'Game'):
+        self._update_allowed_card_actions()
+
+        self._show_available_card_actions()
+
+        index = self._read_chosen_card_action()
+
+        effect = self._allowed_card_actions[index].effect
+        action = effect(game, self._allowed_card_actions[index].name, self)
+        return action
+
+    def _show_available_card_actions(self) -> None:
+        self._show_available_options(msg.NightActionTarget.ACT_CARD_ACTION,
+                                     self._allowed_card_actions)
+
+    def _read_chosen_card_action(self) -> int:
+        return self._read_chosen_option(msg.Errors.CARD_CHOICE,
+                                        self._validate_card_action)
+
+    def _update_allowed_card_actions(self) -> None:
+        self._allowed_card_actions = {}
+
+        index = 0
+        self._allowed_card_actions[index] = \
+            self.actions_common_list[ActionType.NONE]
+
+        if self.actions_common_list[ActionType.CARD_USAGE].available:
+            if self.citizen_card is not None:
+                index += 1
+                self._allowed_card_actions[index] = \
+                    ActionData(True, self.citizen_card)
+
+            for i, stolen_card in enumerate(self.stolen_cards,
+                                            start=(index + 1)):
+                self._allowed_card_actions[i] = ActionData(True, stolen_card)
+
     def _validate_card_action(self, number: int):
         valid = (number is not None) and \
                 (number >= 0) and \
                 (number < len(self._allowed_card_actions))
         return valid
+
+
+# =================================================================
+# Available options management
+# =================================================================
 
     def disable_steal_action(self) -> None:
         self.actions_common_list[ActionType.STEAL].available = False

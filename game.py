@@ -1,15 +1,16 @@
+from dataclasses import dataclass, field
 from typing import List
 
 from action_manager import ActionManager
 
 
+@dataclass
 class Game:
-    def __init__(self) -> None:
-        self.citizens: List['Citizen'] = []
-        self.players: List['Player'] = []
-        self.spy: 'Spy' = None
-        self.round_number = 0
-        self.action_manager: ActionManager
+    citizens: List['Citizen'] = field(default_factory=list)
+    players: List['Player'] = field(default_factory=list)
+    spy: 'Spy' = None
+    round_number: int = 0
+    action_manager: ActionManager = None
 
     @property
     def active_player(self) -> 'Player':
