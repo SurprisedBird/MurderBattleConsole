@@ -148,9 +148,9 @@ class GameController:
         player_hp_str = msg.NightStatus.ACT_HP_COUNT.format(
             self.game.active_player.hp)
 
-        staging_available = msg.NightStatus.ACT_STAGING_AVAILABLE \
+        staging_available = msg.NightStatus.ACT_STAGING_UNAVAILABLE \
             if self.game.active_player.is_staging_used \
-            else msg.NightStatus.ACT_STAGING_UNAVAILABLE
+            else msg.NightStatus.ACT_STAGING_AVAILABLE
         staging_active_str = msg.NightStatus.ACT_IS_STAGING.format(
             staging_available)
 
