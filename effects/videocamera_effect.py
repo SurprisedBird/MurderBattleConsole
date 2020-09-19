@@ -3,6 +3,7 @@ import user_interaction
 import utils
 from citizens.citizen import Citizen
 from effects.effect import Effect
+from effects.staging_effect import StagingEffect
 from effects.steal_effect import StealEffect
 from game import Game
 
@@ -36,10 +37,10 @@ class VideoCameraEffect(Effect):
 
     def _is_videocamera_triggered(self) -> bool:
         for effect in self.targets[0].effects:
-            # TODO: uncomment when KillEffect and StagingEffect will be available
-            videocamera_triggered = type(effect) is StealEffect  #or \
-            #type(effect) is KillEffect or \
-            #type(effect) is StagingEffect
+            # TODO: uncomment when KillEffect will be available
+            videocamera_triggered = isinstance(effect, StealEffect) or \
+            isinstance(effect, StagingEffect) #or \
+            # isinstance(effect, KillEffect)
 
             # Check that videocamera was triggered
             # not by camera creator

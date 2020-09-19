@@ -25,7 +25,7 @@ class WhoreEffect(Effect):
         if self.activation_round == self.game.round_number:
             user_interaction.save_global(msg.EffectsActivated.GLOBAL_BITCH)
 
-            if type(self.targets[0]) is Player:
+            if isinstance(self.targets[0], Player):
                 self.targets[0].disable_steal_action()
                 self.targets[0].disable_kill_action()
                 self.targets[0].disable_staging_action()
@@ -42,7 +42,7 @@ class WhoreEffect(Effect):
                                                     self.game.citizens)
 
     def _on_clear_impl(self) -> None:
-        if type(self.targets[0]) is Player:
+        if isinstance(self.targets[0], Player):
             self.targets[0].enable_steal_action()
             self.targets[0].enable_kill_action()
             self.targets[0].enable_staging_action()
