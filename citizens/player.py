@@ -9,6 +9,7 @@ from citizens.citizen import Citizen
 from effects.effect import Effect
 from effects.kill_effect import KillEffect
 from effects.none_effect import NoneEffect
+from effects.staging_effect import StagingEffect
 from effects.steal_effect import StealEffect
 
 from citizens.citizen import Citizen
@@ -73,7 +74,7 @@ class Player(Citizen):
         self.actions_common_list[ActionType.KILL] = \
             create_action_data(msg.UserActions.TYPE_KILL, NoneEffect)  # TODO: change NoneEffect
         self.actions_common_list[ActionType.STAGING] = \
-            create_action_data(msg.UserActions.TYPE_STAGING, NoneEffect)  # TODO: change NoneEffect
+            create_action_data(msg.UserActions.TYPE_STAGING, StagingEffect)
         self.actions_common_list[ActionType.CARD_USAGE] = \
             create_action_data(msg.UserActions.TYPE_CARD_USAGE, None)
 

@@ -5,6 +5,7 @@ import user_interaction
 import utils
 from citizens.citizen import Citizen
 from effects.effect import Effect
+from effects.staging_effect import StagingEffect
 from effects.steal_effect import StealEffect
 from game import Game
 
@@ -39,10 +40,10 @@ class AlarmEffect(Effect):
 
     def _is_alarm_triggered(self) -> Tuple[bool, Effect]:
         for effect in self.targets[0].effects:
-            # TODO: uncomment when KillEffect and StagingEffect will be available
-            alarm_triggered = type(effect) is StealEffect  #or \
-            #type(effect) is KillEffect or \
-            #type(effect) is StagingEffect
+            # TODO: uncomment when KillEffect will be available
+            alarm_triggered = isinstance(effect, StealEffect) or \
+            isinstance(effect, StagingEffect) #or \
+            # isinstance(effect, KillEffect)
 
             if alarm_triggered:
                 return (True, effect)

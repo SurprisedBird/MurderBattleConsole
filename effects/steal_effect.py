@@ -2,7 +2,6 @@ import message_text_config as msg
 import user_interaction
 import utils
 from citizens.citizen import Citizen
-from citizens.spy import Spy
 from effects.effect import Effect
 from game import Game
 
@@ -16,6 +15,10 @@ class StealEffect(Effect):
             msg.NightActionTarget.ACT_STEAL, self._validate)
 
         self.targets.append(self.game.citizens[target_number - 1])
+
+        user_interaction.save_active(
+            msg.NightActionTarget.ACT_STEAL_ACTIVATED.format(
+                self.targets[0].name))
 
         return True
 
@@ -34,6 +37,8 @@ class StealEffect(Effect):
             user_interaction.save_active(
                 msg.NightResult.ACT_STEAL_UNSUCCESSFULL.format(
                     self.targets[0].name))
+
+        user_interaction.save_global(msg.DayGeneral.GLOBAL_STEAL_CITIZEN)
 
         return True
 
