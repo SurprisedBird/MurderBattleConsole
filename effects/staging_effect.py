@@ -29,11 +29,9 @@ class StagingEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
-
-        self.creator.disable_staging_action(disable_forever=True)
-
         # Hit the target
         self.targets[0].hp -= 1
+
         if not self.targets[0].is_alive:
             # Move personal card to stolen cards
             if self.creator.citizen_card is not None:
