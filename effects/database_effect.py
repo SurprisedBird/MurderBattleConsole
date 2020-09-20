@@ -45,15 +45,10 @@ class DataBase(Effect):
     def _validate(self, target_numbers: List[int]):
 
         for target in target_numbers:
-            if not utils.validate_citizen_target_number(
+            if target is None or not utils.is_citizen_in_range(
                     target, self._game.citizens):
+                self._status = ErrorsEnum.INVALID_TURGET
                 return False
-        else:
-            is_in_range = True
-
-        if not is_in_range:
-            self._status = ErrorsEnum.INVALID_TURGET
-            return False
 
         is_three_targets = (len(target_numbers) == 3)
         if not is_three_targets:
@@ -61,8 +56,8 @@ class DataBase(Effect):
             return False
 
         #check if player have chosen 3 different targets
-        is_different = (len(target_numbers) == len(set(target_numbers)))
-        if not is_different:
+        contains_duplicates = (len(target_numbers) == len(set(target_numbers)))
+        if not contains_duplicates:
             self._status = ErrorsEnum.SAME_TARGETS
             return False
 
