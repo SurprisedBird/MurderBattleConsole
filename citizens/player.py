@@ -54,13 +54,14 @@ class Player(Citizen):
         self._allowed_actions: Dict[int, ActionData]
         self._allowed_card_actions: Dict[int, ActionData]
 
-        self._staging_disabled_forever = False
+        # TODO: Figure out how to remove this ugly logic
+        # Player can't use staging if he used staging earlier
+        self.staging_was_used = False
+        # If staging was chosen as action - card action
+        # could not be performed on this turn
+        self._staging_processing = False
 
         self._chosen_card: Card
-
-    @property
-    def is_staging_used(self):
-        return self._staging_disabled_forever
 
     def _init_action_common_list(self):
         self.actions_common_list = {}
@@ -115,7 +116,17 @@ class Player(Citizen):
 
         effect = self._allowed_actions[index].effect
         action = effect(game, self._allowed_actions[index].name, self)
+
+        self._staging_processing = effect is StagingEffect
+
         return action
+
+    def disable_used_staging(self) -> None:
+        # Disable staging forever if it was used
+        if self._staging_processing:
+            self.disable_staging_action()
+            self.staging_was_used = True
+            self._staging_processing = False
 
     def _show_available_actions(self) -> None:
         self._show_available_options(msg.NightActionTarget.ACT_ACTION,
@@ -157,7 +168,7 @@ class Player(Citizen):
         action = effect(game, self._allowed_card_actions[index].name, self)
         return action
 
-    def remove_chosen_card(self) -> None:
+    def remove_used_card(self) -> None:
         if self._chosen_card is self.citizen_card:
             self.citizen_card = None
         elif self._chosen_card in self.stolen_cards:
@@ -180,7 +191,9 @@ class Player(Citizen):
         self._allowed_card_actions[index] = \
             self.actions_common_list[ActionType.NONE]
 
-        if self.actions_common_list[ActionType.CARD_USAGE].available:
+        if self.actions_common_list[ActionType.CARD_USAGE].available \
+                and not self._staging_processing:
+
             if self.citizen_card is not None:
                 index += 1
                 self._allowed_card_actions[index] = \
@@ -207,8 +220,7 @@ class Player(Citizen):
     def disable_kill_action(self) -> None:
         self.actions_common_list[ActionType.KILL].available = False
 
-    def disable_staging_action(self, disable_forever: bool = False) -> None:
-        self._staging_disabled_forever = disable_forever
+    def disable_staging_action(self) -> None:
         self.actions_common_list[ActionType.STAGING].available = False
 
     def disable_card_usage_action(self) -> None:
@@ -221,7 +233,7 @@ class Player(Citizen):
         self.actions_common_list[ActionType.KILL].available = True
 
     def enable_staging_action(self) -> None:
-        if (not self._staging_disabled_forever):
+        if (not self.staging_was_used):
             self.actions_common_list[ActionType.STAGING].available = True
 
     def enable_card_usage_action(self) -> None:

@@ -117,7 +117,7 @@ class GameController:
             action_confirmed = self._confirm_actions()
 
         self._apply_pre_actions()
-        self.game.active_player.remove_chosen_card()
+        self._disable_used_player_actions()
 
         self._resolve_effects()
         self._clear_effects()
@@ -139,6 +139,10 @@ class GameController:
 
         self.game.action_manager.store_actions_history(self.game.round_number)
 
+    def _disable_used_player_actions(self):
+        self.game.active_player.remove_used_card()
+        self.game.active_player.disable_used_staging()
+
     def _show_night_state(self) -> None:
         night_number_str = msg.NightStatus.ACT_PASS_NIGHT_NUMBER.format(
             self.game.round_number)
@@ -149,7 +153,7 @@ class GameController:
             self.game.active_player.hp)
 
         staging_available = msg.NightStatus.ACT_STAGING_UNAVAILABLE \
-            if self.game.active_player.is_staging_used \
+            if self.game.active_player.staging_was_used \
             else msg.NightStatus.ACT_STAGING_AVAILABLE
         staging_active_str = msg.NightStatus.ACT_IS_STAGING.format(
             staging_available)
