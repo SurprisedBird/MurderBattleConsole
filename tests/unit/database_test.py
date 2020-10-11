@@ -54,7 +54,7 @@ class DatabaseEffectTest(TestCase):
     @patch('builtins.print')
     def test_resolve_impl(self, mock_print):
 
-        self.db_effect._targets = [
+        self.db_effect.targets = [
             self.gc.game.citizens[0], self.gc.game.citizens[1]
         ]
 
@@ -62,7 +62,7 @@ class DatabaseEffectTest(TestCase):
         mock_print.assert_called_with(
             f"ACTIVE: {config.EffectsResolved.ACT_DATABASE_NO_SUSPECT}")
 
-        self.db_effect._targets = [
+        self.db_effect.targets = [
             self.gc.game.citizens[0], self.gc.game.citizens[4]
         ]
 
@@ -70,7 +70,7 @@ class DatabaseEffectTest(TestCase):
         mock_print.assert_called_with(
             f"ACTIVE: {config.EffectsResolved.ACT_DATABASE_FIND_SPY}")
 
-        self.db_effect._targets = [
+        self.db_effect.targets = [
             self.gc.game.citizens[3], self.gc.game.citizens[1]
         ]
 
@@ -78,7 +78,7 @@ class DatabaseEffectTest(TestCase):
         mock_print.assert_called_with(
             f"ACTIVE: {config.EffectsResolved.ACT_DATABASE_FIND_PLAYER}")
 
-        self.db_effect._targets = [
+        self.db_effect.targets = [
             self.gc.game.citizens[3], self.gc.game.citizens[4]
         ]
 
