@@ -5,8 +5,9 @@ import message_text_config as msg
 import user_interaction
 import utils
 from citizens.citizen import Citizen
-from effects.effect import Effect
 from game import Game
+
+from effects.effect import Effect
 
 
 class ErrorType(Enum):
@@ -103,6 +104,7 @@ class StagingEffect(Effect):
         is_valid, error_code = self._validate(target_number)
         while not is_valid:
             user_interaction.show_active_instant(error_code.value)
-            is_valid, error_code = user_interaction.read_number(message)
+            target_number = user_interaction.read_number(message)
+            is_valid, error_code = self._validate(target_number)
 
         return target_number
