@@ -14,12 +14,12 @@ class AlarmEffect(Effect):
         super().__init__(game, name, creator, 8)
 
     def _activate_impl(self) -> bool:
-        target_number = utils.read_target_number(msg.CardTarget.ACT_ALARM,
-                                                 self._validate)
+        target_number = utils.read_target_number(
+            msg.AlarmMessages.ACTIVATION_CHOOSE_TARGET, self._validate)
         self.targets.append(self.game.citizens[target_number - 1])
 
         user_interaction.save_active(
-            msg.EffectsActivated.ACT_ALARM.format(self.targets[0].name))
+            msg.AlarmMessages.ACTIVATION_SUCCESS.format(self.targets[0].name))
 
         return True
 
@@ -29,9 +29,11 @@ class AlarmEffect(Effect):
         if is_alarm_triggered:
             effect.deactivate()
 
-            user_interaction.save_active(msg.EffectsResolved.ACT_ALARM)
-            utils.save_message_for_player(self.game, self.creator,
-                                          msg.EffectsResolved.PASS_ALARM)
+            user_interaction.save_active(
+                msg.AlarmMessages.RESOLVE_FORCED_TO_RUN)
+            utils.save_message_for_player(
+                self.game, self.creator,
+                msg.AlarmMessages.RESOLVE_ALARM_ACTIVATED)
 
             return True
 

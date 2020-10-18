@@ -14,12 +14,13 @@ class VideoCameraEffect(Effect):
         super().__init__(game, name, creator, 6)
 
     def _activate_impl(self) -> bool:
-        target_number = utils.read_target_number(msg.CardTarget.ACT_CAMERA,
-                                                 self._validate)
+        target_number = utils.read_target_number(
+            msg.VideoCameraMessages.ACTIVATION_CHOOSE_TARGET, self._validate)
         self.targets.append(self.game.citizens[target_number - 1])
 
         user_interaction.save_active(
-            msg.EffectsActivated.ACT_CAMERA.format(self.targets[0].name))
+            msg.VideoCameraMessages.ACTIVATION_SUCCESS.format(
+                self.targets[0].name))
 
         return True
 
@@ -28,7 +29,7 @@ class VideoCameraEffect(Effect):
             enemy_name = self.game.active_player.name
             citizen_name = self.targets[0].name
 
-            camera_message = msg.EffectsResolved.PASS_CAMERA.format(
+            camera_message = msg.VideoCameraMessages.RESOLVE_SUCCESS.format(
                 enemy_name, citizen_name)
             user_interaction.save_passive(camera_message)
 

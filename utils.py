@@ -9,7 +9,8 @@ def read_target_number(message: str, validate_method: Callable[[int],
                                                                bool]) -> int:
     target_number = user_interaction.read_number(message)
     while (not validate_method(target_number)):
-        user_interaction.show_active_instant(msg.Errors.TARGET)
+        user_interaction.show_active_instant(
+            msg.CommonMessages.ERROR_INVALID_TARGET)
         target_number = user_interaction.read_number(message)
 
     return target_number

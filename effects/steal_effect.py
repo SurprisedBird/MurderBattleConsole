@@ -2,8 +2,9 @@ import message_text_config as msg
 import user_interaction
 import utils
 from citizens.citizen import Citizen
-from effects.effect import Effect
 from game import Game
+
+from effects.effect import Effect
 
 
 class StealEffect(Effect):
@@ -12,13 +13,12 @@ class StealEffect(Effect):
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
-            msg.NightActionTarget.ACT_STEAL, self._validate)
+            msg.StealMessages.ACTIVATION_CHOOSE_TARGET, self._validate)
 
         self.targets.append(self.game.citizens[target_number - 1])
 
         user_interaction.save_active(
-            msg.NightActionTarget.ACT_STEAL_ACTIVATED.format(
-                self.targets[0].name))
+            msg.StealMessages.ACTIVATION_SUCCESS.format(self.targets[0].name))
 
         return True
 
@@ -28,17 +28,16 @@ class StealEffect(Effect):
             self.creator.stolen_cards.append(citizen_card)
             self.targets[0].citizen_card = None
             user_interaction.save_active(
-                msg.NightResult.ACT_STEAL_SUCCESSFULL.format(
-                    citizen_card.name))
+                msg.StealMessages.RESOLVE_SUCCESS.format(citizen_card.name))
 
             if self.targets[0] is self.game.passive_player:
-                user_interaction.save_passive(msg.NightResult.PASS_LOST_CARD)
+                user_interaction.save_passive(
+                    msg.StealMessages.RESOLVE_LOST_CARD)
         else:
             user_interaction.save_active(
-                msg.NightResult.ACT_STEAL_UNSUCCESSFULL.format(
-                    self.targets[0].name))
+                msg.StealMessages.RESOLVE_FAILED.format(self.targets[0].name))
 
-        user_interaction.save_global(msg.DayGeneral.GLOBAL_STEAL_CITIZEN)
+        # user_interaction.save_global(msg.DayGeneral.GLOBAL_STEAL_CITIZEN)
 
         return True
 
