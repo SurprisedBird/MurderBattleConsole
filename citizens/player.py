@@ -68,15 +68,15 @@ class Player(Citizen):
         create_action_data = lambda message, effect: ActionData(
             True, Card(message, effect))
         self.actions_common_list[ActionType.NONE] = \
-            create_action_data(msg.UserActions.TYPE_NONE, NoneEffect)
+            create_action_data(msg.PlayerMessages.ACTION_NONE, NoneEffect)
         self.actions_common_list[ActionType.STEAL] = \
-            create_action_data(msg.UserActions.TYPE_STEAL, StealEffect)
+            create_action_data(msg.PlayerMessages.ACTION_STEAL, StealEffect)
         self.actions_common_list[ActionType.KILL] = \
-            create_action_data(msg.UserActions.TYPE_KILL, KillEffect)
+            create_action_data(msg.PlayerMessages.ACTION_KILL, KillEffect)
         self.actions_common_list[ActionType.STAGING] = \
-            create_action_data(msg.UserActions.TYPE_STAGING, StagingEffect)
+            create_action_data(msg.PlayerMessages.ACTION_STAGING, StagingEffect)
         self.actions_common_list[ActionType.CARD_USAGE] = \
-            create_action_data(msg.UserActions.TYPE_CARD_USAGE, None)
+            create_action_data(msg.PlayerMessages.ACTION_CARD_USAGE, None)
 
 # =================================================================
 # Utility functions
@@ -87,7 +87,7 @@ class Player(Citizen):
                                                       ActionData]) -> None:
         user_interaction.save_active(message)
         for index, action_data in allowed_options.items():
-            message_str = msg.NightActionTarget.ACT_OPTION.format(
+            message_str = msg.PlayerMessages.OPTION.format(
                 index, action_data.name)
 
             user_interaction.save_active(message_str)
@@ -128,11 +128,11 @@ class Player(Citizen):
             self._staging_processing = False
 
     def _show_available_actions(self) -> None:
-        self._show_available_options(msg.NightActionTarget.ACT_ACTION,
+        self._show_available_options(msg.PlayerMessages.CHOOSE_ACTION,
                                      self._allowed_actions)
 
     def _read_chosen_action(self) -> int:
-        return self._read_chosen_option(msg.Errors.ACTION_CHOICE,
+        return self._read_chosen_option(msg.PlayerMessages.ERROR_ACTION_CHOICE,
                                         self._validate_action)
 
     def _update_allowed_actions(self) -> None:
@@ -176,12 +176,13 @@ class Player(Citizen):
         self._chosen_card = None
 
     def _show_available_card_actions(self) -> None:
-        self._show_available_options(msg.NightActionTarget.ACT_CARD_ACTION,
+        self._show_available_options(msg.PlayerMessages.CHOOSE_CARD_ACTION,
                                      self._allowed_card_actions)
 
     def _read_chosen_card_action(self) -> int:
-        return self._read_chosen_option(msg.Errors.CARD_CHOICE,
-                                        self._validate_card_action)
+        return self._read_chosen_option(
+            msg.PlayerMessages.ERROR_CARD_ACTION_CHOICE,
+            self._validate_card_action)
 
     def _update_allowed_card_actions(self) -> None:
         self._allowed_card_actions = {}

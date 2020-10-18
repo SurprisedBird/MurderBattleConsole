@@ -144,44 +144,43 @@ class GameController:
         self.game.active_player.disable_used_staging()
 
     def _show_night_state(self) -> None:
-        night_number_str = msg.NightStatus.ACT_PASS_NIGHT_NUMBER.format(
+        night_number_str = msg.NightState.NIGHT_NUMBER.format(
             self.game.round_number)
 
-        your_turn_str = msg.NightStatus.ACT_YOUR_TURN
+        your_turn_str = msg.NightState.YOUR_TURN
 
-        player_hp_str = msg.NightStatus.ACT_HP_COUNT.format(
+        player_hp_str = msg.NightState.HP_COUNT.format(
             self.game.active_player.hp)
 
-        staging_available = msg.NightStatus.ACT_STAGING_UNAVAILABLE \
+        staging_available = msg.NightState.STAGING_UNAVAILABLE \
             if self.game.active_player.staging_was_used \
-            else msg.NightStatus.ACT_STAGING_AVAILABLE
-        staging_active_str = msg.NightStatus.ACT_IS_STAGING.format(
+            else msg.NightState.STAGING_AVAILABLE
+        staging_active_str = msg.NightState.IS_STAGING.format(
             staging_available)
 
         player_card = self.game.active_player.citizen_card
-        player_card_name = msg.NightStatus.ACT_NO_CARD if player_card is None else player_card.name
-        player_card_str = msg.NightStatus.ACT_PERSONAL_CARD.format(
-            player_card_name)
+        player_card_name = msg.NightState.NO_CARD if player_card is None else player_card.name
+        player_card_str = msg.NightState.PERSONAL_CARD.format(player_card_name)
 
         stolen_card_names: List[str] = []
         for card in self.game.active_player.stolen_cards:
             stolen_card_names.append(card.name + "\n")
-        stolen_cards_str = msg.NightStatus.ACT_STOLEN_CARDS.format(
+        stolen_cards_str = msg.NightState.STOLEN_CARDS.format(
             " ".join(stolen_card_names))
 
         citizen_names: List[str] = []
         for i, citizen in enumerate(self.game.citizens, start=1):
             prefix = ""
             if citizen is self.game.active_player:
-                prefix = msg.NightStatus.ACT_YOU
+                prefix = msg.NightState.YOU
             elif not citizen.is_alive:
-                prefix = msg.NightStatus.ACT_DEAD
+                prefix = msg.NightState.DEAD
 
-            citizen_option = msg.NightStatus.ACT_CITIZEN_LIST_OPTION.format(
+            citizen_option = msg.NightState.CITIZEN_LIST_OPTION.format(
                 i, citizen.name, prefix)
             citizen_names.append(citizen_option + "\n")
 
-        citizen_names_str = msg.NightStatus.ACT_CITY_STATUS.format(
+        citizen_names_str = msg.NightState.CITY_STATUS.format(
             " ".join(citizen_names))
 
         user_interaction.save_global(night_number_str)
