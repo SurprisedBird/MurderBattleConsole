@@ -3,8 +3,9 @@ import user_interaction
 import utils
 from citizens.citizen import Citizen
 from citizens.player import Player
-from effects.effect import Effect
 from game import Game
+
+from effects.effect import Effect
 
 
 class WhoreEffect(Effect):
@@ -12,18 +13,19 @@ class WhoreEffect(Effect):
         super().__init__(game, name, creator, 7)
 
     def _activate_impl(self) -> bool:
-        target_number = utils.read_target_number(msg.CardTarget.ACT_BITCH,
-                                                 self._validate)
+        target_number = utils.read_target_number(
+            msg.WhoreMessages.ACTIVATION_CHOOSE_TARGET, self._validate)
         self.targets.append(self.game.citizens[target_number - 1])
 
         user_interaction.save_active(
-            msg.EffectsActivated.ACT_BITCH.format(self.targets[0].name))
+            msg.WhoreMessages.ACTIVATION_SUCCESS.format(self.targets[0].name))
 
         return True
 
     def _resolve_impl(self) -> bool:
         if self.activation_round == self.game.round_number:
-            user_interaction.save_global(msg.EffectsActivated.GLOBAL_BITCH)
+            user_interaction.save_global(
+                msg.WhoreMessages.RESOLVE_START_PUBLICLY)
 
             if isinstance(self.targets[0], Player):
                 self.targets[0].disable_steal_action()
@@ -31,7 +33,8 @@ class WhoreEffect(Effect):
                 self.targets[0].disable_staging_action()
 
             if self.targets[0] is self.game.passive_player:
-                user_interaction.save_passive(msg.EffectsResolved.PASS_BITCH)
+                user_interaction.save_passive(
+                    msg.WhoreMessages.RESOLVE_SUCCESS)
 
             return False
 

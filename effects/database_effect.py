@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import List, Tuple
 
-import message_text_config as config
+import message_text_config as msg
 import user_interaction
 import utils
 from citizens.citizen import Citizen
@@ -12,8 +12,8 @@ from effects.effect import Effect
 
 
 class ErrorType(Enum):
-    INVALID_TURGET = Errors.TARGET
-    SAME_TARGETS = Errors.DATA_BASE_SAME_TARGETS
+    INVALID_TURGET = msg.DatabaseMessages.ERROR_INVALID_TARGET
+    SAME_TARGET = msg.DatabaseMessages.ERROR_SAME_TARGET
     # NOT_THREE_TARGET = Errors.DATA_BASE_TARGETS
 
 
@@ -35,29 +35,29 @@ class DatabaseEffect(Effect):
         last_target_number = target_numbers[len(target_numbers) - 1]
         if last_target_number is None or not utils.is_citizen_in_range(
                 last_target_number - 1, self.game.citizens):
-            return False, ErrorType.INVALID_TURGET
+            return (False, ErrorType.INVALID_TURGET)
 
         #check if player have chosen 3 different targets
         contains_duplicates = (len(target_numbers) != len(set(target_numbers)))
         if contains_duplicates:
-            return False, ErrorType.SAME_TARGETS
+            return (False, ErrorType.SAME_TARGET)
 
-        return True, None
+        return (True, None)
 
     def _resolve_impl(self) -> bool:
         roles = [type(target).__name__ for target in self.targets]
         if ("Player" in roles) and ("Spy" in roles):
             user_interaction.show_active_instant(
-                config.EffectsResolved.ACT_DATABASE_FIND_ALL)
+                msg.DatabaseMessages.RESOLVE_FIND_ALL)
         elif "Player" in roles:
             user_interaction.show_active_instant(
-                config.EffectsResolved.ACT_DATABASE_FIND_PLAYER)
+                msg.DatabaseMessages.RESOLVE_FIND_PLAYER)
         elif "Spy" in roles:
             user_interaction.show_active_instant(
-                config.EffectsResolved.ACT_DATABASE_FIND_SPY)
+                msg.DatabaseMessages.RESOLVE_FIND_SPY)
         else:
             user_interaction.show_active_instant(
-                config.EffectsResolved.ACT_DATABASE_NO_SUSPECT)
+                msg.DatabaseMessages.RESOLVE_NO_SUSPECT)
 
         return True
 
@@ -65,7 +65,7 @@ class DatabaseEffect(Effect):
         pass
 
     def _read_target_numbers(self) -> List[int]:
-        message = config.CardTarget.ACT_DATABASE
+        message = msg.DatabaseMessages.ACTIVATION_CHOOSE_TARGET
 
         target_numbers = []
         for _ in range(3):

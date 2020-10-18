@@ -11,8 +11,8 @@ from effects.effect import Effect
 
 
 class ErrorType(Enum):
-    INVALID_TARGET = msg.Errors.TARGET
-    SELF_AS_TARGET = msg.Errors.SELF_AS_TARGET
+    INVALID_TARGET = msg.StagingMassages.ERROR_INVALID_TARGET
+    SELF_AS_TARGET = msg.StagingMassages.ERROR_SELF_AS_TARGET
 
 
 class StagingEffect(Effect):
@@ -24,7 +24,7 @@ class StagingEffect(Effect):
         self.targets.append(self.game.citizens[target_number - 1])
 
         user_interaction.save_active(
-            msg.NightActionTarget.ACT_STAGING_ACTIVATED.format(
+            msg.StagingMassages.ACTIVATION_SUCCESS.format(
                 self.targets[0].name))
 
         return True
@@ -63,18 +63,16 @@ class StagingEffect(Effect):
                 effect.deactivate()
 
             user_interaction.save_active(
-                msg.NightResult.ACT_STAGING_SUCCESSFULL.format(
-                    self.creator.name))
+                msg.StagingMassages.RESOLVE_SUCCESS.format(self.creator.name))
 
         # Not using isinstance(self.targets[0], Player)
         # because of cycle import problem
         elif type(self.targets[0]).__name__ == "Player":
-            user_interaction.save_active(
-                msg.NightResult.ACT_STAGING_UNSUCCESSFUL)
-            user_interaction.save_passive(msg.DayGeneral.ACT_PASS_LOST_HP)
+            user_interaction.save_active(msg.StagingMassages.RESOLVE_FAILED)
+            user_interaction.save_passive(
+                msg.StagingMassages.RESOLVE_ENEMY_LOST_HP)
         else:
-            user_interaction.save_active(
-                msg.NightResult.ACT_STAGING_UNSUCCESSFUL)
+            user_interaction.save_active(msg.StagingMassages.RESOLVE_FAILED)
 
         return True
 
@@ -98,7 +96,7 @@ class StagingEffect(Effect):
         pass
 
     def _read_target_number(self) -> int:
-        message = msg.NightActionTarget.ACT_STAGING
+        message = msg.StagingMassages.ACTIVATION_CHOOSE_TARGET
         target_number = user_interaction.read_number(message)
 
         is_valid, error_code = self._validate(target_number)
