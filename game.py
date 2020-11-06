@@ -1,5 +1,7 @@
 from typing import List
 
+from action_manager import ActionManager
+
 
 class Game:
     def __init__(self) -> None:
@@ -7,6 +9,7 @@ class Game:
         self.players: List['Player'] = []
         self.spy: 'Spy' = None
         self.round_number = 0
+        self.action_manager: ActionManager
 
     @property
     def active_player(self) -> 'Player':
