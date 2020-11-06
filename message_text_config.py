@@ -1,5 +1,6 @@
 class CommonMessages:
     ERROR_INVALID_TARGET = "Ошибка! Введите номер доступной цели."
+    ERROR_SELF_AS_TARGET = "Ошибка! Невозможно выбрать себя в качестве цели."
     LOST_HP = "Вы потеряли 1 HP"
 
 
@@ -18,9 +19,12 @@ class StealMessages:
 
 class KillMessages:
     ACTIVATION_CHOOSE_TARGET = "Выберите цель, на которую будет совершено покушение на убийство в эту ночь:"
-    RESOLVE_KILL_CITIZEN = "Ночь была неспокойной. Был хладнокровно убит {}. Весь город скорбит."
-    RESOLVE_KILL_PLAYER = "Ночь была неспокойной. Было совершено покушение на {}. {} чудом удалось спастись."
-    RESOLVE_KILL_SPY = "Ночь была неспокойной. {} оказался не тем за кого себя выдавал. Шпион, который скрывался под личиной {} в спешке покинул город."
+    RESOLVE_SUCCESS = "Ночь была неспокойной. Был хладнокровно убит {}. Весь город скорбит."
+    RESOLVE_FAILED = "Ночь была неспокойной. Было совершено покушение на гражданина {}. Гражданин {} выжил благодаря чуду."
+    RESOLVE_ENEMY_LOST_HP = CommonMessages.LOST_HP
+    ERROR_INVALID_TARGET = CommonMessages.ERROR_INVALID_TARGET
+    ERROR_SELF_AS_TARGET = CommonMessages.ERROR_SELF_AS_TARGET
+    # RESOLVE_KILL_SPY = "Ночь была неспокойной. Гражданин {} оказался не тем за кого себя выдавал. Шпион, который скрывался под личиной гражданина {}, в спешке покинул город."
 
 
 class StagingMassages:
@@ -30,7 +34,7 @@ class StagingMassages:
     RESOLVE_FAILED = "Вам не удалось инсценировать свою смерть, но вы нанесли урон цели."
     RESOLVE_ENEMY_LOST_HP = CommonMessages.LOST_HP
     ERROR_INVALID_TARGET = CommonMessages.ERROR_INVALID_TARGET
-    ERROR_SELF_AS_TARGET = "Ошибка! Невозможно выбрать себя в качестве цели."
+    ERROR_SELF_AS_TARGET = CommonMessages.ERROR_SELF_AS_TARGET
 
 
 class AlarmMessages:
@@ -112,17 +116,18 @@ class TaxesMessages:
 class AntidoteMessages:
     ACTIVATION_CHOOSE_TARGET = "Выберите гражданина, который следующий ход будет защищен от смертельной атаки:"
     ACTIVATION_SUCCESS = "Вы использовали Антидот на гражданина - {}."
-    ACT_ANTIDOTE = "Препарат нового поколения спас гражданина {} от неминуемой смерти"
+    RESOLVE_SUCCESS = "Препарат нового поколения спас гражданина {} от неминуемой смерти"
 
 
 class GangMessages:
-    ACT_GANG = "Банда вышла на охоту и следующий ход никто не посмеет помешать вашим планам."
-    ACT_GANG = "Банда изрядно поколотила вас в эту ночь, не дав возможность осуществить задуманное."
+    ACTIVATION_SUCCESS = "Банда вышла на охоту и следующий ход никто не посмеет помешать вашим планам."
+    RESOLVE_SUCCESS = "Банда изрядно поколотила вас в эту ночь, не дав возможность осуществить задуманное."
 
 
 class GossipsMessages:
-    ACT_GOSSIPS = "В эту ночь убийца совершил следующие действия:\n {}, цель: {}\n {}, цель: {}"
-    ACT_GOSSIPS_CHOOSE = "Выберите ночь о которой поведает ночная продавщица:"
+    ACTIVATION_CHOOSE_TARGET = "Выберите ночь о которой поведает ночная продавщица:"
+    RESOLVE_SUCCESS = "В эту ночь убийца совершил следующие действия:\n {}, цель: {}\n {}, цель: {}"
+
 
 # ------------------------------------------------------
 # Player messages
@@ -190,7 +195,6 @@ class DayGeneral:
     # ACT_PASS_LOST_HP = "Вы потеряли 1 HP"
 
 
->>>>>>> refactor: move messages for other effects to separate classes
 class FinishTurn:
     ACT_FINISH_TURN = "Ваш ход завершен!"
 

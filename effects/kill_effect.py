@@ -13,8 +13,8 @@ from effects.effect import Effect
 
 
 class ErrorType(Enum):
-    INVALID_TARGET = msg.Errors.TARGET
-    SELF_AS_TARGET = msg.Errors.SELF_AS_TARGET
+    INVALID_TARGET = msg.KillMessages.ERROR_INVALID_TARGET
+    SELF_AS_TARGET = msg.KillMessages.ERROR_SELF_AS_TARGET
 
 
 class KillEffect(Effect):
@@ -32,24 +32,25 @@ class KillEffect(Effect):
 
         if self.targets[0].is_alive:
             user_interaction.save_global(
-                msg.DayGeneral.GLOBAL_KILL_PLAYER.format(
-                    self.targets[0].name, self.targets[0].name))
-            user_interaction.save_passive(msg.DayGeneral.ACT_PASS_LOST_HP)
+                msg.KillMessages.RESOLVE_FAILED.format(self.targets[0].name,
+                                                       self.targets[0].name))
+
+            utils.save_message_for_player(
+                self.targets[0], msg.KillMessages.RESOLVE_ENEMY_LOST_HP)
         else:
             user_interaction.save_global(
-                msg.DayGeneral.GLOBAL_KILL_CITIZEN.format(
-                    self.targets[0].name))
+                msg.KillMessages.RESOLVE_SUCCESS.format(self.targets[0].name))
 
             citizen_card = self.targets[0].citizen_card
             if citizen_card is not None:
                 self.creator.stolen_cards.append(citizen_card)
                 self.targets[0].citizen_card = None
                 user_interaction.save_active(
-                    msg.NightResult.ACT_STEAL_SUCCESSFULL.format(
+                    msg.StealMessages.RESOLVE_SUCCESS.format(
                         citizen_card.name))
             else:
                 user_interaction.save_active(
-                    msg.NightResult.ACT_STEAL_UNSUCCESSFULL.format(
+                    msg.StealMessages.RESOLVE_SUCCESS.format(
                         self.targets[0].name))
 
         return True
@@ -76,7 +77,7 @@ class KillEffect(Effect):
     # TODO: duplicating logic. There are seveal places in code with same read and validate logic
     # Fix duplication AND\OR make error codes returnal - common practice for every effect
     def _read_target_number(self) -> int:
-        message = msg.NightActionTarget.ACT_KILL
+        message = msg.KillMessages.ACTIVATION_CHOOSE_TARGET
         target_number = user_interaction.read_number(message)
 
         is_valid, error_code = self._validate(target_number)
