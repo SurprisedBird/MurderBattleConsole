@@ -20,7 +20,6 @@ class GameController:
         self.user_names = user_names
 
         self.game: Game
-        self.action_manager: ActionManager
 
     def start_game(self) -> None:
         self._prepare_game()
@@ -32,7 +31,7 @@ class GameController:
 
     def _prepare_game(self) -> None:
         self.game = Game()
-        self.action_manager = ActionManager()
+        self.game.action_manager = ActionManager()
         avilable_citizens: List[Citizen] = []
 
         self._create_citizens(avilable_citizens)
@@ -114,14 +113,14 @@ class GameController:
         user_interaction.show_all()
 
     def _clear_pre_actions(self) -> None:
-        self.action_manager.clear_pre_actions()
+        self.game.action_manager.clear_pre_actions()
 
     def _apply_pre_actions(self) -> None:
-        for effect in self.action_manager.pre_actions:
+        for effect in self.game.action_manager.pre_actions:
             for target in effect.targets:
                 target.effects.append(effect)
 
-        self.action_manager.store_actions_history(self.game.round_number)
+        self.game.action_manager.store_actions_history(self.game.round_number)
 
     def _show_night_state(self) -> None:
         night_number_str = msg.NightStatus.ACT_PASS_NIGHT_NUMBER.format(
@@ -179,12 +178,12 @@ class GameController:
     def _create_action(self) -> None:
         effect = self.game.active_player.create_action(self.game)
         effect.activate()
-        self.action_manager.add_pre_action(effect)
+        self.game.action_manager.add_pre_action(effect)
 
     def _create_card_action(self) -> None:
         effect = self.game.active_player.create_card_action(self.game)
         effect.activate()
-        self.action_manager.add_pre_action(effect)
+        self.game.action_manager.add_pre_action(effect)
 
     def _clear_effects(self) -> None:
         for citizen in self.game.citizens:
@@ -219,8 +218,8 @@ class GameController:
     def _confirm_actions_msg(self) -> Optional[int]:
         user_interaction.save_active(
             msg.NightActionTarget.ACT_CHOISE_INFO.format(
-                self.action_manager.pre_actions[0].name,
-                self.action_manager.pre_actions[1].name))
+                self.game.action_manager.pre_actions[0].name,
+                self.game.action_manager.pre_actions[1].name))
         user_interaction.save_active("1. " +
                                      msg.NightActionTarget.ACT_CONFIRM_ACTION)
         user_interaction.save_active("2. " +
