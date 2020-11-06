@@ -16,8 +16,8 @@ class TrapEffect(Effect):
         super().__init__(game, name, game.active_player, 0)
 
     def _activate_impl(self) -> bool:
-        target_number = utils.read_target_number(msg.CardTarget.ACT_TRAP,
-                                                 self._validate)
+        target_number = utils.read_target_number(
+            msg.TrapMessages.ACTIVATION_CHOOSE_TARGET, self._validate)
 
         self.targets.append(self.game.citizens[target_number - 1])
         return True
@@ -31,7 +31,7 @@ class TrapEffect(Effect):
 
         if action_effect:
             user_interaction.show_global_instant(
-                msg.EffectsResolved.GLOBAL_TRAP.format(
+                msg.TrapMessages.RESOLVE_SUCCESS.format(
                     self.game.active_player.name))
 
             self.game.active_player.hp -= 1
@@ -39,7 +39,7 @@ class TrapEffect(Effect):
             action_effect.deactivate()
 
             user_interaction.show_active_instant(
-                msg.DayGeneral.ACT_PASS_LOST_HP)
+                msg.TrapMessages.RESOLVED_CATCHED)
 
         return True
 
