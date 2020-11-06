@@ -4,10 +4,9 @@ import message_text_config as msg
 import user_interaction
 import utils
 from citizens.citizen import Citizen
-from effects.effect import Effect
-from effects.staging_effect import StagingEffect
-from effects.steal_effect import StealEffect
 from game import Game
+
+from effects.effect import Effect
 
 
 class AlarmEffect(Effect):
@@ -40,10 +39,7 @@ class AlarmEffect(Effect):
 
     def _is_alarm_triggered(self) -> Tuple[bool, Effect]:
         for effect in self.targets[0].effects:
-            # TODO: uncomment when KillEffect will be available
-            alarm_triggered = isinstance(effect, StealEffect) or \
-            isinstance(effect, StagingEffect) #or \
-            # isinstance(effect, KillEffect)
+            alarm_triggered = utils.is_action_effect(effect)
 
             if alarm_triggered:
                 return (True, effect)
