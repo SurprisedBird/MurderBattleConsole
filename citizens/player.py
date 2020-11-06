@@ -3,10 +3,12 @@ from typing import Dict, List, Type
 
 import message_text_config as msg
 import user_interaction
-from citizens.citizen import Citizen
 from effects.effect import Effect
+from effects.kill_effect import KillEffect
 from effects.none_effect import NoneEffect
 from effects.steal_effect import StealEffect
+
+from citizens.citizen import Citizen
 
 
 class ActionType(Enum):
@@ -63,7 +65,7 @@ class Player(Citizen):
         self.actions_common_list[ActionType.STEAL] = ActionData(
             True, msg.UserActions.TYPE_STEAL, StealEffect)
         self.actions_common_list[ActionType.KILL] = ActionData(
-            True, msg.UserActions.TYPE_KILL, NoneEffect)  # TODO: change None
+            True, msg.UserActions.TYPE_KILL, KillEffect)
         self.actions_common_list[ActionType.STAGING] = ActionData(
             True, msg.UserActions.TYPE_STAGING,
             NoneEffect)  # TODO: change None
