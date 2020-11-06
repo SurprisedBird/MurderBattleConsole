@@ -5,7 +5,6 @@ from typing import Callable, Dict, List, Type
 import message_text_config as msg
 import user_interaction
 from card import Card
-from citizens.citizen import Citizen
 from effects.effect import Effect
 from effects.kill_effect import KillEffect
 from effects.none_effect import NoneEffect
@@ -73,7 +72,7 @@ class Player(Citizen):
         self.actions_common_list[ActionType.STEAL] = \
             create_action_data(msg.UserActions.TYPE_STEAL, StealEffect)
         self.actions_common_list[ActionType.KILL] = \
-            create_action_data(msg.UserActions.TYPE_KILL, NoneEffect)  # TODO: change NoneEffect
+            create_action_data(msg.UserActions.TYPE_KILL, KillEffect)
         self.actions_common_list[ActionType.STAGING] = \
             create_action_data(msg.UserActions.TYPE_STAGING, StagingEffect)
         self.actions_common_list[ActionType.CARD_USAGE] = \

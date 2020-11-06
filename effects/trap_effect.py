@@ -16,40 +16,27 @@ class TrapEffect(Effect):
         super().__init__(game, name, game.active_player, 0)
 
     def _activate_impl(self) -> bool:
-        target_number = user_interaction.read_number(msg.CardTarget.ACT_TRAP)
+        target_number = utils.read_target_number(msg.CardTarget.ACT_TRAP,
+                                                 self._validate)
 
-        while (not self._validate(target_number)):
-            user_interaction.show_active_instant(msg.Errors.TARGET)
-            target_number = user_interaction.read_number(
-                msg.CardTarget.ACT_TRAP)
-
-        self._targets.append(self._game.citizens[target_number - 1])
+        self.targets.append(self.game.citizens[target_number - 1])
         return True
 
     def _resolve_impl(self) -> bool:
-        if self._activation_round == self._game.round_number:
+        if self.activation_round == self.game.round_number:
             return False
 
-        kill_steal_stage = False
-        for effect in self._targets[0].effects:
-            if type(effect).__name__ in [
-                    "KillEffect", "StealEffect", "StageEffect"
-            ]:
-                kill_steal_stage = True
+        action_effect = next((effect for effect in self.targets[0].effects
+                              if utils.is_action_effect(effect)), None)
 
-        if kill_steal_stage:
+        if action_effect:
             user_interaction.show_global_instant(
                 msg.EffectsResolved.GLOBAL_TRAP.format(
-                    self._game.active_player.name))
+                    self.game.active_player.name))
 
-            self._game.active_player.hp -= 1
+            self.game.active_player.hp -= 1
 
-            for effect in self._targets[0].effects:
-
-                if type(effect).__name__ in [
-                        "KillEffect", "StealEffect", "StageEffect"
-                ]:
-                    self._targets[0].effects.remove(effect)
+            action_effect.deactivate()
 
             user_interaction.show_active_instant(
                 msg.DayGeneral.ACT_PASS_LOST_HP)
@@ -57,13 +44,8 @@ class TrapEffect(Effect):
         return True
 
     def _validate(self, target_number: int) -> bool:
-        is_in_range_and_alive = utils.validate_citizen_target_number(
-            target_number, self._game.citizens)
-
-        if not is_in_range_and_alive:
-            return False
-
-        return True
+        return utils.validate_citizen_target_number(target_number,
+                                                    self.game.citizens)
 
     def _on_clear_impl(self) -> None:
         pass

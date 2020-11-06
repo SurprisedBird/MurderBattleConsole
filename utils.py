@@ -31,6 +31,12 @@ def save_message_for_player(game: 'Game', player: 'Player',
 #         user_interaction.save_active(message)
 
 
+def is_action_effect(effect: 'Effect') -> bool:
+    return type(effect).__name__ in [
+        "KillEffect", "StealEffect", "StageEffect"
+    ]
+
+
 def is_citizen_in_range(target_index: int, citizens: List[Citizen]) -> bool:
     return target_index >= 0 and target_index < len(citizens)
 
