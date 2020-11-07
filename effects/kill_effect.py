@@ -36,7 +36,8 @@ class KillEffect(Effect):
                                                        self.targets[0].name))
 
             utils.save_message_for_player(
-                self.targets[0], msg.KillMessages.RESOLVE_ENEMY_LOST_HP)
+                self.game, self.targets[0],
+                msg.KillMessages.RESOLVE_ENEMY_LOST_HP)
         else:
             user_interaction.save_global(
                 msg.KillMessages.RESOLVE_SUCCESS.format(self.targets[0].name))
