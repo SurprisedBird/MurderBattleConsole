@@ -44,7 +44,7 @@ class VideoCameraEffect(Effect):
             # Check that videocamera was triggered
             # not by camera creator
             videocamera_triggered = videocamera_triggered and \
-                (effect._creator is not self.creator)
+                (effect.creator is not self.creator)
 
             if videocamera_triggered:
                 return True

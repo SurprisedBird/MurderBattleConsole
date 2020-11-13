@@ -123,16 +123,13 @@ class utils {
 }
 
 class Effect {
-    #Game _game
-    #str _name
-    #Player _creator
-    #Citizen[] _targets
-    #int _activation_round
-    #EffectStatus _state
-    #int _PRIORITY
-
-    ' Property name (getter for _name variable)
-    +str name
+    #Game game
+    #str name
+    #Player creator
+    #int priority
+    #Citizen[] targets
+    #EffectStatus status
+    #int activation_round
 
     +activate()
     #_activate_impl()
@@ -140,6 +137,7 @@ class Effect {
     +resolve()
     #_resolve_impl()
     +on_clear()
+    +deactivate()
 }
 
 class DBEffect {

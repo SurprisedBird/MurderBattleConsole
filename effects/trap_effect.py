@@ -13,7 +13,7 @@ from effects.effect import Effect
 
 class TrapEffect(Effect):
     def __init__(self, game: Game, name: str, creator: Citizen) -> None:
-        super().__init__(game, name, game.active_player, 0)
+        super().__init__(game, name, game.active_player, 8)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
@@ -31,8 +31,7 @@ class TrapEffect(Effect):
 
         if action_effect:
             user_interaction.show_global_instant(
-                msg.TrapMessages.RESOLVE_SUCCESS.format(
-                    self.game.active_player.name))
+                msg.TrapMessages.RESOLVE_SUCCESS.format(self.targets[0].name))
 
             self.game.active_player.hp -= 1
 
