@@ -50,9 +50,7 @@ class KillEffect(Effect):
                     msg.StealMessages.RESOLVE_SUCCESS.format(
                         citizen_card.name))
             else:
-                user_interaction.save_active(
-                    msg.StealMessages.RESOLVE_SUCCESS.format(
-                        self.targets[0].name))
+                user_interaction.save_active(msg.KillMessages.RESOLVE_NO_CARD)
 
         return True
 
@@ -60,7 +58,7 @@ class KillEffect(Effect):
         is_valid = utils.validate_citizen_target_number(
             target_number, self.game.citizens)
 
-        # Staging could not be set on yourself
+        # Kill could not be set on yourself
         is_self_as_target = \
             (self.game.citizens[target_number - 1] is self.creator) \
             if is_valid else False

@@ -20,6 +20,7 @@ class StealMessages:
 class KillMessages:
     ACTIVATION_CHOOSE_TARGET = "Выберите цель, на которую будет совершено покушение на убийство в эту ночь:"
     RESOLVE_SUCCESS = "Ночь была неспокойной. Был хладнокровно убит {}. Весь город скорбит."
+    RESOLVE_NO_CARD = "Карту обнаружить вам не удалось."
     RESOLVE_FAILED = "Ночь была неспокойной. Было совершено покушение на гражданина {}. Гражданин {} выжил благодаря чуду."
     RESOLVE_ENEMY_LOST_HP = CommonMessages.LOST_HP
     ERROR_INVALID_TARGET = CommonMessages.ERROR_INVALID_TARGET
