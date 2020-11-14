@@ -41,11 +41,6 @@ class VideoCameraEffect(Effect):
         for effect in self.targets[0].effects:
             videocamera_triggered = utils.is_action_effect(effect)
 
-            # Check that videocamera was triggered
-            # not by camera creator
-            videocamera_triggered = videocamera_triggered and \
-                (effect.creator is not self.creator)
-
             if videocamera_triggered:
                 return True
 
