@@ -39,7 +39,7 @@ def save_message_for_player(game: 'Game', player: 'Citizen',
 
 def is_action_effect(effect: 'Effect') -> bool:
     return type(effect).__name__ in [
-        "KillEffect", "StealEffect", "StageEffect"
+        "KillEffect", "StealEffect", "StagingEffect"
     ]
 
 
