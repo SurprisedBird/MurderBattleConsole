@@ -8,11 +8,12 @@ from card import Card
 from citizens.citizen import Citizen
 from citizens.player import Player
 from citizens.spy import Spy
+from context import Context
 from effects.effect import Effect, EffectStatus
 from game import Game
 
 
-class GameController:
+class GameController(Context):
     def __init__(self, citizens_dict: Dict[str, Card],
                  user_names: List[str]) -> None:
 
@@ -249,7 +250,6 @@ class GameController:
         number = user_interaction.read_number()
         return number
 
-
 # =================================================================
 # Finish game phase
 # =================================================================
@@ -272,3 +272,20 @@ class GameController:
             user_interaction.show_global_instant(
                 msg.FinishPhase.GLOBAL_PLAYER_WON.format(
                     self.game.players[0].name))
+
+
+# =================================================================
+# Context implementation
+# =================================================================
+
+    @property
+    def user_interaction(self):
+        return user_interaction
+
+    @property
+    def game(self):
+        return self.game
+
+    @property
+    def action_manager(self):
+        return self.game.action_manager
