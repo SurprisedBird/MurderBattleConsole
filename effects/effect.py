@@ -17,6 +17,7 @@ class Effect(ABC):
     def __init__(self, context: 'Context', name: str, creator: Citizen,
                  priority: int) -> None:
         self.context = context
+        self.user_interaction = context.user_interaction
         self.game = self.context.game
         self.name = name
         self.creator = creator

@@ -2,7 +2,6 @@ from enum import Enum
 from typing import Tuple
 
 import message_text_config as msg
-import user_interaction
 import utils
 from citizens.citizen import Citizen
 from citizens.spy import Spy
@@ -20,7 +19,7 @@ class ErrorType(Enum):
 class KillEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
-        super().__init__(context, name, self.context.game.active_player, 0)
+        super().__init__(context, name, context.game.active_player, 0)
 
     def _activate_impl(self) -> bool:
         target_number = self._read_target_number()
@@ -32,26 +31,27 @@ class KillEffect(Effect):
         self.targets[0].hp -= 1
 
         if self.targets[0].is_alive:
-            user_interaction.save_global(
+            self.user_interaction.save_global(
                 msg.KillMessages.RESOLVE_FAILED.format(self.targets[0].name,
                                                        self.targets[0].name))
 
             utils.save_message_for_player(
-                self.game, self.targets[0],
+                self.context, self.targets[0],
                 msg.KillMessages.RESOLVE_ENEMY_LOST_HP)
         else:
-            user_interaction.save_global(
+            self.user_interaction.save_global(
                 msg.KillMessages.RESOLVE_SUCCESS.format(self.targets[0].name))
 
             citizen_card = self.targets[0].citizen_card
             if citizen_card is not None:
                 self.creator.stolen_cards.append(citizen_card)
                 self.targets[0].citizen_card = None
-                user_interaction.save_active(
+                self.user_interaction.save_active(
                     msg.StealMessages.RESOLVE_SUCCESS.format(
                         citizen_card.name))
             else:
-                user_interaction.save_active(msg.KillMessages.RESOLVE_NO_CARD)
+                self.user_interaction.save_active(
+                    msg.KillMessages.RESOLVE_NO_CARD)
 
         return True
 
@@ -78,12 +78,12 @@ class KillEffect(Effect):
     # Fix duplication AND\OR make error codes returnal - common practice for every effect
     def _read_target_number(self) -> int:
         message = msg.KillMessages.ACTIVATION_CHOOSE_TARGET
-        target_number = user_interaction.read_number(message)
+        target_number = self.user_interaction.read_number(message)
 
         is_valid, error_code = self._validate(target_number)
         while not is_valid:
-            user_interaction.show_active_instant(error_code.value)
-            target_number = user_interaction.read_number(message)
+            self.user_interaction.show_active_instant(error_code.value)
+            target_number = self.user_interaction.read_number(message)
             is_valid, error_code = self._validate(target_number)
 
         return target_number

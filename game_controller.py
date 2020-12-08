@@ -2,7 +2,6 @@ import random
 from typing import Dict, List, Optional
 
 import message_text_config as msg
-import user_interaction
 from action_manager import ActionManager
 from card import Card
 from citizens.citizen import Citizen
@@ -11,6 +10,7 @@ from citizens.spy import Spy
 from context import Context
 from effects.effect import Effect, EffectStatus
 from game import Game
+from user_interaction import UserInteraction
 
 
 class GameController(Context):
@@ -19,8 +19,8 @@ class GameController(Context):
 
         self.citizens_dict = citizens_dict
         self.user_names = user_names
-
         self._game: Game
+        self._user_interaction: 'UserInteraction'
 
     def start_game(self) -> None:
         self._prepare_game()
@@ -39,6 +39,8 @@ class GameController(Context):
         self._game.action_manager = ActionManager()
         avilable_citizens: List[Citizen] = []
 
+        self._user_interaction = UserInteraction(self)
+
         self._create_citizens(avilable_citizens)
         self._create_players(avilable_citizens)
         self._set_order()
@@ -51,7 +53,8 @@ class GameController(Context):
                 Citizen(context=self, name=name, citizen_card=card))
 
         avilable_citizens.extend(self._game.citizens)
-        user_interaction.show_global_instant(msg.PreparePhase.GLOBAL_LOAD_GAME)
+        self._user_interaction.show_global_instant(
+            msg.PreparePhase.GLOBAL_LOAD_GAME)
 
     def _create_players(self, avilable_citizens) -> None:
         # TODO: first player should not have oportunity to steal
@@ -76,14 +79,14 @@ class GameController(Context):
     def _set_order(self) -> None:
         random.shuffle(self._game.players)
 
-        user_interaction.save_active(msg.PreparePhase.ACT_FIRST_TURN)
-        user_interaction.save_active(
+        self._user_interaction.save_active(msg.PreparePhase.ACT_FIRST_TURN)
+        self._user_interaction.save_active(
             msg.PreparePhase.ACT_PASS_YOUR_ROLE.format(
                 self._game.players[0].name))
-        user_interaction.save_passive(
+        self._user_interaction.save_passive(
             msg.PreparePhase.ACT_PASS_YOUR_ROLE.format(
                 self._game.players[1].name))
-        user_interaction.save_global(
+        self._user_interaction.save_global(
             msg.PreparePhase.GLOBAL_FIRST_TURN.format(
                 self._game.players[0].user_name))
 
@@ -100,8 +103,8 @@ class GameController(Context):
         self._game.citizens.insert(replacing_index, self._game.spy)
 
     def _show_game_state(self) -> None:
-        user_interaction.save_global(msg.PreparePhase.GLOBAL_START_GAME)
-        user_interaction.show_all()
+        self._user_interaction.save_global(msg.PreparePhase.GLOBAL_START_GAME)
+        self._user_interaction.show_all()
 
 # =================================================================
 # Proceed game phase
@@ -124,7 +127,7 @@ class GameController(Context):
 
         self._resolve_effects()
         self._clear_effects()
-        user_interaction.show_all()
+        self._user_interaction.show_all()
 
     def _clear_pre_actions(self) -> None:
         self._game.action_manager.clear_pre_actions()
@@ -187,25 +190,25 @@ class GameController(Context):
         citizen_names_str = msg.NightState.CITY_STATUS.format(
             " ".join(citizen_names))
 
-        user_interaction.save_global(night_number_str)
+        self._user_interaction.save_global(night_number_str)
 
-        user_interaction.save_active(your_turn_str)
-        user_interaction.save_active("\n")
-        user_interaction.save_active(player_hp_str)
-        user_interaction.save_active(staging_active_str)
-        user_interaction.save_active(player_card_str)
-        user_interaction.save_active(stolen_cards_str)
-        user_interaction.save_active(citizen_names_str)
+        self._user_interaction.save_active(your_turn_str)
+        self._user_interaction.save_active("\n")
+        self._user_interaction.save_active(player_hp_str)
+        self._user_interaction.save_active(staging_active_str)
+        self._user_interaction.save_active(player_card_str)
+        self._user_interaction.save_active(stolen_cards_str)
+        self._user_interaction.save_active(citizen_names_str)
 
-        user_interaction.show_all()
+        self._user_interaction.show_all()
 
     def _create_action(self) -> None:
-        effect = self._game.active_player.create_action(self.game)
+        effect = self._game.active_player.create_action()
         effect.activate()
         self._game.action_manager.add_pre_action(effect)
 
     def _create_card_action(self) -> None:
-        effect = self._game.active_player.create_card_action(self.game)
+        effect = self._game.active_player.create_card_action()
         effect.activate()
         self._game.action_manager.add_pre_action(effect)
 
@@ -236,21 +239,21 @@ class GameController(Context):
             elif number == 2:
                 return False
             else:
-                user_interaction.save_active(msg.Errors.CONFIRM_CHOICE)
+                self._user_interaction.save_active(msg.Errors.CONFIRM_CHOICE)
                 number = self._confirm_actions_msg()
 
     def _confirm_actions_msg(self) -> Optional[int]:
-        user_interaction.save_active(
+        self._user_interaction.save_active(
             msg.NightActionTarget.ACT_CHOISE_INFO.format(
                 self._game.action_manager.pre_actions[0].name,
                 self._game.action_manager.pre_actions[1].name))
-        user_interaction.save_active("1. " +
-                                     msg.NightActionTarget.ACT_CONFIRM_ACTION)
-        user_interaction.save_active("2. " +
-                                     msg.NightActionTarget.ACT_CANCEL_ACTION)
-        user_interaction.show_all()
+        self._user_interaction.save_active(
+            "1. " + msg.NightActionTarget.ACT_CONFIRM_ACTION)
+        self._user_interaction.save_active(
+            "2. " + msg.NightActionTarget.ACT_CANCEL_ACTION)
+        self._user_interaction.show_all()
 
-        number = user_interaction.read_number()
+        number = self._user_interaction.read_number()
         return number
 
 # =================================================================
@@ -266,13 +269,14 @@ class GameController(Context):
         second_player_dead = not self._game.players[1].is_alive
 
         if first_player_dead and second_player_dead:
-            user_interaction.show_global_instant(msg.FinishPhase.GLOBAL_DRAW)
+            self._user_interaction.show_global_instant(
+                msg.FinishPhase.GLOBAL_DRAW)
         elif first_player_dead:
-            user_interaction.show_global_instant(
+            self._user_interaction.show_global_instant(
                 msg.FinishPhase.GLOBAL_PLAYER_WON.format(
                     self._game.players[1].name))
         else:
-            user_interaction.show_global_instant(
+            self._user_interaction.show_global_instant(
                 msg.FinishPhase.GLOBAL_PLAYER_WON.format(
                     self._game.players[0].name))
 
@@ -283,7 +287,7 @@ class GameController(Context):
 
     @property
     def user_interaction(self):
-        return user_interaction
+        return self._user_interaction
 
     @property
     def game(self):

@@ -9,34 +9,38 @@ class MessageScope(Enum):
 
 
 class UserInteraction():
-    def __init__(self):
+    def __init__(self, context: 'Context'):
+        self.context = context
+        self.user_names = self.context.user_names
 
-        self.prepared_messages = {
+        self._prepared_messages = {
             MessageScope.GLOBAL: [],
             MessageScope.ACTIVE: [],
             MessageScope.PASSIVE: []
         }
 
     def save_global(self, text: str) -> None:
-        self.prepared_messages[MessageScope.GLOBAL].append(text)
+        self._prepared_messages[MessageScope.GLOBAL].append(text)
 
     def save_active(self, text: str) -> None:
-        self.prepared_messages[MessageScope.ACTIVE].append(text)
+        self._prepared_messages[MessageScope.ACTIVE].append(text)
 
     def save_passive(self, text: str) -> None:
-        self.prepared_messages[MessageScope.PASSIVE].append(text)
+        self._prepared_messages[MessageScope.PASSIVE].append(text)
 
     def show_global_instant(self, text: str) -> None:
         print(f"{MessageScope.GLOBAL.name}: {text}")
 
     def show_active_instant(self, text: str) -> None:
+        print(self.user_names[0])
         print(f"{MessageScope.ACTIVE.name}: {text}")
 
     def show_passive_instant(self, text: str) -> None:
+        print(self.user_names[1])
         print(f"{MessageScope.PASSIVE.name}: {text}")
 
     def show_all(self) -> None:
-        for scope, text_list in self.prepared_messages.items():
+        for scope, text_list in self._prepared_messages.items():
             print(f"{scope.name}:")
             for text in text_list:
                 print(f"\t{text}")
@@ -44,7 +48,7 @@ class UserInteraction():
         self._clear_messages()
 
     def _clear_messages(self) -> None:
-        self.prepared_messages = {
+        self._prepared_messages = {
             MessageScope.GLOBAL: [],
             MessageScope.ACTIVE: [],
             MessageScope.PASSIVE: []

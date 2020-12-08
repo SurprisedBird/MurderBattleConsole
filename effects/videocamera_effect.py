@@ -1,5 +1,4 @@
 import message_text_config as msg
-import user_interaction
 import utils
 from citizens.citizen import Citizen
 from game import Game
@@ -16,10 +15,11 @@ class VideoCameraEffect(Effect):
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
-            msg.VideoCameraMessages.ACTIVATION_CHOOSE_TARGET, self._validate)
+            self.context, msg.VideoCameraMessages.ACTIVATION_CHOOSE_TARGET,
+            self._validate)
         self.targets.append(self.game.citizens[target_number - 1])
 
-        user_interaction.save_active(
+        self.user_interaction.save_active(
             msg.VideoCameraMessages.ACTIVATION_SUCCESS.format(
                 self.targets[0].name))
 
@@ -32,7 +32,7 @@ class VideoCameraEffect(Effect):
 
             camera_message = msg.VideoCameraMessages.RESOLVE_SUCCESS.format(
                 enemy_name, citizen_name)
-            user_interaction.save_passive(camera_message)
+            self.user_interaction.save_passive(camera_message)
 
             return True
 

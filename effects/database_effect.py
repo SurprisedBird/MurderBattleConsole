@@ -2,7 +2,6 @@ from enum import Enum
 from typing import List, Tuple
 
 import message_text_config as msg
-import user_interaction
 import utils
 from citizens.citizen import Citizen
 from game import Game
@@ -48,16 +47,16 @@ class DatabaseEffect(Effect):
     def _resolve_impl(self) -> bool:
         roles = [type(target).__name__ for target in self.targets]
         if ("Player" in roles) and ("Spy" in roles):
-            user_interaction.show_active_instant(
+            self.user_interaction.show_active_instant(
                 msg.DatabaseMessages.RESOLVE_FIND_ALL)
         elif "Player" in roles:
-            user_interaction.show_active_instant(
+            self.user_interaction.show_active_instant(
                 msg.DatabaseMessages.RESOLVE_FIND_PLAYER)
         elif "Spy" in roles:
-            user_interaction.show_active_instant(
+            self.user_interaction.show_active_instant(
                 msg.DatabaseMessages.RESOLVE_FIND_SPY)
         else:
-            user_interaction.show_active_instant(
+            self.user_interaction.show_active_instant(
                 msg.DatabaseMessages.RESOLVE_NO_SUSPECT)
 
         return True
@@ -70,14 +69,14 @@ class DatabaseEffect(Effect):
 
         target_numbers = []
         for _ in range(3):
-            target_number = user_interaction.read_number(message)
+            target_number = self.user_interaction.read_number(message)
             target_numbers.append(target_number)
 
             is_valid, error_code = self._validate(target_numbers)
             while not is_valid:
                 target_numbers.pop()
-                user_interaction.show_active_instant(error_code.value)
-                target_number = user_interaction.read_number(message)
+                self.user_interaction.show_active_instant(error_code.value)
+                target_number = self.user_interaction.read_number(message)
                 target_numbers.append(target_number)
                 is_valid, error_code = self._validate(target_numbers)
 
