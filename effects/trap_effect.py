@@ -12,8 +12,9 @@ from effects.effect import Effect
 
 
 class TrapEffect(Effect):
-    def __init__(self, game: Game, name: str, creator: Citizen) -> None:
-        super().__init__(game, name, game.active_player, 8)
+    def __init__(self, context: 'Context', name: str,
+                 creator: Citizen) -> None:
+        super().__init__(context, name, self.context.game.active_player, 8)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(

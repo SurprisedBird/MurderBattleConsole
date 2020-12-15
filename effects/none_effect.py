@@ -2,9 +2,10 @@ from effects.effect import Effect
 
 
 class NoneEffect(Effect):
-    def __init__(self, game: 'Game', name: str, creator: 'Citizen') -> None:
+    def __init__(self, context: 'Context', name: str,
+                 creator: 'Citizen') -> None:
         # TODO: set correct priority
-        super().__init__(game, name, creator, 0)
+        super().__init__(context, name, creator, 0)
 
     def _activate_impl(self) -> bool:
         return True

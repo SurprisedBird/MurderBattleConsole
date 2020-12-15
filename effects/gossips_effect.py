@@ -12,8 +12,9 @@ from effects.effect import Effect
 
 
 class GossipsEffect(Effect):
-    def __init__(self, game: Game, name: str, creator: Citizen) -> None:
-        super().__init__(game, name, creator, 4)
+    def __init__(self, context: 'Context', name: str,
+                 creator: Citizen) -> None:
+        super().__init__(context, name, creator, 4)
         self.night_number = 0
 
     def _activate_impl(self) -> bool:
