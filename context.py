@@ -14,5 +14,5 @@ class Context(ABC):
 
     @property
     @abstractmethod
-    def action_history(self):
+    def action_manager(self):
         pass

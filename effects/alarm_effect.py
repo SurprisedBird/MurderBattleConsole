@@ -10,8 +10,9 @@ from effects.effect import Effect
 
 
 class AlarmEffect(Effect):
-    def __init__(self, game: Game, name: str, creator: Citizen) -> None:
-        super().__init__(game, name, creator, 8)
+    def __init__(self, context: 'Context', name: str,
+                 creator: Citizen) -> None:
+        super().__init__(context, name, creator, 8)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(

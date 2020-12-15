@@ -14,9 +14,10 @@ class EffectStatus(Enum):
 
 
 class Effect(ABC):
-    def __init__(self, game: Game, name: str, creator: Citizen,
+    def __init__(self, context: 'Context', name: str, creator: Citizen,
                  priority: int) -> None:
-        self.game = game
+        self.context = context
+        self.game = self.context.game
         self.name = name
         self.creator = creator
         self.priority = priority

@@ -38,11 +38,12 @@ class ActionData:
 
 class Player(Citizen):
     def __init__(self,
+                 context: 'Context',
                  user_name: str,
                  name: str,
                  citizen_card: Card,
                  hp: int = 3) -> None:
-        super().__init__(name, citizen_card, hp)
+        super().__init__(context, name, citizen_card, hp)
 
         self.user_name = user_name
         self.stolen_cards: List[Card] = []
@@ -106,7 +107,7 @@ class Player(Citizen):
 # Create action
 # =================================================================
 
-    def create_action(self, game: 'Game') -> Effect:
+    def create_action(self) -> Effect:
         self._update_allowed_actions()
 
         self._show_available_actions()
@@ -114,7 +115,7 @@ class Player(Citizen):
         index = self._read_chosen_action()
 
         effect = self._allowed_actions[index].effect
-        action = effect(game, self._allowed_actions[index].name, self)
+        action = effect(self.context, self._allowed_actions[index].name, self)
 
         self._staging_processing = effect is StagingEffect
 
@@ -155,7 +156,7 @@ class Player(Citizen):
 # Create card action
 # =================================================================
 
-    def create_card_action(self, game: 'Game'):
+    def create_card_action(self):
         self._update_allowed_card_actions()
 
         self._show_available_card_actions()
@@ -164,7 +165,8 @@ class Player(Citizen):
 
         self._chosen_card = self._allowed_card_actions[index].card
         effect = self._chosen_card.effect
-        action = effect(game, self._allowed_card_actions[index].name, self)
+        action = effect(self.context, self._allowed_card_actions[index].name,
+                        self)
         return action
 
     def remove_used_card(self) -> None:
