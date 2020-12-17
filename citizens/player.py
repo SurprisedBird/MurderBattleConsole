@@ -3,13 +3,13 @@ from enum import Enum, auto
 from typing import Callable, Dict, List, Type
 
 import message_text_config as msg
-import user_interaction
 from card import Card
 from effects.effect import Effect
 from effects.kill_effect import KillEffect
 from effects.none_effect import NoneEffect
 from effects.staging_effect import StagingEffect
 from effects.steal_effect import StealEffect
+from user_interaction import UserInteraction
 
 from citizens.citizen import Citizen
 
@@ -44,6 +44,8 @@ class Player(Citizen):
                  citizen_card: Card,
                  hp: int = 3) -> None:
         super().__init__(context, name, citizen_card, hp)
+
+        self.user_interaction = self.context.user_interaction
 
         self.user_name = user_name
         self.stolen_cards: List[Card] = []
@@ -86,20 +88,20 @@ class Player(Citizen):
     def _show_available_options(
             self, message: str, allowed_options: Dict[int,
                                                       ActionData]) -> None:
-        user_interaction.save_active(message)
+        self.user_interaction.save_active(message)
         for index, action_data in allowed_options.items():
             message_str = msg.PlayerMessages.OPTION.format(
                 index, action_data.name)
 
-            user_interaction.save_active(message_str)
+            self.user_interaction.save_active(message_str)
 
-        user_interaction.show_all()
+        self.user_interaction.show_all()
 
     def _read_chosen_option(self, error_message: str,
                             validate_method: Callable[[int], bool]) -> int:
-        index = user_interaction.read_number()
+        index = self.user_interaction.read_number()
         while (not validate_method(index)):
-            index = user_interaction.read_number(error_message)
+            index = self.user_interaction.read_number(error_message)
 
         return index
 

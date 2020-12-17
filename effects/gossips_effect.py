@@ -2,7 +2,6 @@ from enum import Enum
 from typing import List
 
 import message_text_config as msg
-import user_interaction
 import utils
 from citizens.citizen import Citizen
 from game import Game
@@ -19,7 +18,8 @@ class GossipsEffect(Effect):
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
-            msg.GossipsMessages.ACTIVATION_CHOOSE_TARGET, self._validate)
+            self.context, msg.GossipsMessages.ACTIVATION_CHOOSE_TARGET,
+            self._validate)
 
         self.night_number = int(target_number)
         self.targets.append(self.game.passive_player)
@@ -43,7 +43,7 @@ class GossipsEffect(Effect):
                 self.night_number][1].targets:
             second_targets += target.name + " "
 
-        user_interaction.show_active_instant(
+        self.user_interaction.show_active_instant(
             msg.GossipsMessages.RESOLVE_SUCCESS.format(first_action,
                                                        first_targets,
                                                        second_action,

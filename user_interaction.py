@@ -8,65 +8,62 @@ class MessageScope(Enum):
     PASSIVE = auto()
 
 
-prepared_messages = {
-    MessageScope.GLOBAL: [],
-    MessageScope.ACTIVE: [],
-    MessageScope.PASSIVE: []
-}
+class UserInteraction():
+    def __init__(self, context: 'Context'):
+        self.context = context
+        self.user_names = self.context.user_names
 
+        self._prepared_messages = {
+            MessageScope.GLOBAL: [],
+            MessageScope.ACTIVE: [],
+            MessageScope.PASSIVE: []
+        }
 
-def save_global(text: str) -> None:
-    prepared_messages[MessageScope.GLOBAL].append(text)
+    def save_global(self, text: str) -> None:
+        self._prepared_messages[MessageScope.GLOBAL].append(text)
 
+    def save_active(self, text: str) -> None:
+        self._prepared_messages[MessageScope.ACTIVE].append(text)
 
-def save_active(text: str) -> None:
-    prepared_messages[MessageScope.ACTIVE].append(text)
+    def save_passive(self, text: str) -> None:
+        self._prepared_messages[MessageScope.PASSIVE].append(text)
 
+    def show_global_instant(self, text: str) -> None:
+        print(f"{MessageScope.GLOBAL.name}: {text}")
 
-def save_passive(text: str) -> None:
-    prepared_messages[MessageScope.PASSIVE].append(text)
+    def show_active_instant(self, text: str) -> None:
+        print(self.user_names[0])
+        print(f"{MessageScope.ACTIVE.name}: {text}")
 
+    def show_passive_instant(self, text: str) -> None:
+        print(self.user_names[1])
+        print(f"{MessageScope.PASSIVE.name}: {text}")
 
-def show_global_instant(text: str) -> None:
-    print(f"{MessageScope.GLOBAL.name}: {text}")
+    def show_all(self) -> None:
+        for scope, text_list in self._prepared_messages.items():
+            print(f"{scope.name}:")
+            for text in text_list:
+                print(f"\t{text}")
 
+        self._clear_messages()
 
-def show_active_instant(text: str) -> None:
-    print(f"{MessageScope.ACTIVE.name}: {text}")
+    def _clear_messages(self) -> None:
+        self._prepared_messages = {
+            MessageScope.GLOBAL: [],
+            MessageScope.ACTIVE: [],
+            MessageScope.PASSIVE: []
+        }
 
+    def read_number(self, text: str = "") -> Optional[int]:
+        """Reading and validating inputs.
 
-def show_passive_instant(text: str) -> None:
-    print(f"{MessageScope.PASSIVE.name}: {text}")
+        If input value is valid - return int
+        If input value is NOT valid - return None
+        """
+        index_str = input(text)
+        if index_str.isnumeric():
+            index = int(index_str)
+        else:
+            index = None
 
-
-def show_all() -> None:
-    for scope, text_list in prepared_messages.items():
-        print(f"{scope.name}:")
-        for text in text_list:
-            print(f"\t{text}")
-
-    _celar_messages()
-
-
-def _celar_messages() -> None:
-    global prepared_messages
-    prepared_messages = {
-        MessageScope.GLOBAL: [],
-        MessageScope.ACTIVE: [],
-        MessageScope.PASSIVE: []
-    }
-
-
-def read_number(text: str = "") -> Optional[int]:
-    """Reading and validating inputs.
-
-    If input value is valid - return int
-    If input value is NOT valid - return None
-    """
-    index_str = input(text)
-    if index_str.isnumeric():
-        index = int(index_str)
-    else:
-        index = None
-
-    return index
+        return index

@@ -1,5 +1,4 @@
 import message_text_config as msg
-import user_interaction
 import utils
 from citizens.citizen import Citizen
 from citizens.player import Player
@@ -9,23 +8,23 @@ from effects.effect import Effect
 
 
 class WhoreEffect(Effect):
-    def __init__(self, context: 'Context', name: str,
-                 creator: Citizen) -> None:
-        super().__init__(context, name, creator, 7)
+    def __init__(self, game: Game, name: str, creator: Citizen) -> None:
+        super().__init__(game, name, creator, 7)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
-            msg.WhoreMessages.ACTIVATION_CHOOSE_TARGET, self._validate)
+            self.context, msg.WhoreMessages.ACTIVATION_CHOOSE_TARGET,
+            self._validate)
         self.targets.append(self.game.citizens[target_number - 1])
 
-        user_interaction.save_active(
+        self.user_interaction.save_active(
             msg.WhoreMessages.ACTIVATION_SUCCESS.format(self.targets[0].name))
 
         return True
 
     def _resolve_impl(self) -> bool:
         if self.activation_round == self.game.round_number:
-            user_interaction.save_global(
+            self.user_interaction.save_global(
                 msg.WhoreMessages.RESOLVE_START_PUBLICLY)
 
             if isinstance(self.targets[0], Player):
@@ -34,7 +33,7 @@ class WhoreEffect(Effect):
                 self.targets[0].disable_staging_action()
 
             if self.targets[0] is self.game.passive_player:
-                user_interaction.save_passive(
+                self.user_interaction.save_passive(
                     msg.WhoreMessages.RESOLVE_SUCCESS)
 
             return False

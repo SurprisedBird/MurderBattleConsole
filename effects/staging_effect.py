@@ -2,7 +2,6 @@ from enum import Enum, auto
 from typing import Tuple
 
 import message_text_config as msg
-import user_interaction
 import utils
 from citizens.citizen import Citizen
 from game import Game
@@ -24,7 +23,7 @@ class StagingEffect(Effect):
         target_number = self._read_target_number()
         self.targets.append(self.game.citizens[target_number - 1])
 
-        user_interaction.save_active(
+        self.user_interaction.save_active(
             msg.StagingMassages.ACTIVATION_SUCCESS.format(
                 self.targets[0].name))
 
@@ -63,17 +62,19 @@ class StagingEffect(Effect):
             for effect in citizens[player_index].effects:
                 effect.deactivate()
 
-            user_interaction.save_active(
+            self.user_interaction.save_active(
                 msg.StagingMassages.RESOLVE_SUCCESS.format(self.creator.name))
 
         # Not using isinstance(self.targets[0], Player)
         # because of cycle import problem
         elif type(self.targets[0]).__name__ == "Player":
-            user_interaction.save_active(msg.StagingMassages.RESOLVE_FAILED)
-            user_interaction.save_passive(
+            self.user_interaction.save_active(
+                msg.StagingMassages.RESOLVE_FAILED)
+            self.user_interaction.save_passive(
                 msg.StagingMassages.RESOLVE_ENEMY_LOST_HP)
         else:
-            user_interaction.save_active(msg.StagingMassages.RESOLVE_FAILED)
+            self.user_interaction.save_active(
+                msg.StagingMassages.RESOLVE_FAILED)
 
         return True
 
@@ -98,12 +99,12 @@ class StagingEffect(Effect):
 
     def _read_target_number(self) -> int:
         message = msg.StagingMassages.ACTIVATION_CHOOSE_TARGET
-        target_number = user_interaction.read_number(message)
+        target_number = self.user_interaction.read_number(message)
 
         is_valid, error_code = self._validate(target_number)
         while not is_valid:
-            user_interaction.show_active_instant(error_code.value)
-            target_number = user_interaction.read_number(message)
+            self.user_interaction.show_active_instant(error_code.value)
+            target_number = self.user_interaction.read_number(message)
             is_valid, error_code = self._validate(target_number)
 
         return target_number

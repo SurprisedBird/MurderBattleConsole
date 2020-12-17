@@ -1,26 +1,26 @@
 from typing import Callable, List
 
 import message_text_config as msg
-import user_interaction
+from user_interaction import UserInteraction
 
 
-def read_target_number(message: str, validate_method: Callable[[int],
-                                                               bool]) -> int:
-    target_number = user_interaction.read_number(message)
+def read_target_number(context: 'Context', message: str,
+                       validate_method: Callable[[int], bool]) -> int:
+    target_number = context.user_interaction.read_number(message)
     while (not validate_method(target_number)):
-        user_interaction.show_active_instant(
+        context.user_interaction.show_active_instant(
             msg.CommonMessages.ERROR_INVALID_TARGET)
-        target_number = user_interaction.read_number(message)
+        target_number = context.user_interaction.read_number(message)
 
     return target_number
 
 
-def save_message_for_player(game: 'Game', player: 'Citizen',
+def save_message_for_player(context: 'Context', player: 'Citizen',
                             message: str) -> None:
-    if player is game.active_player:
-        user_interaction.save_active(message)
-    elif player is game.passive_player:
-        user_interaction.save_passive(message)
+    if player is context.game.active_player:
+        context.user_interaction.save_active(message)
+    elif player is context.game.passive_player:
+        context.user_interaction.save_passive(message)
     else:
         # do nothing
         pass

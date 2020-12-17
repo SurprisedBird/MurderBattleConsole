@@ -1,7 +1,6 @@
 from typing import Tuple
 
 import message_text_config as msg
-import user_interaction
 import utils
 from citizens.citizen import Citizen
 from game import Game
@@ -16,10 +15,11 @@ class AlarmEffect(Effect):
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
-            msg.AlarmMessages.ACTIVATION_CHOOSE_TARGET, self._validate)
+            self.context, msg.AlarmMessages.ACTIVATION_CHOOSE_TARGET,
+            self._validate)
         self.targets.append(self.game.citizens[target_number - 1])
 
-        user_interaction.save_active(
+        self.user_interaction.save_active(
             msg.AlarmMessages.ACTIVATION_SUCCESS.format(self.targets[0].name))
 
         return True
@@ -30,10 +30,10 @@ class AlarmEffect(Effect):
         if is_alarm_triggered:
             effect.deactivate()
 
-            user_interaction.save_active(
+            self.user_interaction.save_active(
                 msg.AlarmMessages.RESOLVE_FORCED_TO_RUN)
             utils.save_message_for_player(
-                self.game, self.creator,
+                self.context, self.creator,
                 msg.AlarmMessages.RESOLVE_ALARM_ACTIVATED)
 
             return True
