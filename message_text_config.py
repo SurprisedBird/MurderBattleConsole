@@ -109,7 +109,7 @@ class AnonymousCallMessages:
 class TaxesMessages:
     ACTIVATION_CHOOSE_TARGET = "Выберите гражданина, которого сегодня посетит Соцработник:"
     ACTIVATION_SUCCESS = "Вы отправили Соцработника в дом гражданина - {}."
-    RESOLVE_PLAYER_CHOOSE_VARIANT = "Этой ночью вас посетил жадный Соцработник. Выберите способ откупиться от него: \n [{}, 2.HP]"
+    RESOLVE_PLAYER_CHOOSE_VARIANT = "Этой ночью вас посетил жадный Соцработник. Выберите способ откупиться от него:\n1. Потратить 1 HP\n2. Потратить карту\n"
     RESOLVE_PLAYER_CHOOSE_CARD = "Выберите карту: \n {}"
     RESOLVE_SUCCESS = "Соцработник покинул вас, доставив немало хлопот."
 
