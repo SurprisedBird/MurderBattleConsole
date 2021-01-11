@@ -95,6 +95,7 @@ class TalesMessages:
 
 class DrugsMessages:
     ACTIVATION_CHOOSE_TARGET = "Выберите гражданина, к дому которого будет отправлен Наркоман:"
+    ACTIVATION_SUCCESS = "Наркоман отправился в дом гражданина - {}."
     RESOLVE_SUCCESS = "Наркоман успешно устроил диверсию в доме гражданина - {}."
 
 
