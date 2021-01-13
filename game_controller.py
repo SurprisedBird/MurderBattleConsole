@@ -10,7 +10,7 @@ from citizens.spy import Spy
 from context import Context
 from effects.effect import Effect, EffectStatus
 from game import Game
-from user_interaction import UserInteraction
+from user_interactions.user_interaction import UserInteraction
 
 
 class GameController(Context):
@@ -19,8 +19,8 @@ class GameController(Context):
 
         self.citizens_dict = citizens_dict
         self.user_names = user_names
-        self._game: Game
-        self._user_interaction: 'UserInteraction'
+        self._game = Game()
+        self._user_interaction = UserInteraction(self)
 
     def start_game(self) -> None:
         self._prepare_game()
@@ -35,11 +35,8 @@ class GameController(Context):
 # =================================================================
 
     def _prepare_game(self) -> None:
-        self._game = Game()
         self._game.action_manager = ActionManager()
         avilable_citizens: List[Citizen] = []
-
-        self._user_interaction = UserInteraction(self)
 
         self._create_citizens(avilable_citizens)
         self._create_players(avilable_citizens)

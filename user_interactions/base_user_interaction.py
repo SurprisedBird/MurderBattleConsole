@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from enum import Enum, auto
 from typing import Optional
 
@@ -8,7 +9,7 @@ class MessageScope(Enum):
     PASSIVE = auto()
 
 
-class UserInteraction():
+class BaseUserInteraction(ABC):
     def __init__(self, context: 'Context'):
         self.context = context
         self.user_names = self.context.user_names
@@ -19,6 +20,22 @@ class UserInteraction():
             MessageScope.PASSIVE: []
         }
 
+    @abstractmethod
+    def show_global_instant(self, text: str) -> None:
+        pass
+
+    @abstractmethod
+    def show_active_instant(self, text: str) -> None:
+        pass
+
+    @abstractmethod
+    def show_passive_instant(self, text: str) -> None:
+        pass
+
+    @abstractmethod
+    def show_all(self) -> None:
+        pass
+
     def save_global(self, text: str) -> None:
         self._prepared_messages[MessageScope.GLOBAL].append(text)
 
@@ -27,25 +44,6 @@ class UserInteraction():
 
     def save_passive(self, text: str) -> None:
         self._prepared_messages[MessageScope.PASSIVE].append(text)
-
-    def show_global_instant(self, text: str) -> None:
-        print(f"{MessageScope.GLOBAL.name}: {text}")
-
-    def show_active_instant(self, text: str) -> None:
-        print(self.user_names[0])
-        print(f"{MessageScope.ACTIVE.name}: {text}")
-
-    def show_passive_instant(self, text: str) -> None:
-        print(self.user_names[1])
-        print(f"{MessageScope.PASSIVE.name}: {text}")
-
-    def show_all(self) -> None:
-        for scope, text_list in self._prepared_messages.items():
-            print(f"{scope.name}:")
-            for text in text_list:
-                print(f"\t{text}")
-
-        self._clear_messages()
 
     def _clear_messages(self) -> None:
         self._prepared_messages = {

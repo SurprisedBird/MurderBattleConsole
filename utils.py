@@ -1,7 +1,7 @@
 from typing import Callable, List
 
 import message_text_config as msg
-from user_interaction import UserInteraction
+from user_interactions.user_interaction import UserInteraction
 
 
 def read_target_number(context: 'Context', message: str,
