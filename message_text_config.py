@@ -101,10 +101,13 @@ class DrugsMessages:
 
 class AnonymousCallMessages:
     ACTIVATION_CHOOSE_TARGET = "Выберите гражданина, которого сегодняшней ночью неизвестный обвинит с помощью анонимного звонка в полицию:"
-    RESOLVE_SUCCESS = "В полицию поступил загадочный анонимный звонок, где высказывались обвинения в убийстве с указанием конкретного подозреваемого. Полиция решила перепроверить данную информацию"
-    RESOLVE_ANONYMOUSCALL_NO_SUSPECT = "Полиция проверила дом гражданина - {}. Достоверно, что он не является подозрительным."
-    RESOLVE_ANONYMOUSCALL_PLAYER = "Полиция проверила дом гражданина - {}. Достоверно, что он является Убийцей."
-    RESOLVE_ANONYMOUSCALL_SPY = "Полиция проверила дом гражданина - {}. Достоверно, что он является Шпионом."
+    ACTIVATION_SUCCESS = "В полицию поступил загадочный анонимный звонок, где высказывались обвинения в убийстве с указанием конкретного подозреваемого. Полиция решила перепроверить данную информацию"
+    RESOLVE_ANONYMOUSCALL_NO_SUSPECT = "Полиция проверила дом гражданина - {}. Достоверно известно, что он не является подозрительным."
+    RESOLVE_ANONYMOUSCALL_PLAYER = "Полиция проверила дом гражданина - {}. Достоверно известно, что он является Убийцей."
+    RESOLVE_ANONYMOUSCALL_SPY = "Полиция проверила дом гражданина - {}. Достоверно известно, что он является Шпионом."
+    RESOLVE_ENEMY_LOST_HP = CommonMessages.LOST_HP
+    ERROR_INVALID_TARGET = CommonMessages.ERROR_INVALID_TARGET
+    ERROR_SELF_AS_TARGET = CommonMessages.ERROR_SELF_AS_TARGET
 
 
 class TaxesMessages:
