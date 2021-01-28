@@ -2,7 +2,7 @@ import message_text_config as msg
 import utils
 from game import Game
 
-from effects.effect import Effect
+from effects.effect import Effect, InputStatusCode
 
 
 class FreakEffect(Effect):
@@ -24,8 +24,8 @@ class FreakEffect(Effect):
     def _resolve_impl(self) -> bool:
         for effect in self.targets[0].effects:
             if type(effect).__name__ in [
-                    "TrapEffect", "AlarmEffect", "VideocameraEffect",
-                    "WitnessDefenceEffect"
+                    'TrapEffect', 'AlarmEffect', 'VideocameraEffect',
+                    'WitnessDefenceEffect'
             ]:
                 effect.deactivate()
 
@@ -34,7 +34,7 @@ class FreakEffect(Effect):
 
         return True
 
-    def _validate(self, target_number: int) -> bool:
+    def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(target_number,
                                                     self.game.citizens)
 

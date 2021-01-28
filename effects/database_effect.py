@@ -1,19 +1,12 @@
 from enum import Enum
-from typing import List, Tuple
+from typing import List
 
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 from game import Game
-from message_text_config import Errors
 
-from effects.effect import Effect
-
-
-class ErrorType(Enum):
-    INVALID_TURGET = msg.DatabaseMessages.ERROR_INVALID_TARGET
-    SAME_TARGET = msg.DatabaseMessages.ERROR_SAME_TARGET
-    # NOT_THREE_TARGET = Errors.DATA_BASE_TARGETS
+from effects.effect import Effect, InputStatusCode
 
 
 class DatabaseEffect(Effect):
@@ -31,28 +24,28 @@ class DatabaseEffect(Effect):
 
         return True
 
-    def _validate(self, target_numbers: List[int]) -> Tuple[bool, ErrorType]:
+    def _validate(self, target_numbers: List[int]) -> InputStatusCode:
         last_target_number = target_numbers[len(target_numbers) - 1]
         if last_target_number is None or not utils.is_citizen_in_range(
                 last_target_number - 1, self.game.citizens):
-            return (False, ErrorType.INVALID_TURGET)
+            return InputStatusCode.NOK_INVALID_TARGET
 
         #check if player have chosen 3 different targets
         contains_duplicates = (len(target_numbers) != len(set(target_numbers)))
         if contains_duplicates:
-            return (False, ErrorType.SAME_TARGET)
+            return InputStatusCode.NOK_SAME_TARGET
 
-        return (True, None)
+        return InputStatusCode.OK
 
     def _resolve_impl(self) -> bool:
-        roles = [type(target).__name__ for target in self.targets]
-        if ("Player" in roles) and ("Spy" in roles):
+        if utils.contains_player(self.targets) and utils.contains_spy(
+                self.targets):
             self.user_interaction.show_active_instant(
                 msg.DatabaseMessages.RESOLVE_FIND_ALL)
-        elif "Player" in roles:
+        elif utils.contains_player(self.targets):
             self.user_interaction.show_active_instant(
                 msg.DatabaseMessages.RESOLVE_FIND_PLAYER)
-        elif "Spy" in roles:
+        elif utils.contains_spy(self.targets):
             self.user_interaction.show_active_instant(
                 msg.DatabaseMessages.RESOLVE_FIND_SPY)
         else:
@@ -72,12 +65,13 @@ class DatabaseEffect(Effect):
             target_number = self.user_interaction.read_number(message)
             target_numbers.append(target_number)
 
-            is_valid, error_code = self._validate(target_numbers)
-            while not is_valid:
+            input_status_code = self._validate(target_numbers)
+            while (input_status_code is not InputStatusCode.OK):
                 target_numbers.pop()
-                self.user_interaction.show_active_instant(error_code.value)
+                self.user_interaction.show_active_instant(
+                    input_status_code.value)
                 target_number = self.user_interaction.read_number(message)
                 target_numbers.append(target_number)
-                is_valid, error_code = self._validate(target_numbers)
+                input_status_code = self._validate(target_numbers)
 
         return target_numbers

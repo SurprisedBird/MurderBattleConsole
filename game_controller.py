@@ -236,7 +236,8 @@ class GameController(Context):
             elif number == 2:
                 return False
             else:
-                self._user_interaction.save_active(msg.Errors.CONFIRM_CHOICE)
+                self._user_interaction.save_active(
+                    msg.CommonMessages.ERROR_INVALID_OPTION)
                 number = self._confirm_actions_msg()
 
     def _confirm_actions_msg(self) -> Optional[int]:

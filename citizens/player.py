@@ -9,7 +9,6 @@ from effects.kill_effect import KillEffect
 from effects.none_effect import NoneEffect
 from effects.staging_effect import StagingEffect
 from effects.steal_effect import StealEffect
-from user_interaction import UserInteraction
 
 from citizens.citizen import Citizen
 
