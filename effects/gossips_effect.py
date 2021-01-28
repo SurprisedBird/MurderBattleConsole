@@ -5,9 +5,8 @@ import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 from game import Game
-from message_text_config import Errors
 
-from effects.effect import Effect
+from effects.effect import Effect, InputStatusCode
 
 
 class GossipsEffect(Effect):
@@ -52,12 +51,12 @@ class GossipsEffect(Effect):
         return True
 
     # TODO: forbid player to choose nights with own actions
-    def _validate(self, target_number: int) -> bool:
+    def _validate(self, target_number: int) -> InputStatusCode:
         if target_number == None or target_number <= 0 or target_number > len(
                 self.game.action_manager.actions_histry):
-            return False
+            return InputStatusCode.NOK_INVALID_TARGET
 
-        return True
+        return InputStatusCode.OK
 
     def _on_clear_impl(self) -> None:
         pass

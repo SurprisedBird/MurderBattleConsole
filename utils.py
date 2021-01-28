@@ -1,16 +1,19 @@
-from typing import Callable, List
+from typing import Callable, List, Tuple
 
 import message_text_config as msg
+from effects.effect import InputStatusCode
 from user_interactions.user_interaction import UserInteraction
 
 
 def read_target_number(context: 'Context', message: str,
-                       validate_method: Callable[[int], bool]) -> int:
+                       validate_method: InputStatusCode) -> int:
     target_number = context.user_interaction.read_number(message)
-    while (not validate_method(target_number)):
-        context.user_interaction.show_active_instant(
-            msg.CommonMessages.ERROR_INVALID_TARGET)
+
+    input_status_code = validate_method(target_number)
+    while (input_status_code is not InputStatusCode.OK):
+        context.user_interaction.show_active_instant(input_status_code.value)
         target_number = context.user_interaction.read_number(message)
+        input_status_code = context._validate(target_number)
 
     return target_number
 
@@ -39,7 +42,7 @@ def save_message_for_player(context: 'Context', player: 'Citizen',
 
 def is_action_effect(effect: 'Effect') -> bool:
     return type(effect).__name__ in [
-        "KillEffect", "StealEffect", "StagingEffect"
+        'KillEffect', 'StealEffect', 'StagingEffect'
     ]
 
 
@@ -47,8 +50,40 @@ def is_citizen_in_range(target_index: int, citizens: List['Citizen']) -> bool:
     return target_index >= 0 and target_index < len(citizens)
 
 
-def validate_citizen_target_number(target_number: int,
-                                   citizens: List['Citizen']) -> bool:
-    return (target_number is not None
-            and is_citizen_in_range(target_number - 1, citizens)
-            and citizens[target_number - 1].is_alive)
+def validate_citizen_target_number(
+        target_number: int,
+        citizens: List['Citizen'],
+        self_as_target_allowed: bool = True,
+        creator: 'Citizen' = None) -> InputStatusCode:
+    is_valid = (target_number is not None
+                and is_citizen_in_range(target_number - 1, citizens)
+                and citizens[target_number - 1].is_alive)
+
+    is_self_as_target = \
+            (citizens[target_number - 1] is creator) \
+            if is_valid else False
+
+    if not self_as_target_allowed and is_self_as_target:
+        return InputStatusCode.SELF_AS_TARGET
+    elif not is_valid:
+        return InputStatusCode.INVALID_TARGET
+
+    return InputStatusCode.OK
+
+
+def is_player(citizen: 'Citizen') -> bool:
+    return type(citizen).__name__ == 'Player'
+
+
+def is_spy(citizen: 'Citizen') -> bool:
+    return type(citizen).__name__ == 'Spy'
+
+
+def contains_player(citizens: List['Citizen']) -> bool:
+    roles = [type(target).__name__ for target in self.targets]
+    return 'Player' in roles
+
+
+def contains_spy(citizens: List['Citizen']) -> bool:
+    roles = [type(target).__name__ for target in self.targets]
+    return 'Spy' in roles

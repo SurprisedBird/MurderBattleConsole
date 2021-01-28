@@ -3,7 +3,7 @@ import utils
 from citizens.citizen import Citizen
 from game import Game
 
-from effects.effect import Effect
+from effects.effect import Effect, InputStatusCode
 from effects.staging_effect import StagingEffect
 from effects.steal_effect import StealEffect
 
@@ -47,7 +47,7 @@ class VideoCameraEffect(Effect):
 
         return False
 
-    def _validate(self, target_number: int) -> bool:
+    def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(target_number,
                                                     self.game.citizens)
 

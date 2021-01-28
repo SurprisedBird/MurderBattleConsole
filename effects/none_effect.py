@@ -1,4 +1,4 @@
-from effects.effect import Effect
+from effects.effect import Effect, InputStatusCode
 
 
 class NoneEffect(Effect):
@@ -13,8 +13,8 @@ class NoneEffect(Effect):
     def _resolve_impl(self) -> bool:
         return True
 
-    def _validate(self, target_number: int) -> bool:
-        return True
+    def _validate(self, target_number: int) -> InputStatusCode:
+        return InputStatusCode.OK
 
     def _on_clear_impl(self) -> None:
         pass

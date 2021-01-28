@@ -4,7 +4,7 @@ from citizens.citizen import Citizen
 from citizens.player import Player
 from game import Game
 
-from effects.effect import Effect
+from effects.effect import Effect, InputStatusCode
 
 
 class AntidotEffect(Effect):
@@ -37,7 +37,7 @@ class AntidotEffect(Effect):
 
         return True
 
-    def _validate(self, target_number: int) -> bool:
+    def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(target_number,
                                                     self.game.citizens)
 

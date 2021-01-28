@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from enum import Enum, auto
 from typing import List
 
+import message_text_config as msg
 from citizens.citizen import Citizen
 from game import Game
 
@@ -11,6 +12,13 @@ class EffectStatus(Enum):
     CREATED = auto()
     ACTIVATED = auto()
     FINISHED = auto()
+
+
+class InputStatusCode(Enum):
+    OK = msg.CommonMessages.NO_ERROR
+    NOK_INVALID_TARGET = msg.CommonMessages.ERROR_INVALID_TARGET
+    NOK_SELF_AS_TARGET = msg.CommonMessages.ERROR_SELF_AS_TARGET
+    NOK_SAME_TARGET = msg.CommonMessages.ERROR_SAME_TARGET
 
 
 class Effect(ABC):
@@ -53,7 +61,7 @@ class Effect(ABC):
         pass
 
     @abstractmethod
-    def _validate(self, target_number: int) -> bool:
+    def _validate(self, target_number: int) -> InputStatusCode:
         pass
 
     def resolve(self) -> None:

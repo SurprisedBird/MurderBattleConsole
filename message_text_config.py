@@ -1,7 +1,11 @@
 class CommonMessages:
+    NO_ERROR = ""
     ERROR_INVALID_TARGET = "Ошибка! Введите номер доступной цели."
     ERROR_SELF_AS_TARGET = "Ошибка! Невозможно выбрать себя в качестве цели."
+    ERROR_SAME_TARGET = "Ошибка! Все цели должны быть разными."
+    ERROR_INVALID_OPTION = "Ошибка! Введите номер доступного действия."
     LOST_HP = "Вы потеряли 1 HP"
+    CHOOSE_CARD_NUMBER = "Введите номер карты:"
 
 
 # ------------------------------------------------------
@@ -23,8 +27,6 @@ class KillMessages:
     RESOLVE_NO_CARD = "Карту обнаружить вам не удалось."
     RESOLVE_FAILED = "Ночь была неспокойной. Было совершено покушение на гражданина {}. Гражданин {} выжил благодаря чуду."
     RESOLVE_ENEMY_LOST_HP = CommonMessages.LOST_HP
-    ERROR_INVALID_TARGET = CommonMessages.ERROR_INVALID_TARGET
-    ERROR_SELF_AS_TARGET = CommonMessages.ERROR_SELF_AS_TARGET
     # RESOLVE_KILL_SPY = "Ночь была неспокойной. Гражданин {} оказался не тем за кого себя выдавал. Шпион, который скрывался под личиной гражданина {}, в спешке покинул город."
 
 
@@ -34,8 +36,6 @@ class StagingMassages:
     RESOLVE_SUCCESS = "Инсценировка удалась, ваша новая роль {}."
     RESOLVE_FAILED = "Вам не удалось инсценировать свою смерть, но вы нанесли урон цели."
     RESOLVE_ENEMY_LOST_HP = CommonMessages.LOST_HP
-    ERROR_INVALID_TARGET = CommonMessages.ERROR_INVALID_TARGET
-    ERROR_SELF_AS_TARGET = CommonMessages.ERROR_SELF_AS_TARGET
 
 
 class AlarmMessages:
@@ -52,7 +52,7 @@ class DatabaseMessages:
     RESOLVE_FIND_SPY = "База данных показала, что среди указанных граждан есть Шпион."
     RESOLVE_NO_SUSPECT = "База данных показала, что среди указанных граждан нет подозрительных личностей."
     ERROR_INVALID_TARGET = CommonMessages.ERROR_INVALID_TARGET
-    ERROR_SAME_TARGET = "Ошибка! Все цели должны быть разными."
+    ERROR_SAME_TARGET = CommonMessages.ERROR_SAME_TARGET
 
 
 class VideoCameraMessages:
@@ -113,8 +113,11 @@ class AnonymousCallMessages:
 class TaxesMessages:
     ACTIVATION_CHOOSE_TARGET = "Выберите гражданина, которого сегодня посетит Соцработник:"
     ACTIVATION_SUCCESS = "Вы отправили Соцработника в дом гражданина - {}."
-    RESOLVE_PLAYER_CHOOSE_VARIANT = "Этой ночью вас посетил жадный Соцработник. Выберите способ откупиться от него:\n1. Потратить 1 HP\n2. Потратить карту\n"
-    RESOLVE_PLAYER_CHOOSE_CARD = "Выберите карту: \n {}"
+    RESOLVE_PLAYER_CHOOSE_VARIANT = "Этой ночью вас посетил жадный Соцработник. Выберите способ откупиться от него:"
+    RESOLVE_PLAYER_HP_OPTION = "1. Потратить 1 HP"
+    RESOLVE_PLAYER_CARD_OPTION = "2. Потратить карту"
+    RESOLVE_PLAYER_CHOOSE_CARD = CommonMessages.CHOOSE_CARD_NUMBER
+    # RESOLVE_PLAYER_REFUSE_CHOOSE_CARD = "Изменить способ выплаты"
     RESOLVE_SUCCESS = "Соцработник покинул вас, доставив немало хлопот."
 
 
@@ -149,7 +152,7 @@ class PlayerMessages:
     ERROR_CARD_ACTION_CHOICE = "Ошибка! Введите номер доступной карты."
     CHOOSE_ACTION = "Введите номер действия:"
     OPTION = "{}. {}"
-    CHOOSE_CARD_ACTION = "Введите номер карты:"
+    CHOOSE_CARD_ACTION = CommonMessages.CHOOSE_CARD_NUMBER
 
 
 # ------------------------------------------------------
@@ -202,11 +205,3 @@ class DayGeneral:
 
 class FinishTurn:
     ACT_FINISH_TURN = "Ваш ход завершен!"
-
-
-class Errors:
-    # Commonly used
-    # TARGET = "Ошибка! Введите номер доступной цели."
-    # CARDS_ONE_TARGET = "Ошибка! Введите одну цель для выбранной карты."
-    # DATA_BASE_TARGETS = "Ошибка! Введите три цели для выбранной карты."
-    CONFIRM_CHOICE = "Ошибка! Введите номер доступного действия."

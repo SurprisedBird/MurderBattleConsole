@@ -5,7 +5,7 @@ import utils
 from citizens.citizen import Citizen
 from game import Game
 
-from effects.effect import Effect
+from effects.effect import Effect, InputStatusCode
 
 
 class AlarmEffect(Effect):
@@ -49,7 +49,7 @@ class AlarmEffect(Effect):
 
         return (False, None)
 
-    def _validate(self, target_number: int) -> bool:
+    def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(target_number,
                                                     self.game.citizens)
 

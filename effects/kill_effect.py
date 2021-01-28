@@ -1,19 +1,12 @@
 from enum import Enum
-from typing import Tuple
 
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 from citizens.spy import Spy
 from game import Game
-from message_text_config import Errors
 
-from effects.effect import Effect
-
-
-class ErrorType(Enum):
-    INVALID_TARGET = msg.KillMessages.ERROR_INVALID_TARGET
-    SELF_AS_TARGET = msg.KillMessages.ERROR_SELF_AS_TARGET
+from effects.effect import Effect, InputStatusCode
 
 
 class KillEffect(Effect):
@@ -22,7 +15,9 @@ class KillEffect(Effect):
         super().__init__(context, name, context.game.active_player, 0)
 
     def _activate_impl(self) -> bool:
-        target_number = self._read_target_number()
+        target_number = utils.read_target_number(
+            self.context, msg.KillMessages.ACTIVATION_CHOOSE_TARGET,
+            self._validate)
         self.targets.append(self.game.citizens[target_number - 1])
 
         return True
@@ -55,35 +50,12 @@ class KillEffect(Effect):
 
         return True
 
-    def _validate(self, target_number: int) -> Tuple[bool, ErrorType]:
-        is_valid = utils.validate_citizen_target_number(
-            target_number, self.game.citizens)
-
-        # Kill could not be set on yourself
-        is_self_as_target = \
-            (self.game.citizens[target_number - 1] is self.creator) \
-            if is_valid else False
-
-        if is_self_as_target:
-            return (False, ErrorType.SELF_AS_TARGET)
-        elif not is_valid:
-            return (False, ErrorType.INVALID_TARGET)
-
-        return (True, None)
+    def _validate(self, target_number: int) -> InputStatusCode:
+        return utils.validate_citizen_target_number(
+            target_number,
+            self.game.citizens,
+            self_as_target_allowed=False,
+            creator=self.creator)
 
     def _on_clear_impl(self) -> None:
         pass
-
-    # TODO: duplicating logic. There are seveal places in code with same read and validate logic
-    # Fix duplication AND\OR make error codes returnal - common practice for every effect
-    def _read_target_number(self) -> int:
-        message = msg.KillMessages.ACTIVATION_CHOOSE_TARGET
-        target_number = self.user_interaction.read_number(message)
-
-        is_valid, error_code = self._validate(target_number)
-        while not is_valid:
-            self.user_interaction.show_active_instant(error_code.value)
-            target_number = self.user_interaction.read_number(message)
-            is_valid, error_code = self._validate(target_number)
-
-        return target_number
