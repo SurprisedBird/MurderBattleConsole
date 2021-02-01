@@ -99,7 +99,7 @@ class TaxesEffect(Effect):
             card_choice = self.user_interaction.read_number(card_options)
 
             if card_choice is None or \
-                1 > card_choice > len(self.targets[0].stolen_cards):
+                (1 > card_choice > len(card_list)):
                 self.user_interaction.show_active_instant(
                     msg.CommonMessages.ERROR_INVALID_OPTION)
                 continue

@@ -13,7 +13,7 @@ def read_target_number(context: 'Context', message: str,
     while (input_status_code is not InputStatusCode.OK):
         context.user_interaction.show_active_instant(input_status_code.value)
         target_number = context.user_interaction.read_number(message)
-        input_status_code = context._validate(target_number)
+        input_status_code = validate_method(target_number)
 
     return target_number
 
@@ -64,9 +64,9 @@ def validate_citizen_target_number(
             if is_valid else False
 
     if not self_as_target_allowed and is_self_as_target:
-        return InputStatusCode.SELF_AS_TARGET
+        return InputStatusCode.NOK_SELF_AS_TARGET
     elif not is_valid:
-        return InputStatusCode.INVALID_TARGET
+        return InputStatusCode.NOK_INVALID_TARGET
 
     return InputStatusCode.OK
 
