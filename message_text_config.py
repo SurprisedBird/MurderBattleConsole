@@ -75,11 +75,17 @@ class TrapMessages:
     RESOLVED_CATCHED = "Вы попали в Ловушку, ваше действие было прервано."
 
 
-class WitnessDefendMessages:
+class WitnessMessages:
     ACTIVATION_CHOOSE_TARGET = "Выберите гражданина, на дом которого будет установлена Защита свидетеля:"
     ACTIVATION_SUCCESS = "Защита свидетеля была установлена на дом гражданина - {}."
     RESOLVE_START_PUBLICLY = "Городская полиция оцепила один из домов. Говорят, что они нашли ценного свидетеля по делу городских убийств."
     RESOLVE_SUCCESS_PUBLICLY = "В дом {} вломился неизвестный, но был остановлен доблестными стражами закона."
+    RESOLVE_LOST_HP = CommonMessages.LOST_HP
+    RESOLVE_PLAYER_CHOOSE_VARIANT = "Стражи порядка не работают за спасибо. Пришло время платить!"
+    RESOLVE_PLAYER_DECLINE_OPTION = "1. Отказаться от защиты"
+    RESOLVE_PLAYER_HP_OPTION = "2. Потратить 1 HP"
+    RESOLVE_PLAYER_CARD_OPTION = "3. Потратить карту"
+    RESOLVE_PLAYER_CHOOSE_CARD = CommonMessages.CHOOSE_CARD_NUMBER
 
 
 class TheatreMessages:
