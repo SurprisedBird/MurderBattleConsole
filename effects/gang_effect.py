@@ -4,7 +4,7 @@ from citizens.citizen import Citizen
 from citizens.player import Player
 from game import Game
 
-from effects.effect import Effect, EffectStatus
+from effects.effect import Effect, EffectStatus, InputStatusCode
 
 
 class GangEffect(Effect):
@@ -27,7 +27,7 @@ class GangEffect(Effect):
 
         for citizen in citizens:
             card_effect = (effect for effect in citizen.effects
-                           if self.is_crad_effect(effect))
+                           if self.is_valid_card_effect(effect))
 
             for effect in card_effect:
                 card_effects_list.append(effect)
@@ -38,13 +38,13 @@ class GangEffect(Effect):
 
         return True
 
-    def is_crad_effect(self, effect):
-        is_next_round = (effect.activation_round == self.activation_round + 1)
+    def is_valid_card_effect(self, effect: 'Effect') -> bool:
+        is_current_round = effect.activation_round == self.game.round_number
         not_an_action = (not utils.is_action_effect(effect))
 
-        return is_next_round and not_an_action
+        return is_current_round and not_an_action
 
-    def _validate(self, target_number: int) -> bool:
+    def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(target_number,
                                                     self.game.citizens)
 
