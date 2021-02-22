@@ -26,9 +26,8 @@ class GangEffect(Effect):
         citizens = self.context.game.citizens
 
         for citizen in citizens:
-            card_effect_generator = (
-                effect for effect in citizen.effects
-                if self.is_current_round_card_effect(effect))
+            card_effect_generator = (effect for effect in citizen.effects
+                                     if self.should_be_disabled(effect))
 
             for card_effect in card_effect_generator:
                 card_effect_list.append(card_effect)
@@ -39,7 +38,7 @@ class GangEffect(Effect):
 
         return True
 
-    def is_current_round_card_effect(self, effect: 'Effect') -> bool:
+    def should_be_disabled(self, effect: 'Effect') -> bool:
         is_current_round = (effect.activation_round == self.game.round_number)
         not_an_action = (not utils.is_action_effect(effect))
 
