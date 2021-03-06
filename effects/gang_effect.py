@@ -22,23 +22,16 @@ class GangEffect(Effect):
         if self.game.round_number == self.activation_round:
             return False
 
-        card_effect_list = []
-        citizens = self.context.game.citizens
-
-        for citizen in citizens:
-            card_effect_generator = (effect for effect in citizen.effects
-                                     if self.should_be_disabled(effect))
-
-            for card_effect in card_effect_generator:
-                card_effect_list.append(card_effect)
-
-        for card_effect in card_effect_list:
-            card_effect.deactivate()
-            self.user_interaction.save_active(msg.GangMessages.RESOLVE_SUCCESS)
+        for citizen in self.game.citizens:
+            for effect in citizen.effects:
+                if self.should_be_removed(effect):
+                    citizen.effects.remove(effect)
+                    self.user_interaction.save_active(
+                        msg.GangMessages.RESOLVE_SUCCESS)
 
         return True
 
-    def should_be_disabled(self, effect: 'Effect') -> bool:
+    def should_be_removed(self, effect: 'Effect') -> bool:
         is_current_round = (effect.activation_round == self.game.round_number)
         not_an_action = (not utils.is_action_effect(effect))
 
