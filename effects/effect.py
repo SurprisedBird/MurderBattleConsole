@@ -11,6 +11,8 @@ from game import Game
 class EffectStatus(Enum):
     CREATED = auto()
     ACTIVATED = auto()
+    RESOLVING = auto()
+    RESOLVED = auto()
     FINISHED = auto()
 
 
@@ -65,13 +67,14 @@ class Effect(ABC):
         pass
 
     def resolve(self) -> None:
-        if (self.status == EffectStatus.ACTIVATED):
-            is_finished = self._resolve_impl()
+        if (self.status == EffectStatus.ACTIVATED) or \
+            (self.status == EffectStatus.RESOLVING):
+            self.status = EffectStatus.RESOLVING
+            is_resolved = self._resolve_impl()
 
-            if (is_finished):
-                self.status = EffectStatus.FINISHED
-
-        elif (self.status == EffectStatus.CREATED):
+            if (is_resolved):
+                self.status = EffectStatus.RESOLVED
+        else:
             # logging.warning(f'Unexpected resolve call for {self._name}.
             #                 Current stauts: {self._status}')
             pass
@@ -89,8 +92,10 @@ class Effect(ABC):
         pass
 
     def on_clear(self) -> None:
-        if (self.status == EffectStatus.FINISHED):
-            is_finished = self._on_clear_impl()
+        if self.status == EffectStatus.RESOLVED:
+            self._on_clear_impl()
+
+            self.status = EffectStatus.FINISHED
 
     @abstractmethod
     def _on_clear_impl(self) -> None:
@@ -100,4 +105,10 @@ class Effect(ABC):
         return self.priority < other.priority
 
     def deactivate(self) -> None:
-        self.status = EffectStatus.FINISHED
+        # We should skip on_clear stage only
+        # if resolve was not called before
+        if (self.status == EffectStatus.CREATED) or \
+            (self.status == EffectStatus.ACTIVATED):
+            self.status = EffectStatus.FINISHED
+        elif (self.status == EffectStatus.RESOLVING):
+            self.status = EffectStatus.RESOLVED
