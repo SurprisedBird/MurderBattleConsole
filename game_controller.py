@@ -108,7 +108,15 @@ class GameController(Context):
 # =================================================================
 
     def _proceed_game(self) -> None:
+
         self._count_round()
+
+        # Disable steal in the first round
+        if self._game.round_number == 1:
+            self._game.active_player.disable_steal_action()
+        else:
+            self._game.active_player.enable_steal_action()
+
         self._show_night_state()
 
         action_confirmed = False
