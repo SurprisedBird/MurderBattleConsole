@@ -24,14 +24,15 @@ class GangEffect(Effect):
 
         for citizen in self.game.citizens:
             for effect in citizen.effects:
-                if self.should_be_removed(effect):
-                    citizen.effects.remove(effect)
+                if self._should_be_deactivated(effect):
+                    effect.deactivate()
                     self.user_interaction.save_active(
                         msg.GangMessages.RESOLVE_SUCCESS)
+                    return True
 
         return True
 
-    def should_be_removed(self, effect: 'Effect') -> bool:
+    def _should_be_deactivated(self, effect: 'Effect') -> bool:
         is_current_round = (effect.activation_round == self.game.round_number)
         not_an_action = (not utils.is_action_effect(effect))
 
