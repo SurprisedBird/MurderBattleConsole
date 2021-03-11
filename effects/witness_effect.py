@@ -52,7 +52,8 @@ class WitnessEffect(Effect):
 
         if action_effect:
             self.user_interaction.show_global_instant(
-                msg.WitnessMessages.RESOLVE_SUCCESS_PUBLICLY.format(self.targets[0].name))
+                msg.WitnessMessages.RESOLVE_SUCCESS_PUBLICLY.format(
+                    self.targets[0].name))
 
             self.game.active_player.hp -= 1
             self.user_interaction.show_active_instant(

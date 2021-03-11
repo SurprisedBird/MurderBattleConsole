@@ -13,6 +13,7 @@ from effects.taxes_effect import TaxesEffect
 from effects.trap_effect import TrapEffect
 from effects.videocamera_effect import VideoCameraEffect
 from effects.whore_effect import WhoreEffect
+from effects.witness_effect import WitnessEffect
 from game_controller import GameController
 
 citizens_dict = {
@@ -22,7 +23,7 @@ citizens_dict = {
     "Сутенер": Card("Проститутка", WhoreEffect),
     "Надзиратель": Card("Система тревоги", AlarmEffect),
     "Охотник": Card("Ловушка", TrapEffect),
-    "Полицейский": Card("Защита свидетеля", NoneEffect),
+    "Полицейский": Card("Защита свидетеля", WitnessEffect),
     "Актер": Card("Театральный реквизит", NoneEffect),
     "Наркоман": Card("Наркотики", FreakEffect),
     "Вечно недовольная старушка": Card("Анонимный звонок", AnonymusCallEffect),

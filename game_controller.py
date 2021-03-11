@@ -111,6 +111,8 @@ class GameController(Context):
 
         self._count_round()
 
+        # TODO: remove this approach after adding pre_proceed_game stage!!!
+        # TODO: Current approach conatins bug: whore_effect won't work properly
         # Disable steal in the first round
         if self._game.round_number == 1:
             self._game.active_player.disable_steal_action()
