@@ -8,7 +8,7 @@ from effects.effect import Effect, InputStatusCode
 class FreakEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: 'Citizen') -> None:
-        super().__init__(context, name, creator, 11)
+        super().__init__(context, name, creator, 10)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
