@@ -12,7 +12,7 @@ from effects.effect import Effect, InputStatusCode
 class GossipsEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
-        super().__init__(context, name, creator, 4)
+        super().__init__(context, name, creator, 7)
         self.night_number = 0
 
     def _activate_impl(self) -> bool:
