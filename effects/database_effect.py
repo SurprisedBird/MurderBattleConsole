@@ -12,7 +12,7 @@ from effects.effect import Effect, InputStatusCode
 class DatabaseEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
-        super().__init__(context, name, creator, 4)
+        super().__init__(context, name, creator, 6)
 
     def _activate_impl(self) -> bool:
         target_numbers = self._read_target_numbers()
@@ -30,7 +30,7 @@ class DatabaseEffect(Effect):
                 last_target_number - 1, self.game.citizens):
             return InputStatusCode.NOK_INVALID_TARGET
 
-        #check if player have chosen 3 different targets
+        # check if player have chosen 3 different targets
         contains_duplicates = (len(target_numbers) != len(set(target_numbers)))
         if contains_duplicates:
             return InputStatusCode.NOK_SAME_TARGET
