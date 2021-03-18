@@ -52,6 +52,14 @@ class Effect(ABC):
             #                 Current stauts: {self._status}')
             pass
 
+    def activate_by_target(self, citizen) -> None:
+        if (self.status == EffectStatus.CREATED):
+            self.targets.append(citizen)
+            citizen.effects.append(self)
+
+            self.status = EffectStatus.ACTIVATED
+            self.activation_round = self.game.round_number
+
     @abstractmethod
     def _activate_impl(self) -> bool:
         """
@@ -68,7 +76,7 @@ class Effect(ABC):
 
     def resolve(self) -> None:
         if (self.status == EffectStatus.ACTIVATED) or \
-            (self.status == EffectStatus.RESOLVING):
+                (self.status == EffectStatus.RESOLVING):
             self.status = EffectStatus.RESOLVING
             is_resolved = self._resolve_impl()
 
@@ -108,7 +116,7 @@ class Effect(ABC):
         # We should skip on_clear stage only
         # if resolve was not called before
         if (self.status == EffectStatus.CREATED) or \
-            (self.status == EffectStatus.ACTIVATED):
+                (self.status == EffectStatus.ACTIVATED):
             self.status = EffectStatus.FINISHED
         elif (self.status == EffectStatus.RESOLVING):
             self.status = EffectStatus.RESOLVED
