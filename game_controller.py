@@ -9,6 +9,9 @@ from citizens.player import Player
 from citizens.spy import Spy
 from context import Context
 from effects.effect import Effect, EffectStatus
+from effects.spy_effect import SpyEffect
+from effects.first_night_effect import FirstNightEffect
+from effects.alarm_effect import AlarmEffect
 from game import Game
 from user_interactions.user_interaction import UserInteraction
 
@@ -42,6 +45,7 @@ class GameController(Context):
         self._create_players(avilable_citizens)
         self._set_order()
         self._create_spy(avilable_citizens)
+        self._pre_proceed_game()
         self._show_game_state()
 
     def _create_citizens(self, avilable_citizens) -> None:
@@ -99,6 +103,18 @@ class GameController(Context):
         self._game.citizens.remove(random_citizen)
         self._game.citizens.insert(replacing_index, self._game.spy)
 
+    def _pre_proceed_game(self) -> None:
+        self._create_effect(SpyEffect, self._game.spy)
+        self._create_effect(FirstNightEffect, self._game.passive_player)
+        self._create_effect(AlarmEffect, self._game.citizens[3])
+
+        self._resolve_effects()
+        self._clear_effects()
+
+    def _create_effect(self, effect_name, citizen) -> None:
+        effect = effect_name(self, None, citizen)
+        effect.activate_by_target(citizen)
+
     def _show_game_state(self) -> None:
         self._user_interaction.save_global(msg.PreparePhase.GLOBAL_START_GAME)
         self._user_interaction.show_all()
@@ -110,15 +126,6 @@ class GameController(Context):
     def _proceed_game(self) -> None:
 
         self._count_round()
-
-        # TODO: remove this approach after adding pre_proceed_game stage!!!
-        # TODO: Current approach conatins bug: whore_effect won't work properly
-        # Disable steal in the first round
-        if self._game.round_number == 1:
-            self._game.active_player.disable_steal_action()
-        else:
-            self._game.active_player.enable_steal_action()
-
         self._show_night_state()
 
         action_confirmed = False
