@@ -112,6 +112,10 @@ class Effect(ABC):
     def __lt__(self, other: 'Effect') -> bool:
         return self.priority < other.priority
 
+    @property
+    def is_deactivated(self) -> bool:
+        return self.status == EffectStatus.FINISHED
+
     def deactivate(self) -> None:
         # We should skip on_clear stage only
         # if resolve was not called before
