@@ -19,7 +19,7 @@ class PaymentChoice(Enum):
 class WitnessEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
-        super().__init__(context, name, context.game.active_player, 11)
+        super().__init__(context, name, context.game.active_player, 8)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
@@ -40,7 +40,7 @@ class WitnessEffect(Effect):
             if payment_choice == PaymentChoice.DECLINE_OPTION:
                 return True
             elif payment_choice == PaymentChoice.HP_OPTION:
-                self.targets[0].hp -= 1
+                self.creator.hp -= 1
                 return False
             elif payment_choice == PaymentChoice.CARD_OPTION:
                 card = self._choose_card()
@@ -71,16 +71,16 @@ class WitnessEffect(Effect):
         pass
 
     def _create_card_list(self) -> List['Card']:
-        card_list = self.targets[0].stolen_cards[:]
+        card_list = self.creator.stolen_cards[:]
 
-        if self.targets[0].citizen_card is not None:
-            card_list.append(self.targets[0].citizen_card)
+        if self.creator.citizen_card is not None:
+            card_list.append(self.creator.citizen_card)
 
         return card_list
 
     def _choose_payment(self) -> PaymentChoice:
-        target_has_cards = self.targets[0].citizen_card is not None or len(
-            self.targets[0].stolen_cards) > 0
+        target_has_cards = self.creator.citizen_card is not None or len(
+            self.creator.stolen_cards) > 0
 
         payment_options = f"{msg.WitnessMessages.RESOLVE_PLAYER_CHOOSE_VARIANT}\n"
         payment_options += f"{msg.WitnessMessages.RESOLVE_PLAYER_DECLINE_OPTION}\n"
@@ -120,7 +120,7 @@ class WitnessEffect(Effect):
             return card_list[card_choice - 1]
 
     def _remove_card_from_target(self, card: 'Card') -> None:
-        if self.targets[0].citizen_card is card:
-            self.targets[0].citizen_card = None
+        if self.creator.citizen_card is card:
+            self.creator.citizen_card = None
         else:
-            self.targets[0].stolen_cards.remove(card)
+            self.creator.stolen_cards.remove(card)
