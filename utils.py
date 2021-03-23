@@ -60,8 +60,8 @@ def validate_citizen_target_number(
                 and citizens[target_number - 1].is_alive)
 
     is_self_as_target = \
-            (citizens[target_number - 1] is creator) \
-            if is_valid else False
+        (citizens[target_number - 1] is creator) \
+        if is_valid else False
 
     if not self_as_target_allowed and is_self_as_target:
         return InputStatusCode.NOK_SELF_AS_TARGET
@@ -80,10 +80,10 @@ def is_spy(citizen: 'Citizen') -> bool:
 
 
 def contains_player(citizens: List['Citizen']) -> bool:
-    roles = [type(target).__name__ for target in self.targets]
+    roles = [type(target).__name__ for target in citizens]
     return 'Player' in roles
 
 
 def contains_spy(citizens: List['Citizen']) -> bool:
-    roles = [type(target).__name__ for target in self.targets]
+    roles = [type(target).__name__ for target in citizens]
     return 'Spy' in roles
