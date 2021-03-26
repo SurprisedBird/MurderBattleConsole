@@ -124,7 +124,6 @@ class GameController(Context):
 # =================================================================
 
     def _proceed_game(self) -> None:
-
         self._count_round()
         self._show_night_state()
 
@@ -237,6 +236,9 @@ class GameController(Context):
             ]
 
     def _resolve_effects(self) -> None:
+        for effect in self._game.effects:
+            effect.resolve()
+
         for citizen in self._game.citizens:
             for effect in citizen.effects:
                 effect.resolve()
@@ -299,6 +301,7 @@ class GameController(Context):
 # =================================================================
 # Context implementation
 # =================================================================
+
 
     @property
     def user_interaction(self):
