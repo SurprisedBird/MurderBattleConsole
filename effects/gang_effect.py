@@ -13,7 +13,7 @@ class GangEffect(Effect):
         super().__init__(context, name, creator, 18)
 
     def _activate_impl(self) -> bool:
-        self.targets.append(self.creator)
+        self.targets.append(self.game)
         self.user_interaction.save_active(msg.GangMessages.ACTIVATION_SUCCESS)
 
         return True

@@ -8,9 +8,11 @@ from action_manager import ActionManager
 class Game:
     citizens: List['Citizen'] = field(default_factory=list)
     players: List['Player'] = field(default_factory=list)
+    name: str = "Город"
     spy: 'Spy' = None
     round_number: int = 0
     action_manager: ActionManager = None
+    effects: List['Effect'] = field(default_factory=list)
 
     @property
     def active_player(self) -> 'Player':
