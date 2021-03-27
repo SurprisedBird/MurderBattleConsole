@@ -9,7 +9,7 @@ class Context(ABC):
 
     @property
     @abstractmethod
-    def game(self):
+    def city(self):
         pass
 
     @property

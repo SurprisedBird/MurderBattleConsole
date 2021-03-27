@@ -1,7 +1,6 @@
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
-from game import Game
 
 from effects.effect import Effect, InputStatusCode
 
@@ -15,7 +14,7 @@ class WhoreEffect(Effect):
         target_number = utils.read_target_number(
             self.context, msg.WhoreMessages.ACTIVATION_CHOOSE_TARGET,
             self._validate)
-        self.targets.append(self.game.citizens[target_number - 1])
+        self.targets.append(self.city.citizens[target_number - 1])
 
         self.user_interaction.save_active(
             msg.WhoreMessages.ACTIVATION_SUCCESS.format(self.targets[0].name))
@@ -23,7 +22,7 @@ class WhoreEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
-        if self.game.round_number > self.activation_round:
+        if self.city.round_number > self.activation_round:
             return True
 
         self.user_interaction.save_global(
@@ -34,7 +33,7 @@ class WhoreEffect(Effect):
             self.targets[0].disable_kill_action()
             self.targets[0].disable_staging_action()
 
-        if self.targets[0] is self.game.passive_player:
+        if self.targets[0] is self.city.passive_player:
             self.user_interaction.save_passive(
                 msg.WhoreMessages.RESOLVE_SUCCESS)
 
@@ -42,7 +41,7 @@ class WhoreEffect(Effect):
 
     def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(target_number,
-                                                    self.game.citizens)
+                                                    self.city.citizens)
 
     def _on_clear_impl(self) -> None:
         if utils.is_player(self.targets[0]):

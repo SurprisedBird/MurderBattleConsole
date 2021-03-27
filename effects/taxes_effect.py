@@ -5,7 +5,6 @@ import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 from citizens.spy import Spy
-from game import Game
 
 from effects.effect import Effect, InputStatusCode
 
@@ -24,7 +23,7 @@ class TaxesEffect(Effect):
         target_number = utils.read_target_number(
             self.context, msg.TaxesMessages.ACTIVATION_CHOOSE_TARGET,
             self._validate)
-        self.targets.append(self.game.citizens[target_number - 1])
+        self.targets.append(self.city.citizens[target_number - 1])
 
         self.user_interaction.save_active(
             msg.TaxesMessages.ACTIVATION_SUCCESS.format(self.targets[0].name))
@@ -32,7 +31,7 @@ class TaxesEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
-        if self.activation_round == self.game.round_number:
+        if self.activation_round == self.city.round_number:
             return False
 
         if utils.is_player(self.targets[0]):
@@ -53,7 +52,7 @@ class TaxesEffect(Effect):
     def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(
             target_number,
-            self.game.citizens,
+            self.city.citizens,
             self_as_target_allowed=False,
             creator=self.creator)
 

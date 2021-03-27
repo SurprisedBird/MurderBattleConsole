@@ -3,7 +3,6 @@ from typing import Tuple
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
-from game import Game
 
 from effects.effect import Effect, InputStatusCode
 
@@ -14,11 +13,11 @@ class FirstNightEffect(Effect):
         super().__init__(context, name, creator, 5)
 
     def _activate_impl(self) -> bool:
-        self.targets.append(self.game.passive_player)
+        self.targets.append(self.city.passive_player)
         return True
 
     def _resolve_impl(self) -> bool:
-        if self.activation_round == self.game.round_number:
+        if self.activation_round == self.city.round_number:
             self.targets[0].disable_steal_action()
             return False
 

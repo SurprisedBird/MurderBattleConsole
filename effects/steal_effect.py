@@ -1,7 +1,6 @@
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
-from game import Game
 
 from effects.effect import Effect, InputStatusCode
 
@@ -16,7 +15,7 @@ class StealEffect(Effect):
             self.context, msg.StealMessages.ACTIVATION_CHOOSE_TARGET,
             self._validate)
 
-        self.targets.append(self.game.citizens[target_number - 1])
+        self.targets.append(self.city.citizens[target_number - 1])
 
         self.user_interaction.save_active(
             msg.StealMessages.ACTIVATION_SUCCESS.format(self.targets[0].name))
@@ -31,7 +30,7 @@ class StealEffect(Effect):
             self.user_interaction.save_active(
                 msg.StealMessages.RESOLVE_SUCCESS.format(citizen_card.name))
 
-            if self.targets[0] is self.game.passive_player:
+            if self.targets[0] is self.city.passive_player:
                 self.user_interaction.save_passive(
                     msg.StealMessages.RESOLVE_LOST_CARD)
         else:
@@ -44,7 +43,7 @@ class StealEffect(Effect):
 
     def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(target_number,
-                                                    self.game.citizens)
+                                                    self.city.citizens)
 
     def _on_clear_impl(self) -> None:
         pass

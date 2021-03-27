@@ -5,7 +5,6 @@ import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 from citizens.spy import Spy
-from game import Game
 
 from effects.effect import Effect, InputStatusCode
 
@@ -19,23 +18,23 @@ class PaymentChoice(Enum):
 class WitnessEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
-        super().__init__(context, name, context.game.active_player, 8)
+        super().__init__(context, name, context.city.active_player, 8)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
             self.context, msg.WitnessMessages.ACTIVATION_CHOOSE_TARGET,
             self._validate)
-        self.targets.append(self.game.citizens[target_number - 1])
+        self.targets.append(self.city.citizens[target_number - 1])
 
         return True
 
     def _resolve_impl(self) -> bool:
-        if self.activation_round == self.game.round_number:
+        if self.activation_round == self.city.round_number:
             self.user_interaction.show_global_instant(
                 msg.WitnessMessages.RESOLVE_START_PUBLICLY)
             return False
 
-        if self.creator is self.game.active_player:
+        if self.creator is self.city.active_player:
             payment_choice = self._choose_payment()
             if payment_choice == PaymentChoice.DECLINE_OPTION:
                 return True
@@ -55,7 +54,7 @@ class WitnessEffect(Effect):
                 msg.WitnessMessages.RESOLVE_SUCCESS_PUBLICLY.format(
                     self.targets[0].name))
 
-            self.game.active_player.hp -= 1
+            self.city.active_player.hp -= 1
             self.user_interaction.show_active_instant(
                 msg.WitnessMessages.RESOLVE_LOST_HP)
 
@@ -65,7 +64,7 @@ class WitnessEffect(Effect):
 
     def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(target_number,
-                                                    self.game.citizens)
+                                                    self.city.citizens)
 
     def _on_clear_impl(self) -> None:
         pass

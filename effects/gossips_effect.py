@@ -4,7 +4,6 @@ from typing import List
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
-from game import Game
 
 from effects.effect import Effect, InputStatusCode
 
@@ -21,24 +20,24 @@ class GossipsEffect(Effect):
             self._validate)
 
         self.night_number = int(target_number)
-        self.targets.append(self.game.passive_player)
+        self.targets.append(self.city.passive_player)
 
         return True
 
     def _resolve_impl(self) -> bool:
-        first_action = self.game.action_manager.actions_histry[
+        first_action = self.city.action_manager.actions_histry[
             self.night_number][0].name
 
         first_targets = ""
-        for target in self.game.action_manager.actions_histry[
+        for target in self.city.action_manager.actions_histry[
                 self.night_number][0].targets:
             first_targets += target.name + " "
 
-        second_action = self.game.action_manager.actions_histry[
+        second_action = self.city.action_manager.actions_histry[
             self.night_number][1].name
 
         second_targets = ""
-        for target in self.game.action_manager.actions_histry[
+        for target in self.city.action_manager.actions_histry[
                 self.night_number][1].targets:
             second_targets += target.name + " "
 
@@ -53,7 +52,7 @@ class GossipsEffect(Effect):
     # TODO: forbid player to choose nights with own actions
     def _validate(self, target_number: int) -> InputStatusCode:
         if target_number == None or target_number <= 0 or target_number > len(
-                self.game.action_manager.actions_histry):
+                self.city.action_manager.actions_histry):
             return InputStatusCode.NOK_INVALID_TARGET
 
         return InputStatusCode.OK

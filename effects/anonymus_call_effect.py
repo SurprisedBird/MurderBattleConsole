@@ -3,7 +3,6 @@ from enum import Enum, auto
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
-from game import Game
 
 from effects.effect import Effect, InputStatusCode
 
@@ -18,7 +17,7 @@ class AnonymusCallEffect(Effect):
             self.context, msg.AnonymousCallMessages.ACTIVATION_CHOOSE_TARGET,
             self._validate)
 
-        self.targets.append(self.game.citizens[target_number - 1])
+        self.targets.append(self.city.citizens[target_number - 1])
 
         self.user_interaction.save_active(
             msg.AnonymousCallMessages.ACTIVATION_SUCCESS.format(
@@ -50,7 +49,7 @@ class AnonymusCallEffect(Effect):
     def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(
             target_number,
-            self.game.citizens,
+            self.city.citizens,
             self_as_target_allowed=False,
             creator=self.creator)
 

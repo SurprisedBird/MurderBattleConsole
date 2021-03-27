@@ -1,6 +1,5 @@
 import message_text_config as msg
 import utils
-from game import Game
 
 from effects.effect import Effect, InputStatusCode
 
@@ -14,7 +13,7 @@ class FreakEffect(Effect):
         target_number = utils.read_target_number(
             self.context, msg.DrugsMessages.ACTIVATION_CHOOSE_TARGET,
             self._validate)
-        self.targets.append(self.game.citizens[target_number - 1])
+        self.targets.append(self.city.citizens[target_number - 1])
 
         self.user_interaction.save_active(
             msg.DrugsMessages.ACTIVATION_SUCCESS.format(self.targets[0].name))
@@ -36,7 +35,7 @@ class FreakEffect(Effect):
 
     def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(target_number,
-                                                    self.game.citizens)
+                                                    self.city.citizens)
 
     def _on_clear_impl(self) -> None:
         pass
