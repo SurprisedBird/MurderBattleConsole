@@ -5,7 +5,6 @@ from typing import List
 
 import message_text_config as msg
 from citizens.citizen import Citizen
-from game import Game
 
 
 class EffectStatus(Enum):
@@ -28,7 +27,7 @@ class Effect(ABC):
                  priority: int) -> None:
         self.context = context
         self.user_interaction = context.user_interaction
-        self.game = self.context.game
+        self.city = self.context.city
         self.name = name
         self.creator = creator
         self.priority = priority
@@ -43,7 +42,7 @@ class Effect(ABC):
 
             if (is_activated):
                 self.status = EffectStatus.ACTIVATED
-                self.activation_round = self.game.round_number
+                self.activation_round = self.city.round_number
             else:
                 # logging.warning(f'Actovatoion FAILED for {self._name}.')
                 pass
@@ -58,7 +57,7 @@ class Effect(ABC):
             citizen.effects.append(self)
 
             self.status = EffectStatus.ACTIVATED
-            self.activation_round = self.game.round_number
+            self.activation_round = self.city.round_number
 
     @abstractmethod
     def _activate_impl(self) -> bool:

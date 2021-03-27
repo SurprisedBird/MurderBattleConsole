@@ -3,7 +3,6 @@ from typing import Tuple
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
-from game import Game
 
 from effects.effect import Effect, InputStatusCode
 
@@ -16,7 +15,7 @@ class SpyEffect(Effect):
         super().__init__(context, name, creator, 4)
 
     def _activate_impl(self) -> bool:
-        self.targets.append(self.game.spy)
+        self.targets.append(self.city.spy)
         return True
 
     def _resolve_impl(self) -> bool:
@@ -24,16 +23,17 @@ class SpyEffect(Effect):
 
         if is_spy_triggered:
             effect.creator.hp -= 1
-            self.game.spy.hp = 0
+            self.city.spy.hp = 0
 
             effect.deactivate()
 
             self.user_interaction.show_active_instant(
                 msg.SpyMessages.RESOLVE_LOST_HP)
 
-        if not self.game.spy.is_alive:
+        if not self.city.spy.is_alive:
             self.user_interaction.show_global_instant(
-                msg.SpyMessages.RESOLVE_ATTACK_SPY.format(self.targets[0].name, self.targets[0].name))
+                msg.SpyMessages.RESOLVE_ATTACK_SPY.format(
+                    self.targets[0].name, self.targets[0].name))
             return True
 
         return False

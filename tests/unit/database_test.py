@@ -10,7 +10,7 @@ from card import Card
 from citizens.citizen import Citizen
 from effects.database_effect import DataBase
 from effects.none_effect import NoneEffect
-from game import Game
+from city import City
 from game_controller import GameController
 
 

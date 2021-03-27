@@ -20,9 +20,9 @@ def read_target_number(context: 'Context', message: str,
 
 def save_message_for_player(context: 'Context', player: 'Citizen',
                             message: str) -> None:
-    if player is context.game.active_player:
+    if player is context.city.active_player:
         context.user_interaction.save_active(message)
-    elif player is context.game.passive_player:
+    elif player is context.city.passive_player:
         context.user_interaction.save_passive(message)
     else:
         # do nothing

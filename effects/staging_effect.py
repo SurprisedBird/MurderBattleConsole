@@ -3,7 +3,6 @@ from enum import Enum, auto
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
-from game import Game
 
 from effects.effect import Effect, InputStatusCode
 
@@ -17,7 +16,7 @@ class StagingEffect(Effect):
         target_number = utils.read_target_number(
             self.context, msg.StagingMassages.ACTIVATION_CHOOSE_TARGET,
             self._validate)
-        self.targets.append(self.game.citizens[target_number - 1])
+        self.targets.append(self.city.citizens[target_number - 1])
 
         self.user_interaction.save_active(
             msg.StagingMassages.ACTIVATION_SUCCESS.format(
@@ -40,7 +39,7 @@ class StagingEffect(Effect):
                 self.creator.citizen_card = self.targets[0].citizen_card
                 self.targets[0].citizen_card = None
 
-            citizens = self.game.citizens
+            citizens = self.city.citizens
             target_index = citizens.index(self.targets[0])
             player_index = citizens.index(self.creator)
 
@@ -75,7 +74,7 @@ class StagingEffect(Effect):
     def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(
             target_number,
-            self.game.citizens,
+            self.city.citizens,
             self_as_target_allowed=False,
             creator=self.creator)
 

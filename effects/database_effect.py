@@ -4,7 +4,6 @@ from typing import List
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
-from game import Game
 
 from effects.effect import Effect, InputStatusCode
 
@@ -18,7 +17,7 @@ class DatabaseEffect(Effect):
         target_numbers = self._read_target_numbers()
 
         self.targets = [
-            self.game.citizens[target_number - 1]
+            self.city.citizens[target_number - 1]
             for target_number in target_numbers
         ]
 
@@ -27,7 +26,7 @@ class DatabaseEffect(Effect):
     def _validate(self, target_numbers: List[int]) -> InputStatusCode:
         last_target_number = target_numbers[len(target_numbers) - 1]
         if last_target_number is None or not utils.is_citizen_in_range(
-                last_target_number - 1, self.game.citizens):
+                last_target_number - 1, self.city.citizens):
             return InputStatusCode.NOK_INVALID_TARGET
 
         # check if player have chosen 3 different targets

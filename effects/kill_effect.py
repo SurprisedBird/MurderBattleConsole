@@ -4,7 +4,6 @@ import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 from citizens.spy import Spy
-from game import Game
 
 from effects.effect import Effect, InputStatusCode
 
@@ -12,13 +11,13 @@ from effects.effect import Effect, InputStatusCode
 class KillEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
-        super().__init__(context, name, context.game.active_player, 2)
+        super().__init__(context, name, context.city.active_player, 2)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
             self.context, msg.KillMessages.ACTIVATION_CHOOSE_TARGET,
             self._validate)
-        self.targets.append(self.game.citizens[target_number - 1])
+        self.targets.append(self.city.citizens[target_number - 1])
 
         return True
 
@@ -53,7 +52,7 @@ class KillEffect(Effect):
     def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(
             target_number,
-            self.game.citizens,
+            self.city.citizens,
             self_as_target_allowed=False,
             creator=self.creator)
 
