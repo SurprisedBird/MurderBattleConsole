@@ -21,13 +21,16 @@ class GangEffect(Effect):
         if self.city.round_number == self.activation_round:
             return False
 
+        all_effects = self.city.effects[:]
         for citizen in self.city.citizens:
-            for effect in citizen.effects:
-                if self._should_be_deactivated(effect):
-                    effect.deactivate()
-                    self.user_interaction.save_active(
-                        msg.GangMessages.RESOLVE_SUCCESS)
-                    return True
+            all_effects.extend(citizen.effects)
+
+        for effect in all_effects:
+            if self._should_be_deactivated(effect):
+                effect.deactivate()
+                self.user_interaction.save_active(
+                    msg.GangMessages.RESOLVE_SUCCESS)
+                return True
 
         return True
 
