@@ -25,13 +25,17 @@ class VideoCameraEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
-        if self._is_videocamera_triggered():
-            enemy_name = self.city.active_player.name
+        triggered_effect = self._is_videocamera_triggered()
+        if triggered_effect is not None:
+            enemy_name = triggered_effect.creator.name
             citizen_name = self.targets[0].name
 
             camera_message = msg.VideoCameraMessages.RESOLVE_SUCCESS.format(
                 enemy_name, citizen_name)
-            self.user_interaction.save_passive(camera_message)
+
+            utils.save_message_for_player(
+                self.context, self.creator, camera_message)
+            self.user_interaction.show_all()
 
             return True
 
@@ -42,9 +46,9 @@ class VideoCameraEffect(Effect):
             videocamera_triggered = utils.is_action_effect(effect)
 
             if videocamera_triggered:
-                return True
+                return effect
 
-        return False
+        return None
 
     def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(target_number,
