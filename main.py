@@ -10,6 +10,7 @@ from effects.gang_effect import GangEffect
 from effects.gossips_effect import GossipsEffect
 from effects.none_effect import NoneEffect
 from effects.taxes_effect import TaxesEffect
+from effects.theatre_effect import TheatreEffect
 from effects.trap_effect import TrapEffect
 from effects.videocamera_effect import VideoCameraEffect
 from effects.whore_effect import WhoreEffect
@@ -25,7 +26,7 @@ citizens_dict = {
     "Полицейский": Card("Защита свидетеля", WitnessEffect),
     "Наркоман": Card("Наркотики", FreakEffect),
     "Вечно недовольная старушка": Card("Анонимный звонок", AnonymusCallEffect),
-    "Актер": Card("Театральный реквизит", NoneEffect),
+    "Актер": Card("Театральный реквизит", TheatreEffect),
     "Сутенер": Card("Проститутка", WhoreEffect),
     "Соцработник": Card("Налоги", TaxesEffect),
     "Врач": Card("Антидот", AntidotEffect),
