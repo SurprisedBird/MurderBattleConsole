@@ -41,7 +41,7 @@ class VideoCameraEffect(Effect):
 
         return False
 
-    def _is_videocamera_triggered(self) -> bool:
+    def _is_videocamera_triggered(self) -> 'Effect':
         for effect in self.targets[0].effects:
             videocamera_triggered = utils.is_action_effect(effect)
 
