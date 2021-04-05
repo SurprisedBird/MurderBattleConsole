@@ -11,6 +11,7 @@ class AnonymusCallEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
         super().__init__(context, name, creator, 13)
+        self.detected_name: str
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
@@ -26,25 +27,40 @@ class AnonymusCallEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
+        self.detected_name = self.targets[0].name
+        if self.theatre_target() is not None:
+            self.targets[0] = self.theatre_target()
+
         role = type(self.targets[0]).__name__
         if role == "Player":
             self.user_interaction.show_active_instant(
                 msg.AnonymousCallMessages.RESOLVE_ANONYMOUSCALL_PLAYER.format(
-                    self.targets[0].name))
-            self.targets[0].hp -= 1
-            self.user_interaction.save_passive(
-                msg.AnonymousCallMessages.RESOLVE_ENEMY_LOST_HP)
+                    self.detected_name))
+
+            if self.targets[0].name is self.detected_name:
+                self.targets[0].hp -= 1
+                self.user_interaction.save_passive(
+                    msg.AnonymousCallMessages.RESOLVE_ENEMY_LOST_HP)
         elif role == "Spy":
             self.targets[0].hp -= 1
             self.user_interaction.show_active_instant(
                 msg.AnonymousCallMessages.RESOLVE_ANONYMOUSCALL_SPY.format(
-                    self.targets[0].name))
+                    self.detected_name))
         else:
             self.user_interaction.show_active_instant(
                 msg.AnonymousCallMessages.RESOLVE_ANONYMOUSCALL_NO_SUSPECT.
-                format(self.targets[0].name))
+                format(self.detected_name))
 
         return True
+
+    def theatre_target(self) -> 'Citizen':
+        for effect in self.city.effects:
+            if type(effect).__name__ is 'TheatreEffect':
+                if self.targets[0] is effect.creator:
+                    return effect.mask
+                elif self.targets[0] is effect.mask:
+                    return effect.creator
+        return None
 
     def _validate(self, target_number: int) -> InputStatusCode:
         return utils.validate_citizen_target_number(

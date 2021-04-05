@@ -27,7 +27,11 @@ class VideoCameraEffect(Effect):
     def _resolve_impl(self) -> bool:
         triggered_effect = self._is_videocamera_triggered()
         if triggered_effect is not None:
-            enemy_name = triggered_effect.creator.name
+            if self.theatre_name() is not None:
+                enemy_name = self.theatre_name()
+            else:
+                enemy_name = triggered_effect.creator.name
+
             citizen_name = self.targets[0].name
 
             camera_message = msg.VideoCameraMessages.RESOLVE_SUCCESS.format(
@@ -40,6 +44,13 @@ class VideoCameraEffect(Effect):
             return True
 
         return False
+
+    def theatre_name(self) -> str:
+        for effect in self.city.effects:
+            if type(effect).__name__ is 'TheatreEffect':
+                if self._is_videocamera_triggered().creator is effect.creator:
+                    return effect.mask.name
+        return None
 
     def _is_videocamera_triggered(self) -> 'Effect':
         for effect in self.targets[0].effects:

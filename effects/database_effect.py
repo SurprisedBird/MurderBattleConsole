@@ -37,6 +37,8 @@ class DatabaseEffect(Effect):
         return InputStatusCode.OK
 
     def _resolve_impl(self) -> bool:
+        self.theatre_targets_changer()
+
         if utils.contains_player(self.targets) and utils.contains_spy(
                 self.targets):
             self.user_interaction.show_active_instant(
@@ -52,6 +54,17 @@ class DatabaseEffect(Effect):
                 msg.DatabaseMessages.RESOLVE_NO_SUSPECT)
 
         return True
+
+    def theatre_targets_changer(self) -> 'List':
+        for effect in self.city.effects:
+            if type(effect).__name__ is 'TheatreEffect':
+                for i in range(0, len(self.targets)):
+                    if self.targets[i] is effect.mask:
+                        self.targets[i] = effect.creator
+                    elif self.targets[i] is effect.creator:
+                        self.targets[i] = effect.mask
+
+        return self.targets
 
     def _on_clear_impl(self) -> None:
         pass
