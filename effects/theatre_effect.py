@@ -22,7 +22,7 @@ class TheatreEffect(Effect):
 
         self.user_interaction.save_active(
             msg.TheatreMessages.ACTIVATION_SUCCESS.format(
-                self.targets[0].name))
+                self.mask.name))
 
         return True
 
