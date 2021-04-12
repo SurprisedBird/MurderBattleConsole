@@ -33,7 +33,7 @@ class AnonymusCallEffect(Effect):
 
         role = type(self.targets[0]).__name__
         if role == "Player":
-            self.user_interaction.show_active_instant(
+            self.user_interaction.show_global_instant(
                 msg.AnonymousCallMessages.RESOLVE_ANONYMOUSCALL_PLAYER.format(
                     self.detected_name))
 
@@ -43,11 +43,11 @@ class AnonymusCallEffect(Effect):
                     msg.AnonymousCallMessages.RESOLVE_ENEMY_LOST_HP)
         elif role == "Spy":
             self.targets[0].hp -= 1
-            self.user_interaction.show_active_instant(
+            self.user_interaction.show_global_instant(
                 msg.AnonymousCallMessages.RESOLVE_ANONYMOUSCALL_SPY.format(
                     self.detected_name))
         else:
-            self.user_interaction.show_active_instant(
+            self.user_interaction.show_global_instant(
                 msg.AnonymousCallMessages.RESOLVE_ANONYMOUSCALL_NO_SUSPECT.
                 format(self.detected_name))
 

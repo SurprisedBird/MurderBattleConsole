@@ -25,19 +25,19 @@ class GossipsEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
-        first_action = self.city.action_manager.actions_histry[
+        first_action = self.context.action_manager.actions_histry[
             self.night_number][0].name
 
         first_targets = ""
-        for target in self.city.action_manager.actions_histry[
+        for target in self.context.action_manager.actions_histry[
                 self.night_number][0].targets:
             first_targets += target.name + " "
 
-        second_action = self.city.action_manager.actions_histry[
+        second_action = self.context.action_manager.actions_histry[
             self.night_number][1].name
 
         second_targets = ""
-        for target in self.city.action_manager.actions_histry[
+        for target in self.context.action_manager.actions_histry[
                 self.night_number][1].targets:
             second_targets += target.name + " "
 
