@@ -13,6 +13,7 @@ from effects.alarm_effect import AlarmEffect
 from effects.effect import Effect, EffectStatus
 from effects.first_night_effect import FirstNightEffect
 from effects.spy_effect import SpyEffect
+from murder_logging import logger
 from user_interactions.user_interaction import UserInteraction
 
 
@@ -25,6 +26,7 @@ class GameController(Context):
         self._city = City()
         self._user_interaction = UserInteraction(self)
         self._action_manager = ActionManager()
+        self.logger = logger.getChild(__name__)
 
     def start_game(self) -> None:
         self._prepare_game()
@@ -57,6 +59,8 @@ class GameController(Context):
         self._user_interaction.show_global_instant(
             msg.PreparePhase.GLOBAL_LOAD_GAME)
 
+        self.logger.debug(" ")
+
     def _create_players(self, avilable_citizens) -> None:
         # TODO: first player should not have oportunity to steal
 
@@ -68,6 +72,10 @@ class GameController(Context):
                             user_name=user_name,
                             name=random_citizen.name,
                             citizen_card=random_citizen.citizen_card)
+
+            self.logger.info(
+                f"user_name = {player.user_name}, citizen_name = {player.name}"
+            )
 
             # Add player to players list
             self._city.players.append(player)
@@ -91,6 +99,10 @@ class GameController(Context):
             msg.PreparePhase.GLOBAL_FIRST_TURN.format(
                 self._city.players[0].user_name))
 
+        self.logger.info(
+            f"first player = {self._city.players[0].name}, second player = {self._city.players[1].name}"
+        )
+
     def _create_spy(self, avilable_citizens) -> None:
         random_index = random.randint(0, len(avilable_citizens) - 1)
         random_citizen = avilable_citizens.pop(random_index)
@@ -102,6 +114,8 @@ class GameController(Context):
         replacing_index = self._city.citizens.index(random_citizen)
         self._city.citizens.remove(random_citizen)
         self._city.citizens.insert(replacing_index, self._city.spy)
+
+        self.logger.info(f'spy = {self._city.spy.name}')
 
     def _pre_proceed_game(self) -> None:
         self._create_effect(SpyEffect, self._city.spy)
@@ -115,9 +129,15 @@ class GameController(Context):
         effect = effect_name(self, None, citizen)
         effect.activate_by_target(citizen)
 
+        self.logger.info(
+            f'effect name = {effect_name.__name__}, effect creator = {effect.creator.name}'
+        )
+
     def _show_game_state(self) -> None:
         self._user_interaction.save_global(msg.PreparePhase.GLOBAL_START_GAME)
         self._user_interaction.show_all()
+
+        self.logger.debug(" ")
 
 # =================================================================
 # Proceed game phase
@@ -145,6 +165,8 @@ class GameController(Context):
     def _clear_pre_actions(self) -> None:
         self._action_manager.clear_pre_actions()
 
+        self.logger.info(self._action_manager.pre_actions)
+
     def _apply_pre_actions(self) -> None:
         updated_targets = []
         for effect in self._action_manager.pre_actions:
@@ -156,12 +178,15 @@ class GameController(Context):
         for target in updated_targets:
             target.effects.sort(reverse=True)
 
-        self._action_manager.store_actions_history(
-            self._city.round_number)
+        self._action_manager.store_actions_history(self._city.round_number)
+
+        self.logger.info(self._action_manager.pre_actions)
 
     def _disable_used_player_actions(self):
         self._city.active_player.remove_used_card()
         self._city.active_player.disable_used_staging()
+
+        self.logger.debug(" ")
 
     def _show_night_state(self) -> None:
         night_number_str = msg.NightState.NIGHT_NUMBER.format(
@@ -215,15 +240,20 @@ class GameController(Context):
 
         self._user_interaction.show_all()
 
+        self.logger.debug(" ")
+
     def _create_action(self) -> None:
         effect = self._city.active_player.create_action()
         effect.activate()
         self._action_manager.add_pre_action(effect)
 
+        self.logger.info(f"{effect.name}, {effect.status}")
+
     def _create_card_action(self) -> None:
         effect = self._city.active_player.create_card_action()
         effect.activate()
         self._action_manager.add_pre_action(effect)
+        self.logger.info(f"{effect.name}, {effect.status}")
 
     def _clear_effects(self) -> None:
         for citizen in self._city.citizens:
@@ -234,17 +264,24 @@ class GameController(Context):
                 effect for effect in citizen.effects
                 if effect.status != EffectStatus.FINISHED
             ]
+            self.logger.info(f"{citizen.name}, {citizen.effects}")
 
     def _resolve_effects(self) -> None:
         for effect in self._city.effects:
             effect.resolve()
+            self.logger.info(f"{effect.name}, {effect.status}")
 
         for citizen in self._city.citizens:
             for effect in citizen.effects:
                 effect.resolve()
+                self.logger.info(
+                    f'target name = {citizen.name}, effect name = {effect.name}, status = {effect.status}'
+                )
 
     def _count_round(self) -> None:
         self._city.round_number += 1
+
+        self.logger.debug(" ")
 
     def _confirm_actions(self) -> bool:
         number = self._confirm_actions_msg()
@@ -259,6 +296,8 @@ class GameController(Context):
                     msg.CommonMessages.ERROR_INVALID_OPTION)
                 number = self._confirm_actions_msg()
 
+        self.logger.debug(" ")
+
     def _confirm_actions_msg(self) -> Optional[int]:
         self._user_interaction.save_active(
             msg.NightActionTarget.ACT_CHOISE_INFO.format(
@@ -271,6 +310,9 @@ class GameController(Context):
         self._user_interaction.show_all()
 
         number = self._user_interaction.read_number()
+
+        self.logger.debug("")
+
         return number
 
 # =================================================================
@@ -278,6 +320,7 @@ class GameController(Context):
 # =================================================================
 
     def _check_win(self) -> bool:
+        self.logger.debug("")
         return (not self._city.players[0].is_alive) or \
             (not self._city.players[1].is_alive)
 
@@ -296,6 +339,10 @@ class GameController(Context):
             self._user_interaction.show_global_instant(
                 msg.FinishPhase.GLOBAL_PLAYER_WON.format(
                     self._city.players[0].name))
+
+        self.logger.info(
+            f"{self._city.players[0].is_alive}, second player is alive = {self._city.players[1].is_alive}"
+        )
 
 
 # =================================================================
