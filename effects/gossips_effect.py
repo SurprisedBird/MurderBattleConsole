@@ -52,7 +52,7 @@ class GossipsEffect(Effect):
     # TODO: forbid player to choose nights with own actions
     def _validate(self, target_number: int) -> InputStatusCode:
         if target_number == None or target_number <= 0 or target_number > len(
-                self.city.action_manager.actions_histry):
+                self.context.action_manager.actions_histry):
             return InputStatusCode.NOK_INVALID_TARGET
 
         return InputStatusCode.OK
