@@ -16,6 +16,9 @@ from effects.videocamera_effect import VideoCameraEffect
 from effects.whore_effect import WhoreEffect
 from effects.witness_effect import WitnessEffect
 from game_controller import GameController
+from user import User
+import telebot
+from telegram_initializer import TelegramInitializer
 
 citizens_dict = {
     "Мальчик Хакер": Card("База данных", DatabaseEffect),
@@ -32,8 +35,9 @@ citizens_dict = {
     "Врач": Card("Антидот", AntidotEffect),
     "Бригадир": Card("Банда", GangEffect)
 }
+tel = TelegramInitializer()
 
-user_names = ["GvinP", "Runmaget"]
+user_names = tel.get_users()
 
 if __name__ == "__main__":
     gc = GameController(citizens_dict, user_names)
