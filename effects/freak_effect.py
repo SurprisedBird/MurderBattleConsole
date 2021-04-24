@@ -24,7 +24,7 @@ class FreakEffect(Effect):
         for effect in self.targets[0].effects:
             if type(effect).__name__ in [
                     'TrapEffect', 'AlarmEffect', 'VideocameraEffect',
-                    'WitnessDefenceEffect'
+                    'WitnessEffect'
             ]:
                 effect.deactivate()
 
