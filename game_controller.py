@@ -14,15 +14,15 @@ from effects.effect import Effect, EffectStatus
 from effects.first_night_effect import FirstNightEffect
 from effects.spy_effect import SpyEffect
 from murder_logging import logger
-from user_interactions.user_interaction import UserInteraction
+from user_interactions.user_interaction_telegram import UserInteraction
 
 
 class GameController(Context):
     def __init__(self, citizens_dict: Dict[str, Card],
-                 user_names: List[str]) -> None:
+                 users: List[str]) -> None:
 
         self.citizens_dict = citizens_dict
-        self.user_names = user_names
+        self.users = users
         self._city = City()
         self._user_interaction = UserInteraction(self)
         self._action_manager = ActionManager()
@@ -64,17 +64,17 @@ class GameController(Context):
     def _create_players(self, avilable_citizens) -> None:
         # TODO: first player should not have oportunity to steal
 
-        for user_name in self.user_names:
+        for user in self.users:
             random_index = random.randint(0, len(avilable_citizens) - 1)
             random_citizen = avilable_citizens.pop(random_index)
 
             player = Player(context=self,
-                            user_name=user_name,
+                            user=user,
                             name=random_citizen.name,
                             citizen_card=random_citizen.citizen_card)
 
             self.logger.info(
-                f"user_name = {player.user_name}, citizen_name = {player.name}"
+                f"user_name = {player.user.name}, citizen_name = {player.name}"
             )
 
             # Add player to players list
@@ -88,16 +88,16 @@ class GameController(Context):
     def _set_order(self) -> None:
         random.shuffle(self._city.players)
 
-        self._user_interaction.save_active(msg.PreparePhase.ACT_FIRST_TURN)
-        self._user_interaction.save_active(
+        self._user_interaction.save_passive(msg.PreparePhase.ACT_FIRST_TURN)
+        self._user_interaction.save_passive(
             msg.PreparePhase.ACT_PASS_YOUR_ROLE.format(
                 self._city.players[0].name))
-        self._user_interaction.save_passive(
+        self._user_interaction.save_active(
             msg.PreparePhase.ACT_PASS_YOUR_ROLE.format(
                 self._city.players[1].name))
         self._user_interaction.save_global(
             msg.PreparePhase.GLOBAL_FIRST_TURN.format(
-                self._city.players[0].user_name))
+                self._city.players[0].user.name))
 
         self.logger.info(
             f"first player = {self._city.players[0].name}, second player = {self._city.players[1].name}"

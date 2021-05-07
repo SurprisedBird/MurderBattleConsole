@@ -35,11 +35,14 @@ citizens_dict = {
     "Врач": Card("Антидот", AntidotEffect),
     "Бригадир": Card("Банда", GangEffect)
 }
-tel = TelegramInitializer()
 
-user_names = tel.get_users()
 
 if __name__ == "__main__":
-    gc = GameController(citizens_dict, user_names)
+    while(True):
+        tel = TelegramInitializer()
 
-    gc.start_game()
+        users = tel.get_users()
+
+        gc = GameController(citizens_dict, users)
+
+        gc.start_game()

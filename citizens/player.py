@@ -38,7 +38,7 @@ class ActionData:
 class Player(Citizen):
     def __init__(self,
                  context: 'Context',
-                 user_name: str,
+                 user: str,
                  name: str,
                  citizen_card: Card,
                  hp: int = 3) -> None:
@@ -46,7 +46,7 @@ class Player(Citizen):
 
         self.user_interaction = self.context.user_interaction
 
-        self.user_name = user_name
+        self.user = user
         self.stolen_cards: List[Card] = []
 
         self.actions_common_list: Dict[ActionType, ActionData]
@@ -67,7 +67,7 @@ class Player(Citizen):
     def _init_action_common_list(self):
         self.actions_common_list = {}
 
-        create_action_data = lambda message, effect: ActionData(
+        def create_action_data(message, effect): return ActionData(
             True, Card(message, effect))
         self.actions_common_list[ActionType.NONE] = \
             create_action_data(msg.PlayerMessages.ACTION_NONE, NoneEffect)
@@ -76,7 +76,8 @@ class Player(Citizen):
         self.actions_common_list[ActionType.KILL] = \
             create_action_data(msg.PlayerMessages.ACTION_KILL, KillEffect)
         self.actions_common_list[ActionType.STAGING] = \
-            create_action_data(msg.PlayerMessages.ACTION_STAGING, StagingEffect)
+            create_action_data(
+                msg.PlayerMessages.ACTION_STAGING, StagingEffect)
         self.actions_common_list[ActionType.CARD_USAGE] = \
             create_action_data(msg.PlayerMessages.ACTION_CARD_USAGE, None)
 
@@ -143,7 +144,7 @@ class Player(Citizen):
         index = 0
         for action_type, action_data in self.actions_common_list.items():
             if action_data.available and \
-                (action_type is not ActionType.CARD_USAGE):
+                    (action_type is not ActionType.CARD_USAGE):
                 self._allowed_actions[index] = action_data
                 index += 1
 
@@ -216,6 +217,7 @@ class Player(Citizen):
 # =================================================================
 # Available options management
 # =================================================================
+
 
     def disable_steal_action(self) -> None:
         self.actions_common_list[ActionType.STEAL].available = False
