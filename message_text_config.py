@@ -208,9 +208,9 @@ class NightActionTarget:
     ACT_CANCEL_ACTION = "Отменить действие"
 
 
-class DayGeneral:
+class DayGeneralMessages:
     GLOBAL_DAY_NUMBER = "ДЕНЬ {}"
-    GLOBAL_STEAL_CITIZEN = "Эта ночь прошла спокойно."
+    GLOBAL_CALM_CITIZEN = "Эта ночь прошла спокойно."
     # Commonly used
     # ACT_PASS_LOST_HP = "Вы потеряли 1 HP"
 

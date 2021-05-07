@@ -59,6 +59,8 @@ class StagingEffect(Effect):
 
             self.user_interaction.save_active(
                 msg.StagingMassages.RESOLVE_SUCCESS.format(self.creator.name))
+            self.user_interaction.save_global(
+                msg.KillMessages.RESOLVE_SUCCESS.format(self.targets[0].name))
 
         elif utils.is_player(self.targets[0]):
             self.user_interaction.save_active(
