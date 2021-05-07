@@ -278,6 +278,10 @@ class GameController(Context):
                     f'target name = {citizen.name}, effect name = {effect.name}, status = {effect.status}'
                 )
 
+        if self.user_interaction.is_global_empty():
+            self.user_interaction.save_global(
+                msg.DayGeneralMessages.GLOBAL_CALM_CITIZEN)
+
     def _count_round(self) -> None:
         self._city.round_number += 1
 

@@ -37,8 +37,6 @@ class StealEffect(Effect):
             self.user_interaction.save_active(
                 msg.StealMessages.RESOLVE_FAILED.format(self.targets[0].name))
 
-        # user_interaction.save_global(msg.DayGeneral.GLOBAL_STEAL_CITIZEN)
-
         return True
 
     def _validate(self, target_number: int) -> InputStatusCode:
