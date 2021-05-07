@@ -65,3 +65,9 @@ class BaseUserInteraction(ABC):
             index = None
 
         return index
+
+    def is_global_empty(self):
+        if not self._prepared_messages[MessageScope.GLOBAL]:
+            return True
+        else:
+            return False
