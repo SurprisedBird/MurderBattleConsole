@@ -10,7 +10,7 @@ from effects.steal_effect import StealEffect
 class VideoCameraEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
-        super().__init__(context, name, creator, 8)
+        super().__init__(context, name, creator)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(

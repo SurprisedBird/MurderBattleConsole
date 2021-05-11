@@ -10,7 +10,7 @@ from effects.effect import Effect, InputStatusCode
 class AnonymusCallEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
-        super().__init__(context, name, creator, 13)
+        super().__init__(context, name, creator)
         self.detected_name: str
 
     def _activate_impl(self) -> bool:

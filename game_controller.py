@@ -11,6 +11,10 @@ from city import City
 from context import Context
 from effects.alarm_effect import AlarmEffect
 from effects.effect import Effect, EffectStatus
+from effects.kill_effect import KillEffect
+from effects.steal_effect import StealEffect
+from effects.staging_effect import StagingEffect
+from effects.none_effect import NoneEffect
 from effects.first_night_effect import FirstNightEffect
 from effects.spy_effect import SpyEffect
 from murder_logging import logger
@@ -45,6 +49,7 @@ class GameController(Context):
 
         self._create_citizens(avilable_citizens)
         self._create_players(avilable_citizens)
+        self._set_priorities()
         self._set_order()
         self._create_spy(avilable_citizens)
         self._pre_proceed_game()
@@ -84,6 +89,17 @@ class GameController(Context):
             replacing_index = self._city.citizens.index(random_citizen)
             self._city.citizens.remove(random_citizen)
             self._city.citizens.insert(replacing_index, player)
+
+    def _set_priorities(self) -> None:
+        NoneEffect.__priority__ = 0
+        StagingEffect.__priority__ = 1
+        KillEffect.__priority__ = 2
+        StealEffect.__priority__ = 3
+        SpyEffect.__priority__ = 4
+        FirstNightEffect.__priority__ = 5
+
+        for card, counter in zip(self.citizens_dict.values(), range(0, len(self.citizens_dict.values()))):
+            card.effect.__priority__ = counter + 6
 
     def _set_order(self) -> None:
         random.shuffle(self._city.players)
