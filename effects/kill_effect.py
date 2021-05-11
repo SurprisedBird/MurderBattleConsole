@@ -11,7 +11,7 @@ from effects.effect import Effect, InputStatusCode
 class KillEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
-        super().__init__(context, name, context.city.active_player, 2)
+        super().__init__(context, name, context.city.active_player)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(

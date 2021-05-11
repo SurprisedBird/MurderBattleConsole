@@ -12,7 +12,7 @@ from effects.effect import Effect, InputStatusCode
 class SpyEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
-        super().__init__(context, name, creator, 4)
+        super().__init__(context, name, creator)
 
     def _activate_impl(self) -> bool:
         self.targets.append(self.city.spy)

@@ -5,7 +5,7 @@ class NoneEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: 'Citizen') -> None:
         # TODO: set correct priority
-        super().__init__(context, name, creator, 0)
+        super().__init__(context, name, creator)
 
     def _activate_impl(self) -> bool:
         return True
