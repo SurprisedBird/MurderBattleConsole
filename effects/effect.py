@@ -6,8 +6,6 @@ from typing import List
 import message_text_config as msg
 from citizens.citizen import Citizen
 
-__priority__ = 0
-
 
 class EffectStatus(Enum):
     CREATED = auto()
@@ -25,6 +23,8 @@ class InputStatusCode(Enum):
 
 
 class Effect(ABC):
+    __priority__ = None
+
     def __init__(self, context: 'Context', name: str, creator: Citizen,) -> None:
         self.context = context
         self.user_interaction = context.user_interaction
@@ -109,7 +109,7 @@ class Effect(ABC):
         pass
 
     def __lt__(self, other: 'Effect') -> bool:
-        return __priority__ < other.__priority__
+        return self.__priority__ < other.__priority__
 
     @property
     def is_deactivated(self) -> bool:
