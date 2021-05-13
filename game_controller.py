@@ -134,19 +134,22 @@ class GameController(Context):
         self.logger.info(f'spy = {self._city.spy.name}')
 
     def _pre_proceed_game(self) -> None:
-        self._create_effect(SpyEffect, self._city.spy)
-        self._create_effect(FirstNightEffect, self._city.passive_player)
-        self._create_effect(AlarmEffect, self._city.citizens[3])
+        self._create_effect(
+            SpyEffect, msg.EffectsNames.SPY_EFFECT_NAME, self._city.spy)
+        self._create_effect(
+            FirstNightEffect, msg.EffectsNames.FIRST_NIGHT_EFFECT, self._city.passive_player)
+        self._create_effect(AlarmEffect, msg.EffectsNames.ALARM_EFFECT_NAME,
+                            self._city.citizens[3])
 
         self._resolve_effects()
         self._clear_effects()
 
-    def _create_effect(self, effect_name, citizen) -> None:
-        effect = effect_name(self, None, citizen)
+    def _create_effect(self, effect_type, effect_name, citizen) -> None:
+        effect = effect_type(self, effect_name, citizen)
         effect.activate_by_target(citizen)
 
         self.logger.info(
-            f'effect name = {effect_name.__name__}, effect creator = {effect.creator.name}'
+            f'effect name = {effect_type.__name__}, effect creator = {effect.creator.name}'
         )
 
     def _show_game_state(self) -> None:
@@ -368,6 +371,7 @@ class GameController(Context):
 # =================================================================
 # Context implementation
 # =================================================================
+
 
     @property
     def user_interaction(self):
