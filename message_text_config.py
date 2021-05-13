@@ -8,6 +8,11 @@ class CommonMessages:
     CHOOSE_CARD_NUMBER = "Введите номер карты:"
 
 
+class EffectsNames:
+    ALARM_EFFECT_NAME = "Система тревоги"
+    SPY_EFFECT_NAME = "Шпионский реквизит"
+    FIRST_NIGHT_EFFECT = "Нет кражи в первую ночь"
+
 # ------------------------------------------------------
 # Effect messages
 # ------------------------------------------------------
