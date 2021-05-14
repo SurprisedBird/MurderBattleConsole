@@ -25,16 +25,18 @@ class GossipsEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
-        first_action = self.context.action_manager.actions_histry[
-            self.night_number][0].name
+        first_action_effect = self.context.action_manager.actions_histry[self.night_number][0]
+        first_action = first_action_effect.name
 
         first_targets = ""
         for target in self.context.action_manager.actions_histry[
                 self.night_number][0].targets:
+            if type(first_action_effect).__name__ == "StagingEffect":
+                target.name = first_action_effect.creator.name
             first_targets += target.name + " "
 
-        second_action = self.context.action_manager.actions_histry[
-            self.night_number][1].name
+        second_action_effect = self.context.action_manager.actions_histry[self.night_number][1]
+        second_action = second_action_effect.name
 
         second_targets = ""
         for target in self.context.action_manager.actions_histry[
