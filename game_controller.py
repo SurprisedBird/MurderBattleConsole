@@ -232,6 +232,17 @@ class GameController(Context):
         stolen_cards_str = msg.NightState.STOLEN_CARDS.format(
             " ".join(stolen_card_names))
 
+        self._user_interaction.save_global(night_number_str)
+
+        self._user_interaction.save_active(your_turn_str)
+        self._user_interaction.save_active("\n")
+        self._user_interaction.save_active(player_hp_str)
+        self._user_interaction.save_active(staging_active_str)
+        self._user_interaction.save_active(player_card_str)
+        self._user_interaction.save_active(stolen_cards_str)
+
+        self._user_interaction.show_all()
+
         citizen_names: List[str] = []
         for i, citizen in enumerate(self._city.citizens, start=1):
             prefix = ""
@@ -247,14 +258,6 @@ class GameController(Context):
         citizen_names_str = msg.NightState.CITY_STATUS.format(
             " ".join(citizen_names))
 
-        self._user_interaction.save_global(night_number_str)
-
-        self._user_interaction.save_active(your_turn_str)
-        self._user_interaction.save_active("\n")
-        self._user_interaction.save_active(player_hp_str)
-        self._user_interaction.save_active(staging_active_str)
-        self._user_interaction.save_active(player_card_str)
-        self._user_interaction.save_active(stolen_cards_str)
         self._user_interaction.save_active(citizen_names_str)
 
         self._user_interaction.show_all()
