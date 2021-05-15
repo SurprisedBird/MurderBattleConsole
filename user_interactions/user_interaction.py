@@ -18,9 +18,11 @@ class UserInteraction(BaseUserInteraction):
         print(f"{MessageScope.PASSIVE.name}: {text}")
 
     def show_all(self) -> None:
+        full_text = ""
         for scope, text_list in self._prepared_messages.items():
-            print(f"{scope.name}:")
+            full_text += f"{scope.name}:\n"
             for text in text_list:
-                print(f"\t{text}")
+                full_text += f"\t{text}\n"
 
+        print(full_text)
         self._clear_messages()

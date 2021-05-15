@@ -11,7 +11,7 @@ from effects.effect import Effect, InputStatusCode
 class GossipsEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
-        super().__init__(context, name, creator, 7)
+        super().__init__(context, name, creator)
         self.night_number = 0
 
     def _activate_impl(self) -> bool:
@@ -25,16 +25,18 @@ class GossipsEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
-        first_action = self.context.action_manager.actions_histry[
-            self.night_number][0].name
+        first_action_effect = self.context.action_manager.actions_histry[self.night_number][0]
+        first_action = first_action_effect.name
 
         first_targets = ""
         for target in self.context.action_manager.actions_histry[
                 self.night_number][0].targets:
+            if type(first_action_effect).__name__ == "StagingEffect":
+                target.name = first_action_effect.creator.name
             first_targets += target.name + " "
 
-        second_action = self.context.action_manager.actions_histry[
-            self.night_number][1].name
+        second_action_effect = self.context.action_manager.actions_histry[self.night_number][1]
+        second_action = second_action_effect.name
 
         second_targets = ""
         for target in self.context.action_manager.actions_histry[

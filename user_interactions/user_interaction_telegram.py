@@ -31,18 +31,22 @@ class UserInteraction(BaseUserInteraction):
 
     def show_all(self) -> None:
         for scope, text_list in self._prepared_messages.items():
+            global_text = ""
+            active_text = ""
+            passive_text = ""
+
             for text in text_list:
                 if scope is MessageScope.GLOBAL:
-                    self.send(
-                        text, self.context.city.active_player.user.id)
-                    self.send(
-                        text, self.context.city.passive_player.user.id)
+                    global_text += f"{text}\n"
                 elif scope is MessageScope.ACTIVE:
-                    self.send(
-                        text, self.context.city.active_player.user.id)
+                    active_text += f"{text}\n"
                 elif scope is MessageScope.PASSIVE:
-                    self.send(
-                        text, self.context.city.passive_player.user.id)
+                    passive_text += f"{text}\n"
+
+            self.send(global_text, self.context.city.active_player.user.id)
+            self.send(global_text, self.context.city.passive_player.user.id)
+            self.send(active_text, self.context.city.active_player.user.id)
+            self.send(passive_text, self.context.city.passive_player.user.id)
 
         self._clear_messages()
 
@@ -61,7 +65,7 @@ class UserInteraction(BaseUserInteraction):
             self.bot.send_message(message.chat.id, text)
 
         @self.bot.message_handler(commands=['cards'])
-        def help(message):
+        def cards(message):
             text = "СПИСОК КАРТ И ЖИТЕЛЕЙ, КОТОРЫЕ ЯВЛЯЮТСЯ ИХ ВЛАДЕЛЬЦАМИ:\n\n\n"
             for citizen, card in zip(msg.Help.CITIZENS.keys(), msg.Help.CARDS.keys()):
                 text += f"{card} ({citizen}): {msg.Help.CITIZENS[citizen]}\n\n"

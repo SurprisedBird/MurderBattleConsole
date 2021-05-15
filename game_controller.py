@@ -11,6 +11,10 @@ from city import City
 from context import Context
 from effects.alarm_effect import AlarmEffect
 from effects.effect import Effect, EffectStatus
+from effects.kill_effect import KillEffect
+from effects.steal_effect import StealEffect
+from effects.staging_effect import StagingEffect
+from effects.none_effect import NoneEffect
 from effects.first_night_effect import FirstNightEffect
 from effects.spy_effect import SpyEffect
 from murder_logging import logger
@@ -45,6 +49,7 @@ class GameController(Context):
 
         self._create_citizens(avilable_citizens)
         self._create_players(avilable_citizens)
+        self._set_priorities()
         self._set_order()
         self._create_spy(avilable_citizens)
         self._pre_proceed_game()
@@ -85,6 +90,17 @@ class GameController(Context):
             self._city.citizens.remove(random_citizen)
             self._city.citizens.insert(replacing_index, player)
 
+    def _set_priorities(self) -> None:
+        NoneEffect.__priority__ = 0
+        StagingEffect.__priority__ = 1
+        KillEffect.__priority__ = 2
+        StealEffect.__priority__ = 3
+        SpyEffect.__priority__ = 4
+        FirstNightEffect.__priority__ = 5
+
+        for card, counter in zip(self.citizens_dict.values(), range(0, len(self.citizens_dict.values()))):
+            card.effect.__priority__ = counter + 6
+
     def _set_order(self) -> None:
         random.shuffle(self._city.players)
 
@@ -118,19 +134,22 @@ class GameController(Context):
         self.logger.info(f'spy = {self._city.spy.name}')
 
     def _pre_proceed_game(self) -> None:
-        self._create_effect(SpyEffect, self._city.spy)
-        self._create_effect(FirstNightEffect, self._city.passive_player)
-        self._create_effect(AlarmEffect, self._city.citizens[3])
+        self._create_effect(
+            SpyEffect, msg.EffectsNames.SPY_EFFECT_NAME, self._city.spy)
+        self._create_effect(
+            FirstNightEffect, msg.EffectsNames.FIRST_NIGHT_EFFECT, self._city.passive_player)
+        self._create_effect(AlarmEffect, msg.EffectsNames.ALARM_EFFECT_NAME,
+                            self._city.citizens[3])
 
         self._resolve_effects()
         self._clear_effects()
 
-    def _create_effect(self, effect_name, citizen) -> None:
-        effect = effect_name(self, None, citizen)
+    def _create_effect(self, effect_type, effect_name, citizen) -> None:
+        effect = effect_type(self, effect_name, citizen)
         effect.activate_by_target(citizen)
 
         self.logger.info(
-            f'effect name = {effect_name.__name__}, effect creator = {effect.creator.name}'
+            f'effect name = {effect_type.__name__}, effect creator = {effect.creator.name}'
         )
 
     def _show_game_state(self) -> None:
@@ -213,6 +232,17 @@ class GameController(Context):
         stolen_cards_str = msg.NightState.STOLEN_CARDS.format(
             " ".join(stolen_card_names))
 
+        self._user_interaction.save_global(night_number_str)
+
+        self._user_interaction.save_active(your_turn_str)
+        self._user_interaction.save_active("\n")
+        self._user_interaction.save_active(player_hp_str)
+        self._user_interaction.save_active(staging_active_str)
+        self._user_interaction.save_active(player_card_str)
+        self._user_interaction.save_active(stolen_cards_str)
+
+        self._user_interaction.show_all()
+
         citizen_names: List[str] = []
         for i, citizen in enumerate(self._city.citizens, start=1):
             prefix = ""
@@ -228,14 +258,6 @@ class GameController(Context):
         citizen_names_str = msg.NightState.CITY_STATUS.format(
             " ".join(citizen_names))
 
-        self._user_interaction.save_global(night_number_str)
-
-        self._user_interaction.save_active(your_turn_str)
-        self._user_interaction.save_active("\n")
-        self._user_interaction.save_active(player_hp_str)
-        self._user_interaction.save_active(staging_active_str)
-        self._user_interaction.save_active(player_card_str)
-        self._user_interaction.save_active(stolen_cards_str)
         self._user_interaction.save_active(citizen_names_str)
 
         self._user_interaction.show_all()
@@ -352,6 +374,7 @@ class GameController(Context):
 # =================================================================
 # Context implementation
 # =================================================================
+
 
     @property
     def user_interaction(self):
