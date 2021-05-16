@@ -10,11 +10,11 @@ class UserInteraction(BaseUserInteraction):
         print(f"{MessageScope.GLOBAL.name}: {text}")
 
     def show_active_instant(self, text: str) -> None:
-        print(self.user_names[0])
+        print(self.users[0])
         print(f"{MessageScope.ACTIVE.name}: {text}")
 
     def show_passive_instant(self, text: str) -> None:
-        print(self.user_names[1])
+        print(self.users[1])
         print(f"{MessageScope.PASSIVE.name}: {text}")
 
     def show_all(self) -> None:

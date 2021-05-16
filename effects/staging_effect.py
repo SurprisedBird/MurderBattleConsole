@@ -46,10 +46,15 @@ class StagingEffect(Effect):
             # Swap citizens
             citizens[target_index], citizens[player_index] = citizens[
                 player_index], citizens[target_index]
+
+            # CHANGE STAGING TARGET BUG
+
             # Swap names of citizens back
             citizens[target_index].name, citizens[
                 player_index].name = citizens[player_index].name, citizens[
                     target_index].name
+
+            # CHANGE STAGING TARGET BUG
 
             # Disable all effects for both citizens
             for effect in citizens[target_index].effects:

@@ -12,7 +12,7 @@ class MessageScope(Enum):
 class BaseUserInteraction(ABC):
     def __init__(self, context: 'Context'):
         self.context = context
-        self.user_names = self.context.user_names
+        self.users = self.context.users
 
         self._prepared_messages = {
             MessageScope.GLOBAL: [],
