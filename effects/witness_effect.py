@@ -37,6 +37,8 @@ class WitnessEffect(Effect):
         if self.creator is self.city.active_player:
             payment_choice = self._choose_payment()
             if payment_choice == PaymentChoice.DECLINE_OPTION:
+                self.user_interaction.show_global_instant(
+                    msg.WitnessMessages.RESOLVE_END_PUBLICLY)
                 return True
             elif payment_choice == PaymentChoice.HP_OPTION:
                 self.creator.hp -= 1

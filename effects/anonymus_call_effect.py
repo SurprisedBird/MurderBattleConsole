@@ -36,11 +36,10 @@ class AnonymusCallEffect(Effect):
             self.user_interaction.show_global_instant(
                 msg.AnonymousCallMessages.RESOLVE_ANONYMOUSCALL_PLAYER.format(
                     self.detected_name))
-
             if self.targets[0].name is self.detected_name:
                 self.targets[0].hp -= 1
-                self.user_interaction.save_passive(
-                    msg.AnonymousCallMessages.RESOLVE_ENEMY_LOST_HP)
+                utils.save_message_for_player(
+                    self.context, self.targets[0], msg.AnonymousCallMessages.RESOLVE_ENEMY_LOST_HP)
         elif role == "Spy":
             self.targets[0].hp -= 1
             self.user_interaction.show_global_instant(
@@ -66,7 +65,7 @@ class AnonymusCallEffect(Effect):
         return utils.validate_citizen_target_number(
             target_number,
             self.city.citizens,
-            self_as_target_allowed=False,
+            self_as_target_allowed=True,
             creator=self.creator)
 
     def _on_clear_impl(self) -> None:
