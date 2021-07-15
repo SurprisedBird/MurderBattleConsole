@@ -4,6 +4,7 @@ import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 from citizens.spy import Spy
+from murder_logging import logger
 
 from effects.effect import Effect, InputStatusCode
 
@@ -12,6 +13,7 @@ class KillEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
         super().__init__(context, name, context.city.active_player)
+        self.logger = logger.getChild(__name__)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
@@ -22,7 +24,9 @@ class KillEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
+        self.logger.info(f"Target HP before resolving = {self.targets[0].hp}")
         self.targets[0].hp -= 1
+        self.logger.info(f"Target HP after resolving = {self.targets[0].hp}")
 
         if self.targets[0].is_alive:
             self.user_interaction.save_global(
@@ -37,12 +41,18 @@ class KillEffect(Effect):
                 msg.KillMessages.RESOLVE_SUCCESS.format(self.targets[0].name))
 
             citizen_card = self.targets[0].citizen_card
+
+            self.logger.info(
+                f"Citizen card: {self.targets[0].citizen_card.name if self.targets[0].citizen_card is not None else None}")
+
             if citizen_card is not None:
                 self.creator.stolen_cards.append(citizen_card)
                 self.targets[0].citizen_card = None
                 self.user_interaction.save_active(
                     msg.StealMessages.RESOLVE_SUCCESS.format(
                         citizen_card.name))
+                self.logger.info(
+                    f"Stolen cards: {' '.join(card.name for card in self.creator.stolen_cards)}")
             else:
                 self.user_interaction.save_active(
                     msg.KillMessages.RESOLVE_NO_CARD)

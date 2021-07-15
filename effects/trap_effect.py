@@ -4,6 +4,7 @@ import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 from citizens.spy import Spy
+from murder_logging import logger
 
 from effects.effect import Effect, InputStatusCode
 
@@ -12,6 +13,7 @@ class TrapEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
         super().__init__(context, name, context.city.active_player)
+        self.logger.getChild(__name__)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
@@ -33,6 +35,8 @@ class TrapEffect(Effect):
                 msg.TrapMessages.RESOLVE_SUCCESS.format(self.targets[0].name))
 
             self.city.active_player.hp -= 1
+            self.logger.info(
+                f"Effect that was on target: {action_effect.name}. Effects creator HP HP: {self.city.active_player.hp}")
 
             action_effect.deactivate()
 

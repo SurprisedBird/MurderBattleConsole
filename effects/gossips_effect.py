@@ -4,6 +4,7 @@ from typing import List
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
+from murder_logging import logger
 
 from effects.effect import Effect, InputStatusCode
 
@@ -13,6 +14,7 @@ class GossipsEffect(Effect):
                  creator: Citizen) -> None:
         super().__init__(context, name, creator)
         self.night_number = 0
+        self.logger = logger.getChild(__name__)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
@@ -25,23 +27,26 @@ class GossipsEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
-        first_action_effect = self.context.action_manager.actions_histry[self.night_number][0]
+        first_action_effect = self.context.action_manager.actions_history[self.night_number][0]
         first_action = first_action_effect.name
 
         first_targets = ""
-        for target in self.context.action_manager.actions_histry[
+        for target in self.context.action_manager.actions_history[
                 self.night_number][0].targets:
             if type(first_action_effect).__name__ == "StagingEffect":
                 target.name = first_action_effect.creator.name
             first_targets += target.name + " "
 
-        second_action_effect = self.context.action_manager.actions_histry[self.night_number][1]
+        second_action_effect = self.context.action_manager.actions_history[self.night_number][1]
         second_action = second_action_effect.name
 
         second_targets = ""
-        for target in self.context.action_manager.actions_histry[
+        for target in self.context.action_manager.actions_history[
                 self.night_number][1].targets:
             second_targets += target.name + " "
+
+        self.logger.info(
+            f"First action = {first_action}, second action = {second_action} first target = {first_targets}, second target = {second_targets}")
 
         self.user_interaction.show_active_instant(
             msg.GossipsMessages.RESOLVE_SUCCESS.format(first_action,
@@ -54,7 +59,7 @@ class GossipsEffect(Effect):
     # TODO: forbid player to choose nights with own actions
     def _validate(self, target_number: int) -> InputStatusCode:
         if target_number == None or target_number <= 0 or target_number > len(
-                self.context.action_manager.actions_histry):
+                self.context.action_manager.actions_history):
             return InputStatusCode.NOK_INVALID_TARGET
 
         return InputStatusCode.OK

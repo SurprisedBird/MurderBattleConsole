@@ -5,6 +5,7 @@ import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 from citizens.spy import Spy
+from murder_logging import logger
 
 from effects.effect import Effect, InputStatusCode
 
@@ -18,6 +19,7 @@ class TaxesEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
         super().__init__(context, name, creator)
+        self.logger.getChild(__name__)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
@@ -31,21 +33,33 @@ class TaxesEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
+
         if self.activation_round == self.city.round_number:
             return False
 
         if utils.is_player(self.targets[0]):
             payment_choice = self._choose_payment()
+
+            self.logger.info(f"Payment: {payment_choice.name}")
+
             if payment_choice == PaymentChoice.HP_OPTION:
                 self.targets[0].hp -= 1
+                self.logger.info(f"Target player HP: {self.targets[0].hp}")
             elif payment_choice == PaymentChoice.CARD_OPTION:
                 card = self._choose_card()
                 self._remove_card_from_target(card)
+                self.logger.info(f"Choosed card: {card.name}")
+
         else:
             if self.targets[0].citizen_card is None:
                 self.targets[0].hp -= 1
+                self.logger.info(
+                    f"Target citizen HP after resolvint: {self.targets[0].hp}")
+
             else:
                 self.targets[0].citizen_card = None
+                self.logger.info(
+                    f"Target citizen card after resolvint: {self.targets[0].citizen_card}")
 
         return True
 
@@ -110,3 +124,5 @@ class TaxesEffect(Effect):
             self.targets[0].citizen_card = None
         else:
             self.targets[0].stolen_cards.remove(card)
+            self.logger.info(
+                f"Cards list after card removed {' '.join(card.name for card in  self.targets[0].stolen_cards)}")

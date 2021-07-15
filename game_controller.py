@@ -11,12 +11,12 @@ from city import City
 from context import Context
 from effects.alarm_effect import AlarmEffect
 from effects.effect import Effect, EffectStatus
-from effects.kill_effect import KillEffect
-from effects.steal_effect import StealEffect
-from effects.staging_effect import StagingEffect
-from effects.none_effect import NoneEffect
 from effects.first_night_effect import FirstNightEffect
+from effects.kill_effect import KillEffect
+from effects.none_effect import NoneEffect
 from effects.spy_effect import SpyEffect
+from effects.staging_effect import StagingEffect
+from effects.steal_effect import StealEffect
 from murder_logging import logger
 from user_interactions.user_interaction import UserInteraction
 
@@ -31,6 +31,7 @@ class GameController(Context):
         self._user_interaction = UserInteraction(self)
         self._action_manager = ActionManager()
         self.logger = logger.getChild(__name__)
+        self.logger.disabled = False
 
     def start_game(self) -> None:
         self._prepare_game()
@@ -98,7 +99,8 @@ class GameController(Context):
         SpyEffect.__priority__ = 4
         FirstNightEffect.__priority__ = 5
 
-        for card, counter in zip(self.citizens_dict.values(), range(0, len(self.citizens_dict.values()))):
+        for card, counter in zip(self.citizens_dict.values(),
+                                 range(0, len(self.citizens_dict.values()))):
             card.effect.__priority__ = counter + 6
 
     def _set_order(self) -> None:
@@ -134,10 +136,11 @@ class GameController(Context):
         self.logger.info(f'spy = {self._city.spy.name}')
 
     def _pre_proceed_game(self) -> None:
-        self._create_effect(
-            SpyEffect, msg.EffectsNames.SPY_EFFECT_NAME, self._city.spy)
-        self._create_effect(
-            FirstNightEffect, msg.EffectsNames.FIRST_NIGHT_EFFECT, self._city.passive_player)
+        self._create_effect(SpyEffect, msg.EffectsNames.SPY_EFFECT_NAME,
+                            self._city.spy)
+        self._create_effect(FirstNightEffect,
+                            msg.EffectsNames.FIRST_NIGHT_EFFECT,
+                            self._city.passive_player)
         self._create_effect(AlarmEffect, msg.EffectsNames.ALARM_EFFECT_NAME,
                             self._city.citizens[3])
 
@@ -269,13 +272,11 @@ class GameController(Context):
         effect.activate()
         self._action_manager.add_pre_action(effect)
 
-        self.logger.info(f"{effect.name}, {effect.status}")
-
     def _create_card_action(self) -> None:
         effect = self._city.active_player.create_card_action()
         effect.activate()
         self._action_manager.add_pre_action(effect)
-        self.logger.info(f"{effect.name}, {effect.status}")
+        self.logger.info(f"{effect.name}, {effect.status.name}")
 
     def _clear_effects(self) -> None:
         for citizen in self._city.citizens:
@@ -286,19 +287,16 @@ class GameController(Context):
                 effect for effect in citizen.effects
                 if effect.status != EffectStatus.FINISHED
             ]
-            self.logger.info(f"{citizen.name}, {citizen.effects}")
+        self.logger.debug(" ")
 
     def _resolve_effects(self) -> None:
         for effect in self._city.effects:
             effect.resolve()
-            self.logger.info(f"{effect.name}, {effect.status}")
+            self.logger.info(f"{effect.name}, {effect.status.name}")
 
         for citizen in self._city.citizens:
             for effect in citizen.effects:
                 effect.resolve()
-                self.logger.info(
-                    f'target name = {citizen.name}, effect name = {effect.name}, status = {effect.status}'
-                )
 
         if self.user_interaction.is_global_empty():
             self.user_interaction.save_global(
@@ -374,7 +372,6 @@ class GameController(Context):
 # =================================================================
 # Context implementation
 # =================================================================
-
 
     @property
     def user_interaction(self):

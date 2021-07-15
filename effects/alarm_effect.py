@@ -3,6 +3,7 @@ from typing import Tuple
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
+from murder_logging import logger
 
 from effects.effect import Effect, InputStatusCode
 
@@ -11,6 +12,7 @@ class AlarmEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
         super().__init__(context, name, creator)
+        self.logger = logger.getChild(__name__)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
@@ -42,8 +44,11 @@ class AlarmEffect(Effect):
     def _is_alarm_triggered(self) -> Tuple[bool, Effect]:
         for effect in self.targets[0].effects:
             alarm_triggered = utils.is_action_effect(effect)
+            self.logger.info(
+                f"Effect name {effect.name}. Alarm wasn't trigered")
 
             if alarm_triggered:
+                self.logger.info(f"Alarm was trigered")
                 return (True, effect)
 
         return (False, None)
