@@ -3,6 +3,7 @@ from enum import Enum, auto
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
+from murder_logging import logger
 
 from effects.effect import Effect, InputStatusCode
 
@@ -11,6 +12,7 @@ class StagingEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
         super().__init__(context, name, creator)
+        self.logger = logger.getChild(__name__)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
@@ -25,24 +27,43 @@ class StagingEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
+        self.logger.info(f"Target HP: {self.targets[0].hp}")
+
         # Hit the target
         self.targets[0].hp -= 1
 
+        self.logger.info(f"Target HP: {self.targets[0].hp}")
+
+        self.logger.info(
+            f"Personal player's card: {self.creator.citizen_card.name}. Stolen player's card: {' '.join(card.name for card in self.creator.stolen_cards)}. Target's card: {self.targets[0].citizen_card.name if self.targets[0].citizen_card is not None else 'None'}")
+
         if not self.targets[0].is_alive:
+            self.logger.info("SWAP CARDS")
             # Move personal card to stolen cards
             if self.creator.citizen_card is not None:
                 self.creator.stolen_cards.append(self.creator.citizen_card)
                 self.creator.citizen_card = None
+
+                self.logger.info(
+                    f"Move personal card to stolen cards. Pesonal card: {self.creator.citizen_card}. Stolen cards: {' '.join(card.name for card in self.creator.stolen_cards)}")
 
             # Get personal card of target citizen
             if self.targets[0].citizen_card is not None:
                 self.creator.citizen_card = self.targets[0].citizen_card
                 self.targets[0].citizen_card = None
 
+                self.logger.info(
+                    f"Get personal card of target citizen. Player card: {self.creator.citizen_card.name}, citizen card: {self.targets[0].citizen_card}")
+
+            if self.targets[0].citizen_card is not None:
+                self.logger.error(
+                    f"Target citizen card should be NONE but it is {self.targets[0].citizen_card.name}")
+
             citizens = self.city.citizens
             target_index = citizens.index(self.targets[0])
             player_index = citizens.index(self.creator)
 
+            self.logger.info("SWAP PLAYER TO TARGET")
             # Swap citizens
             citizens[target_index], citizens[player_index] = citizens[
                 player_index], citizens[target_index]
@@ -50,6 +71,8 @@ class StagingEffect(Effect):
             citizens[target_index].name, citizens[
                 player_index].name = citizens[player_index].name, citizens[
                     target_index].name
+            self.logger.info(
+                f"Current player name: {self.city.active_player.name}, current target name: {self.targets[0].name}")
 
             # Disable all effects for both citizens
             for effect in citizens[target_index].effects:

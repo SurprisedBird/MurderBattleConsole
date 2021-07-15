@@ -2,6 +2,7 @@ import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 from citizens.player import Player
+from murder_logging import logger
 
 from effects.effect import Effect, InputStatusCode
 
@@ -12,6 +13,7 @@ class AntidotEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
         super().__init__(context, name, creator)
+        self.logger = logger.getChild(__name__)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
@@ -26,9 +28,10 @@ class AntidotEffect(Effect):
         return True
 
     def _resolve_impl(self) -> bool:
-
+        self.logger.info(f"Target HP before Antidot {self.targets[0].hp}")
         if self.activation_round == self.city.round_number:
             self.targets[0].hp += AntidotEffect.BOOST_HP
+            self.logger.info(f"Target HP after Antidot {self.targets[0].hp}")
             return False
 
         if self.city.round_number == self.activation_round + 1:

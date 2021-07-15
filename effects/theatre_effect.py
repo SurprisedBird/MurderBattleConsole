@@ -1,6 +1,7 @@
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
+from murder_logging import logger
 
 from effects.effect import Effect, InputStatusCode
 from effects.staging_effect import StagingEffect
@@ -13,6 +14,8 @@ class TheatreEffect(Effect):
         super().__init__(context, name, creator)
         self.mask: 'Citizen'
 
+        self.logger.getChild(__name__)
+
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
             self.context, msg.TheatreMessages.ACTIVATION_CHOOSE_TARGET,
@@ -23,6 +26,9 @@ class TheatreEffect(Effect):
         self.user_interaction.save_active(
             msg.TheatreMessages.ACTIVATION_SUCCESS.format(
                 self.mask.name))
+
+        self.logger.info(
+            f"Target name: {self.mask.name}. Creator name: {self.creator.name}.")
 
         return True
 

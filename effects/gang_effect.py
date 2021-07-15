@@ -2,6 +2,7 @@ import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 from citizens.player import Player
+from murder_logging import logger
 
 from effects.effect import Effect, EffectStatus, InputStatusCode
 
@@ -10,6 +11,7 @@ class GangEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
         super().__init__(context, name, creator)
+        self.logger = logger.getChild(__name__)
 
     def _activate_impl(self) -> bool:
         self.targets.append(self.city)
@@ -25,9 +27,14 @@ class GangEffect(Effect):
         for citizen in self.city.citizens:
             all_effects.extend(citizen.effects)
 
+        self.logger.info(
+            f"Effects list: {', '.join(effect.name for effect in all_effects)}")
+
         for effect in all_effects:
             if self._should_be_deactivated(effect):
                 effect.deactivate()
+                self.logger.info(
+                    f"Effect {effect.name} has been deactivated. Status {effect.STAUS}")
                 self.user_interaction.save_active(
                     msg.GangMessages.RESOLVE_SUCCESS)
                 return True
@@ -37,6 +44,7 @@ class GangEffect(Effect):
     def _should_be_deactivated(self, effect: 'Effect') -> bool:
         is_current_round = (effect.activation_round == self.city.round_number)
         not_an_action = (not utils.is_action_effect(effect))
+        self.logger.debug("")
 
         return is_current_round and not_an_action
 

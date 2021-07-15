@@ -3,6 +3,7 @@ from typing import Tuple
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
+from murder_logging import logger
 
 from effects.effect import Effect, InputStatusCode
 
@@ -13,6 +14,7 @@ class SpyEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: Citizen) -> None:
         super().__init__(context, name, creator)
+        self.logger = logger.getChild(__name__)
 
     def _activate_impl(self) -> bool:
         self.targets.append(self.city.spy)
@@ -26,6 +28,8 @@ class SpyEffect(Effect):
             self.city.spy.hp = 0
 
             effect.deactivate()
+            self.logger.info(
+                f"Effect on spy: {effect.name}, effect status {effect.status.name}")
 
             self.user_interaction.show_active_instant(
                 msg.SpyMessages.RESOLVE_LOST_HP)
@@ -42,6 +46,9 @@ class SpyEffect(Effect):
         for effect in self.targets[0].effects:
             spy_triggered = utils.is_action_effect(
                 effect) and not effect.is_deactivated
+
+            self.logger.info(
+                f"Effect on spy: {effect.name}, effect status {effect.status.name}")
 
             if spy_triggered:
                 return (True, effect)

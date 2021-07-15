@@ -3,6 +3,7 @@ from enum import Enum, auto
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
+from murder_logging import logger
 
 from effects.effect import Effect, InputStatusCode
 
@@ -12,6 +13,8 @@ class AnonymusCallEffect(Effect):
                  creator: Citizen) -> None:
         super().__init__(context, name, creator)
         self.detected_name: str
+
+        self.logger = logger.getChild(__name__)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
@@ -50,11 +53,18 @@ class AnonymusCallEffect(Effect):
                 msg.AnonymousCallMessages.RESOLVE_ANONYMOUSCALL_NO_SUSPECT.
                 format(self.detected_name))
 
+        self.logger.info(
+            f'Detected name {self.detected_name}, Is theatre target {self.theatre_target() is not None}, role {role}'
+        )
+
         return True
 
     def theatre_target(self) -> 'Citizen':
         for effect in self.city.effects:
             if type(effect).__name__ is 'TheatreEffect':
+                self.logger.info(
+                    f"Player is {effect.creator.name}, player mask is {effect.mask.name}"
+                )
                 if self.targets[0] is effect.creator:
                     return effect.mask
                 elif self.targets[0] is effect.mask:

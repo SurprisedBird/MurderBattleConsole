@@ -57,6 +57,7 @@ class VideoCameraEffect(Effect):
             videocamera_triggered = utils.is_action_effect(effect)
 
             if videocamera_triggered:
+                self.logger.info(f"Videocamera was triggered by {effect.name}")
                 return effect
 
         return None
