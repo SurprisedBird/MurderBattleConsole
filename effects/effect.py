@@ -5,7 +5,7 @@ from typing import List
 
 import message_text_config as msg
 from citizens.citizen import Citizen
-from murder_logging import logger
+from custom_logger import logger
 
 
 class EffectStatus(Enum):

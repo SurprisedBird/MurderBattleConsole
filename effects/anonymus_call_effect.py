@@ -3,7 +3,7 @@ from enum import Enum, auto
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
-from murder_logging import logger
+
 
 from effects.effect import Effect, InputStatusCode
 
@@ -13,8 +13,6 @@ class AnonymusCallEffect(Effect):
                  creator: Citizen) -> None:
         super().__init__(context, name, creator)
         self.detected_name: str
-
-        self.logger = logger.getChild(__name__)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
