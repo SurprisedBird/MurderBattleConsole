@@ -61,7 +61,9 @@ class DatabaseEffect(Effect):
                 for i in range(0, len(self.targets)):
                     if self.targets[i] is effect.mask:
                         self.targets[i] = effect.creator
+                        self.logger.info(f"Target citizen {effect.mask.name} was mask for {effect.creator.name}")
                     elif self.targets[i] is effect.creator:
+                        self.logger.info(f"Target citizen {effect.creator.name} was player with mask {effect.mask.name}")
                         self.targets[i] = effect.mask
 
         return self.targets
