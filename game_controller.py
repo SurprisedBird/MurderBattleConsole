@@ -9,6 +9,7 @@ from citizens.player import Player
 from citizens.spy import Spy
 from city import City
 from context import Context
+from custom_logger import logger
 from effects.alarm_effect import AlarmEffect
 from effects.effect import Effect, EffectStatus
 from effects.first_night_effect import FirstNightEffect
@@ -17,7 +18,6 @@ from effects.none_effect import NoneEffect
 from effects.spy_effect import SpyEffect
 from effects.staging_effect import StagingEffect
 from effects.steal_effect import StealEffect
-from murder_logging import logger
 from user_interactions.user_interaction import UserInteraction
 
 
@@ -372,6 +372,7 @@ class GameController(Context):
 # =================================================================
 # Context implementation
 # =================================================================
+
 
     @property
     def user_interaction(self):

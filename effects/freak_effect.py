@@ -1,6 +1,6 @@
 import message_text_config as msg
 import utils
-from murder_logging import logger
+
 from effects.effect import Effect, InputStatusCode
 
 
@@ -8,7 +8,6 @@ class FreakEffect(Effect):
     def __init__(self, context: 'Context', name: str,
                  creator: 'Citizen') -> None:
         super().__init__(context, name, creator)
-        self.logger = logger.getChild(__name__)
 
     def _activate_impl(self) -> bool:
         target_number = utils.read_target_number(
@@ -28,7 +27,8 @@ class FreakEffect(Effect):
                     'WitnessEffect'
             ]:
                 effect.deactivate()
-                self.logger.info(f'Effect {effect.name} has been deactivated. Current stauts: {self.status.name}.')
+                self.logger.info(
+                    f'Effect {effect.name} has been deactivated. Current stauts: {self.status.name}.')
 
         self.user_interaction.save_active(
             msg.DrugsMessages.RESOLVE_SUCCESS.format(self.targets[0].name))

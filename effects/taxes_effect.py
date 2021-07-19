@@ -5,7 +5,7 @@ import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 from citizens.spy import Spy
-from murder_logging import logger
+
 
 from effects.effect import Effect, InputStatusCode
 
