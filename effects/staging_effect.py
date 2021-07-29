@@ -4,7 +4,6 @@ import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
 
-
 from effects.effect import Effect, InputStatusCode
 
 
@@ -33,8 +32,15 @@ class StagingEffect(Effect):
 
         self.logger.info(f"Target HP: {self.targets[0].hp}")
 
+        stolen_cards_names = [
+            card.name if self.creator.stolen_cards else None for card in self.creator.stolen_cards]
+
+        targets_card_name = self.targets[0].citizen_card.name if self.targets[0].citizen_card is not None else None
+
+        creator_card_name = self.creator.citizen_card.name if self.creator.citizen_card is not None else None
+
         self.logger.info(
-            f"Personal player's card: {self.creator.citizen_card.name}. Stolen player's card: {' '.join(card.name for card in self.creator.stolen_cards)}. Target's card: {self.targets[0].citizen_card.name if self.targets[0].citizen_card is not None else 'None'}")
+            f"Personal player's card: {creator_card_name}. Stolen player's cards: {''.join(name for name in stolen_cards_names)}. Targets card: {targets_card_name}")
 
         if not self.targets[0].is_alive:
             self.logger.info("SWAP CARDS")
