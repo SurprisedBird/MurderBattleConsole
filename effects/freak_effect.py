@@ -28,7 +28,7 @@ class FreakEffect(Effect):
             ]:
                 effect.deactivate()
                 self.logger.info(
-                    f'Effect {effect.name} has been deactivated. Current stauts: {self.status.name}.')
+                    f'Effect {effect.name} has been deactivated. Current status: {self.status.name}.')
 
         self.user_interaction.save_active(
             msg.DrugsMessages.RESOLVE_SUCCESS.format(self.targets[0].name))
