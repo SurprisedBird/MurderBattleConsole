@@ -16,6 +16,7 @@ from effects.videocamera_effect import VideoCameraEffect
 from effects.whore_effect import WhoreEffect
 from effects.witness_effect import WitnessEffect
 from game_controller import GameController
+from user import User
 
 citizens_dict = {
     "Мальчик Хакер": Card("База данных", DatabaseEffect),
@@ -33,9 +34,9 @@ citizens_dict = {
     "Бригадир": Card("Банда", GangEffect)
 }
 
-user_names = ["GvinP", "Runmaget"]
+users = [User("GvinP", 1), User("Runmaget", 2)]
 
 if __name__ == "__main__":
-    gc = GameController(citizens_dict, user_names)
+    gc = GameController(citizens_dict, users)
 
     gc.start_game()
