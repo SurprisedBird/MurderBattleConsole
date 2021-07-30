@@ -32,7 +32,8 @@ class GangEffect(Effect):
             if self._should_be_deactivated(effect):
                 effect.deactivate()
                 self.logger.info(
-                    f"Effect {effect.name} has been deactivated. Status {effect.STATUS}")
+                    f"Effect {effect.name} has been deactivated. Status {effect.status}")
+
                 self.user_interaction.save_active(
                     msg.GangMessages.RESOLVE_SUCCESS)
                 return True
