@@ -178,7 +178,7 @@ class GameController(Context):
             action_confirmed = self._confirm_actions()
 
         self._apply_pre_actions()
-        self._disable_used_player_actions()
+        self._city.active_player.remove_used_card()
 
         self._resolve_effects()
         self._clear_effects()
@@ -203,12 +203,6 @@ class GameController(Context):
         self._action_manager.store_actions_history(self._city.round_number)
 
         self.logger.info(self._action_manager.pre_actions)
-
-    def _disable_used_player_actions(self):
-        self._city.active_player.remove_used_card()
-        self._city.active_player.disable_used_staging()
-
-        self.logger.debug(" ")
 
     def _show_night_state(self) -> None:
         night_number_str = msg.NightState.NIGHT_NUMBER.format(

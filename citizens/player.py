@@ -123,13 +123,6 @@ class Player(Citizen):
 
         return action
 
-    def disable_used_staging(self) -> None:
-        # Disable staging forever if it was used
-        if self._staging_processing:
-            self.disable_staging_action()
-            self.staging_was_used = True
-            self._staging_processing = False
-
     def _show_available_actions(self) -> None:
         self._show_available_options(msg.PlayerMessages.CHOOSE_ACTION,
                                      self._allowed_actions)

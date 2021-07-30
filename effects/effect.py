@@ -47,7 +47,7 @@ class Effect(ABC):
         if (self.status == EffectStatus.CREATED):
             is_activated = self._activate_impl()
             self.logger.info(
-                f'Effect {self.name} has been activated. Current stauts: {self.status.name}. Target: {" ".join(target.name for target in self.targets)}'
+                f'Effect {self.name} has been activated. Current status: {self.status.name}. Target: {" ".join(target.name for target in self.targets)}'
             )
 
             if (is_activated):
@@ -58,7 +58,7 @@ class Effect(ABC):
                 pass
         else:
             self.logger.warning(
-                f'Unexpected activate call for {self.name}. Current stauts: {self.status.name}'
+                f'Unexpected activate call for {self.name}. Current status: {self.status.name}'
             )
             pass
 
@@ -75,7 +75,7 @@ class Effect(ABC):
 
         else:
             self.logger.warning(
-                f'Unexpected activate call for {self.name}. Current stauts: {self.status.name}'
+                f'Unexpected activate call for {self.name}. Current status: {self.status.name}'
             )
 
     @abstractmethod
