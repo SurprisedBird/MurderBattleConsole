@@ -64,6 +64,9 @@ class DatabaseEffect(Effect):
                     elif self.targets[i] is effect.creator:
                         self.targets[i] = effect.mask
 
+                self.logger.info(
+                    f"Theatre effect was on {effect.mask.name}. Creator {self.creator.name}")
+
         return self.targets
 
     def _on_clear_impl(self) -> None:

@@ -4,6 +4,7 @@ from typing import Callable, Dict, List, Type
 
 import message_text_config as msg
 from card import Card
+from custom_logger import logger
 from effects.effect import Effect
 from effects.kill_effect import KillEffect
 from effects.none_effect import NoneEffect
@@ -43,6 +44,8 @@ class Player(Citizen):
                  citizen_card: Card,
                  hp: int = 3) -> None:
         super().__init__(context, name, citizen_card, hp)
+
+        self.logger = logger.getChild(__name__)
 
         self.user_interaction = self.context.user_interaction
 
@@ -141,6 +144,9 @@ class Player(Citizen):
                 self._allowed_actions[index] = action_data
                 index += 1
 
+        self.logger.info(
+            f"Allowed actions: {', '.join(action_data.card.name for action_data in list(self._allowed_actions.values()))}")
+
     def _validate_action(self, number: int) -> bool:
         valid = (number is not None) and \
                 (number >= 0) and \
@@ -196,9 +202,14 @@ class Player(Citizen):
                 self._allowed_card_actions[index] = \
                     ActionData(True, self.citizen_card)
 
+                self.logger.info(
+                    f"Allowed card actions: {', '.join(action_data.card.name for action_data in list(self._allowed_card_actions.values()))}")
+
             for i, stolen_card in enumerate(self.stolen_cards,
                                             start=(index + 1)):
                 self._allowed_card_actions[i] = ActionData(True, stolen_card)
+                self.logger.info(
+                    f"Allowed card actions: {', '.join(action_data.card.name for action_data in list(self._allowed_card_actions.values()))}")
 
     def _validate_card_action(self, number: int):
         valid = (number is not None) and \
@@ -211,28 +222,35 @@ class Player(Citizen):
 # Available options management
 # =================================================================
 
-
     def disable_steal_action(self) -> None:
         self.actions_common_list[ActionType.STEAL].available = False
+        self.logger.debug(" ")
 
     def disable_kill_action(self) -> None:
         self.actions_common_list[ActionType.KILL].available = False
+        self.logger.debug(" ")
 
     def disable_staging_action(self) -> None:
         self.actions_common_list[ActionType.STAGING].available = False
+        self.logger.debug(" ")
 
     def disable_card_usage_action(self) -> None:
         self.actions_common_list[ActionType.CARD_USAGE].available = False
+        self.logger.debug(" ")
 
     def enable_steal_action(self) -> None:
         self.actions_common_list[ActionType.STEAL].available = True
+        self.logger.debug(" ")
 
     def enable_kill_action(self) -> None:
         self.actions_common_list[ActionType.KILL].available = True
+        self.logger.debug(" ")
 
     def enable_staging_action(self) -> None:
         if (not self.staging_was_used):
             self.actions_common_list[ActionType.STAGING].available = True
+            self.logger.debug(" ")
 
     def enable_card_usage_action(self) -> None:
         self.actions_common_list[ActionType.CARD_USAGE].available = True
+        self.logger.debug(" ")

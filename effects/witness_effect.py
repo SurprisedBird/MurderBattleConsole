@@ -36,12 +36,14 @@ class WitnessEffect(Effect):
 
         if self.creator is self.city.active_player:
             payment_choice = self._choose_payment()
+            self.logger.info(f"Payment: {payment_choice.name}")
             if payment_choice == PaymentChoice.DECLINE_OPTION:
                 self.user_interaction.show_global_instant(
                     msg.WitnessMessages.RESOLVE_END_PUBLICLY)
                 return True
             elif payment_choice == PaymentChoice.HP_OPTION:
                 self.creator.hp -= 1
+                self.logger.info(f"Player HP after payment: {self.creator.hp}")
                 return False
             elif payment_choice == PaymentChoice.CARD_OPTION:
                 card = self._choose_card()
@@ -52,6 +54,7 @@ class WitnessEffect(Effect):
                               if utils.is_action_effect(effect)), None)
 
         if action_effect:
+            self.logger.info(f"Opponent effect: {action_effect.name}")
             self.user_interaction.show_global_instant(
                 msg.WitnessMessages.RESOLVE_SUCCESS_PUBLICLY.format(
                     self.targets[0].name))
@@ -104,6 +107,8 @@ class WitnessEffect(Effect):
 
     def _choose_card(self) -> 'Card':
         card_list = self._create_card_list()
+        self.logger.info(
+            f"Creator cards list: {', '.join(card.name for card in card_list)}")
 
         card_options = f"{msg.PlayerMessages.CHOOSE_CARD_ACTION}\n"
         for i, card in enumerate(card_list, start=1):
@@ -117,6 +122,8 @@ class WitnessEffect(Effect):
                 self.user_interaction.show_active_instant(
                     msg.CommonMessages.ERROR_INVALID_OPTION)
                 continue
+
+            self.logger.info(f"Card choise: {card_list[card_choice - 1].name}")
 
             return card_list[card_choice - 1]
 
