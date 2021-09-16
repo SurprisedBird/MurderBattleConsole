@@ -8,6 +8,7 @@ from citizens.citizen import Citizen
 from citizens.player import Player
 from citizens.spy import Spy
 from city import City
+from city_builders.predefined_city_builder import CityBuilder
 from context import Context
 from custom_logger import logger
 from effects.alarm_effect import AlarmEffect
@@ -18,7 +19,7 @@ from effects.none_effect import NoneEffect
 from effects.spy_effect import SpyEffect
 from effects.staging_effect import StagingEffect
 from effects.steal_effect import StealEffect
-from user_interactions.user_interaction import UserInteraction
+from user_interactions.user_interaction_telegram import UserInteraction
 
 
 class GameController(Context):
@@ -29,6 +30,7 @@ class GameController(Context):
         self._users = users
         self._city = City()
         self._user_interaction = UserInteraction(self)
+        self._city_builder = CityBuilder(self, self.citizens_dict, self._users)
         self._action_manager = ActionManager()
         self.logger = logger.getChild(__name__)
         self.logger.disabled = False
@@ -48,18 +50,15 @@ class GameController(Context):
     def _prepare_game(self) -> None:
         avilable_citizens: List[Citizen] = []
 
-        self._create_citizens(avilable_citizens)
-        self._create_players(avilable_citizens)
         self._set_priorities()
-        self._set_order()
-        self._create_spy(avilable_citizens)
+        self._city_builder.build_city(self._city)
         self._pre_proceed_game()
         self._show_game_state()
 
     def _create_citizens(self, avilable_citizens) -> None:
-        for name, card in self.citizens_dict.items():
+        for citizen in self.citizens_dict:
             self._city.citizens.append(
-                Citizen(context=self, name=name, citizen_card=card))
+                Citizen(context=self, name=citizen["name"], citizen_card=citizen["card"]))
 
         avilable_citizens.extend(self._city.citizens)
         self._user_interaction.show_global_instant(
@@ -99,9 +98,9 @@ class GameController(Context):
         SpyEffect.__priority__ = 4
         FirstNightEffect.__priority__ = 5
 
-        for card, counter in zip(self.citizens_dict.values(),
-                                 range(0, len(self.citizens_dict.values()))):
-            card.effect.__priority__ = counter + 6
+        for citizen, counter in zip(self.citizens_dict,
+                                    range(0, len(self.citizens_dict))):
+            citizen["card"].effect.__priority__ = counter + 6
 
     def _set_order(self) -> None:
         random.shuffle(self._city.players)
