@@ -12,6 +12,7 @@ from city_builders.predefined_city_builder import CityBuilder
 from context import Context
 from custom_logger import logger
 from effects.alarm_effect import AlarmEffect
+from effects.trap_effect import TrapEffect
 from effects.effect import Effect, EffectStatus
 from effects.first_night_effect import FirstNightEffect
 from effects.kill_effect import KillEffect
@@ -19,14 +20,15 @@ from effects.none_effect import NoneEffect
 from effects.spy_effect import SpyEffect
 from effects.staging_effect import StagingEffect
 from effects.steal_effect import StealEffect
-from user_interactions.user_interaction_telegram import UserInteraction
+from user_interactions.user_interaction import UserInteraction
 
 
 class GameController(Context):
-    def __init__(self, citizens_dict: Dict[str, Card],
+    def __init__(self, cards, citizens_dict: Dict[str, Card],
                  users: List[str]) -> None:
 
         self.citizens_dict = citizens_dict
+        self.cards = cards
         self._users = users
         self._city = City()
         self._user_interaction = UserInteraction(self)
@@ -91,16 +93,25 @@ class GameController(Context):
             self._city.citizens.insert(replacing_index, player)
 
     def _set_priorities(self) -> None:
-        NoneEffect.__priority__ = 0
-        StagingEffect.__priority__ = 1
-        KillEffect.__priority__ = 2
-        StealEffect.__priority__ = 3
-        SpyEffect.__priority__ = 4
-        FirstNightEffect.__priority__ = 5
+        all_effects = []
 
-        for citizen, counter in zip(self.citizens_dict,
-                                    range(0, len(self.citizens_dict))):
-            citizen["card"].effect.__priority__ = counter + 6
+        standard_effects = [
+                NoneEffect,
+                StagingEffect,
+                KillEffect,
+                StealEffect,
+                SpyEffect,
+                FirstNightEffect,
+                TrapEffect
+                ]
+        
+        all_effects.extend(standard_effects)
+
+        for citizen in self.citizens_dict:
+            all_effects.append(citizen["card"].effect)
+
+        for i in range(0, len(all_effects)):
+                all_effects[i].__priority__ = i
 
     def _set_order(self) -> None:
         random.shuffle(self._city.players)
@@ -140,8 +151,6 @@ class GameController(Context):
         self._create_effect(FirstNightEffect,
                             msg.EffectsNames.FIRST_NIGHT_EFFECT,
                             self._city.passive_player)
-        self._create_effect(AlarmEffect, msg.EffectsNames.ALARM_EFFECT_NAME,
-                            self._city.citizens[3])
 
         self._resolve_effects()
         self._clear_effects()

@@ -24,6 +24,12 @@ class SpyEffect(Effect):
 
         if is_spy_triggered:
             effect.creator.hp -= 1
+            citizen_card = self.city.spy.citizen_card
+            effect.creator.stolen_cards.append(citizen_card)
+            self.city.spy.citizen_card = None
+            self.user_interaction.save_active(
+                msg.StealMessages.RESOLVE_SUCCESS.format(citizen_card.name))
+
             self.city.spy.hp = 0
 
             effect.deactivate()

@@ -85,7 +85,7 @@ class CityBuilder():
         random_citizen = avilable_citizens.pop(random_index)
 
         # Save spy entity
-        self._city.spy = Spy(context=self, name=random_citizen.name)
+        self._city.spy = Spy(context=self.context, name=random_citizen.name)
 
         # Replace citizen by spy
         replacing_index = self._city.citizens.index(random_citizen)
