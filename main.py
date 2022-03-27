@@ -40,19 +40,16 @@ citizens_dict = [
     {"name": "Ночная продавщица", "role": "C", "hp": 1,
         "card": cards["Сплетни"], "stolen_cards": []},
 
-    {"name": "Начальник охраны", "role": "C", "hp": 1,
+    {"name": "Начальник охраны", "role": "P1", "hp": 3,
         "card": cards["Видеокамера"], "stolen_cards": []},
 
-    {"name": "Надзиратель", "role": "P1", "hp": 3,
+    {"name": "Надзиратель", "role": "C", "hp": 1,
         "card": cards["Система тревоги"], "stolen_cards": []},
-
-    {"name": "Охотник", "role": "P2", "hp": 3,
-        "card": cards["Ловушка"], "stolen_cards": []},
 
     {"name": "Полицейский", "role": "C", "hp": 1,
         "card": cards["Защита свидетеля"], "stolen_cards": []},
 
-    {"name": "Наркоман", "role": "C", "hp": 1,
+    {"name": "Наркоман", "role": "P2", "hp": 3,
         "card": cards["Наркотики"], "stolen_cards": []},
 
     {"name": "Вечно недовольная старушка", "role": "S", "hp": 1,
@@ -78,6 +75,6 @@ users = [User("GvinP", 1), User("Runmaget", 2)]
 
 if __name__ == "__main__":
 
-    gc = GameController(citizens_dict, users)
+    gc = GameController(cards, citizens_dict, users)
 
     gc.start_game()
