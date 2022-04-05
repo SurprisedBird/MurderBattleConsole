@@ -23,6 +23,15 @@ class StealEffect(Effect):
 
         return True
 
+    def _activate_by_target_impl(self, targets) -> bool:
+        citizen = self.city.citizens[targets[0] - 1]
+        self.user_interaction.save_active(
+            msg.StealMessages.ACTIVATION_SUCCESS.format(citizen.name))
+        self.targets.append(citizen)
+        citizen.effects.append(self)
+
+        return True
+
     def _resolve_impl(self) -> bool:
         citizen_card = self.targets[0].citizen_card
         if citizen_card is not None:
@@ -37,24 +46,6 @@ class StealEffect(Effect):
         else:
             self.user_interaction.save_active(
                 msg.StealMessages.RESOLVE_FAILED.format(self.targets[0].name))
-
-        return True
-
-    def _activate_by_target_impl(self, targets) -> bool:
-        citizen = self.city.citizens[targets[0] - 1]
-        citizen_card = citizen.citizen_card
-        if citizen_card is not None:
-            self.creator.stolen_cards.append(citizen_card)
-            citizen.citizen_card = None
-            self.user_interaction.save_active(
-                msg.StealMessages.RESOLVE_SUCCESS.format(citizen_card.name))
-
-            if citizen is self.city.passive_player:
-                self.user_interaction.save_passive(
-                    msg.StealMessages.RESOLVE_LOST_CARD)
-        else:
-            self.user_interaction.save_active(
-                msg.StealMessages.RESOLVE_FAILED.format(citizen.name))
 
         return True
 
