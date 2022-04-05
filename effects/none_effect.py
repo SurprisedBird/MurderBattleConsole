@@ -10,6 +10,9 @@ class NoneEffect(Effect):
     def _activate_impl(self) -> bool:
         return True
 
+    def _activate_by_target_impl(self, targets) -> bool:
+        return True
+
     def _resolve_impl(self) -> bool:
         return True
 

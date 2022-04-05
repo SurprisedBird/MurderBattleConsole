@@ -28,6 +28,13 @@ class WitnessEffect(Effect):
 
         return True
 
+    def _activate_by_target_impl(self, targets) -> bool:
+        citizen = self.city.citizens[targets[0] - 1]
+        self.targets.append(citizen)
+        citizen.effects.append(self)
+
+        return True
+
     def _resolve_impl(self) -> bool:
         if self.activation_round == self.city.round_number:
             self.user_interaction.show_global_instant(

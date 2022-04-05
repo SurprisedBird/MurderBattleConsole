@@ -25,6 +25,12 @@ class GossipsEffect(Effect):
 
         return True
 
+    def _activate_by_target_impl(self, targets) -> bool:
+        self.night_number = int(targets[0])
+        self.targets.append(self.city.passive_player)
+
+        return True
+
     def _resolve_impl(self) -> bool:
         first_action_effect = self.context.action_manager.actions_history[self.night_number][0]
         first_action = first_action_effect.name

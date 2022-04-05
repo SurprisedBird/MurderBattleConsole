@@ -66,6 +66,17 @@ class BaseUserInteraction(ABC):
 
         return index
 
+    def read_numbers(self, text: str = "") -> "List":
+        """Reading and validating inputs.
+
+        If input value is valid - return int
+        If input value is NOT valid - return None
+        """
+        texts = input(text)
+        self.context.action_request.parsing(texts)
+
+        return self.context.action_request
+
     def is_global_empty(self):
         if not self._prepared_messages[MessageScope.GLOBAL]:
             return True

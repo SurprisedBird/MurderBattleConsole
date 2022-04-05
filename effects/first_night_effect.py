@@ -20,6 +20,14 @@ class FirstNightEffect(Effect):
 
         return True
 
+    def _activate_by_target_impl(self, targets) -> bool:
+        self.targets.append(self.city.passive_player)
+        self.city.passive_player.effects.append(self)
+
+        self.logger.debug(" ")
+
+        return True
+
     def _resolve_impl(self) -> bool:
         self.logger.debug(" ")
         if self.activation_round == self.city.round_number:

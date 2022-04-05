@@ -23,6 +23,14 @@ class DatabaseEffect(Effect):
 
         return True
 
+    def _activate_by_target_impl(self, targets) -> bool:
+        self.targets = [
+            self.city.citizens[target_number - 1]
+            for target_number in targets
+        ]
+
+        return True
+
     def _validate(self, target_numbers: List[int]) -> InputStatusCode:
         last_target_number = target_numbers[len(target_numbers) - 1]
         if last_target_number is None or not utils.is_citizen_in_range(

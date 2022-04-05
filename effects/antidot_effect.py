@@ -26,6 +26,16 @@ class AntidotEffect(Effect):
 
         return True
 
+    def _activate_by_target_impl(self, targets) -> bool:
+        citizen = self.city.citizens[targets[0] - 1]
+        self.user_interaction.save_active(
+            msg.AntidoteMessages.ACTIVATION_SUCCESS.format(
+                citizen.name))
+        self.targets.append(citizen)
+        citizen.effects.append(self)
+
+        return True
+
     def _resolve_impl(self) -> bool:
         self.logger.info(f"Target HP before Antidot {self.targets[0].hp}")
         if self.activation_round == self.city.round_number:

@@ -108,9 +108,49 @@ class Player(Citizen):
 
         return index
 
+    def _read_chosen_options(self, error_message: str, validate_method: Callable[[int], bool]) -> "List":
+        action_request = self.user_interaction.read_numbers()
+        while (not validate_method(action_request.indexes[0])):
+            index = self.user_interaction.read_number(error_message)
+        while (not validate_method(action_request.indexes[2])):
+            index = self.user_interaction.read_number(error_message)
+
+        return action_request
+
 # =================================================================
 # Create action
 # =================================================================
+
+    def create_pre_actions(self) -> "List":
+        self._update_allowed_actions()
+        self._show_available_actions()
+
+        self._update_allowed_card_actions()
+        self._show_available_card_actions()
+
+        action_request = self._read_chosen_actions()
+
+        actions = []
+
+        effect = self._allowed_actions[action_request.indexes[0]].effect
+        action = effect(self.context, self._allowed_actions[action_request.indexes[0]].name, self)
+        action.activate_by_target([action_request.indexes[1]])
+
+        self._staging_processing = effect is StagingEffect
+
+        actions.append(action)
+
+        self._chosen_card = self._allowed_card_actions[action_request.indexes[2]].card
+        effect = self._chosen_card.effect
+        action = effect(self.context, self._allowed_card_actions[action_request.indexes[2]].name, self)
+        
+        action.activate_by_target(action_request.card_targets)
+
+        action_request.clear_action_request()
+
+        actions.append(action)
+
+        return actions
 
     def create_action(self) -> Effect:
         self._update_allowed_actions()
@@ -133,6 +173,10 @@ class Player(Citizen):
     def _read_chosen_action(self) -> int:
         return self._read_chosen_option(msg.PlayerMessages.ERROR_ACTION_CHOICE,
                                         self._validate_action)
+
+    def _read_chosen_actions(self) -> "List":
+        return self._read_chosen_options(msg.PlayerMessages.ERROR_ACTION_CHOICE,
+                                    self._validate_action)
 
     def _update_allowed_actions(self) -> None:
         self._allowed_actions = {}

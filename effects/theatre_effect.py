@@ -32,6 +32,20 @@ class TheatreEffect(Effect):
 
         return True
 
+    def _activate_by_target_impl(self, targets) -> bool:
+        citizen = self.city.citizens[targets[0] - 1]
+        self.mask = citizen
+        self.targets.append(self.city)
+
+        self.user_interaction.save_active(
+            msg.TheatreMessages.ACTIVATION_SUCCESS.format(
+                self.mask.name))
+
+        self.logger.info(
+            f"Target name: {self.mask.name}. Creator name: {self.creator.name}.")
+
+        return True
+
     def _resolve_impl(self) -> bool:
         return False
 
