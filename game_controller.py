@@ -8,7 +8,7 @@ from citizens.citizen import Citizen
 from citizens.player import Player
 from citizens.spy import Spy
 from city import City
-from city_builders.predefined_city_builder import CityBuilder
+from city_builders.random_city_builder import CityBuilder
 from context import Context
 from custom_logger import logger
 from effects.alarm_effect import AlarmEffect
@@ -20,7 +20,7 @@ from effects.none_effect import NoneEffect
 from effects.spy_effect import SpyEffect
 from effects.staging_effect import StagingEffect
 from effects.steal_effect import StealEffect
-from user_interactions.user_interaction import UserInteraction
+from user_interactions.user_interaction_telegram import UserInteraction
 
 
 class GameController(Context):
@@ -325,15 +325,21 @@ class GameController(Context):
         self.logger.debug(" ")
 
     def _confirm_actions_msg(self) -> Optional[int]:
-        self._user_interaction.save_active(
-            msg.NightActionTarget.ACT_CHOISE_INFO.format(
-                self._action_manager.pre_actions[0].name,
-                self._action_manager.pre_actions[1].name))
-        self._user_interaction.save_active(
-            "1. " + msg.NightActionTarget.ACT_CONFIRM_ACTION)
-        self._user_interaction.save_active(
-            "2. " + msg.NightActionTarget.ACT_CANCEL_ACTION)
-        self._user_interaction.show_all()
+        
+        #self._user_interaction.save_active(
+        #    msg.NightActionTarget.ACT_CHOISE_INFO.format(
+        #        self._action_manager.pre_actions[0].name,
+        #        self._action_manager.pre_actions[1].name))
+        #self._user_interaction.save_active(
+        #    "1. " + msg.NightActionTarget.ACT_CONFIRM_ACTION)
+        #self._user_interaction.save_active(
+        #    "2. " + msg.NightActionTarget.ACT_CANCEL_ACTION)
+        #self._user_interaction.show_all()
+        
+        full_confirm_text = msg.NightActionTarget.ACT_CHOISE_INFO.format(self._action_manager.pre_actions[0].name, self._action_manager.pre_actions[1].name) + "\n"
+        full_confirm_text += "1. " + msg.NightActionTarget.ACT_CONFIRM_ACTION + "\n"
+        full_confirm_text += "2. " + msg.NightActionTarget.ACT_CANCEL_ACTION + "\n"
+        self._user_interaction.save_active(full_confirm_text)
 
         number = self._user_interaction.read_number()
 
@@ -360,11 +366,11 @@ class GameController(Context):
         elif first_player_dead:
             self._user_interaction.show_global_instant(
                 msg.FinishPhase.GLOBAL_PLAYER_WON.format(
-                    self._city.players[1].name))
+                    self._city.players[1].user.name))
         else:
             self._user_interaction.show_global_instant(
                 msg.FinishPhase.GLOBAL_PLAYER_WON.format(
-                    self._city.players[0].name))
+                    self._city.players[0].user.name))
 
         self.logger.info(
             f"{self._city.players[0].is_alive}, second player is alive = {self._city.players[1].is_alive}"

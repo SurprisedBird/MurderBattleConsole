@@ -91,14 +91,16 @@ class Player(Citizen):
     def _show_available_options(
             self, message: str, allowed_options: Dict[int,
                                                       ActionData]) -> None:
-        self.user_interaction.save_active(message)
+        #self.user_interaction.save_active(message)
+        full_options_text = message + "\n"
         for index, action_data in allowed_options.items():
             message_str = msg.PlayerMessages.OPTION.format(
                 index, action_data.name)
+            full_options_text += message_str + "\n"
 
-            self.user_interaction.save_active(message_str)
+        self.user_interaction.save_active(full_options_text)
 
-        self.user_interaction.show_all()
+        #self.user_interaction.show_all()
 
     def _read_chosen_option(self, error_message: str,
                             validate_method: Callable[[int], bool]) -> int:

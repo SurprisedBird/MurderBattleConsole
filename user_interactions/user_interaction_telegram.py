@@ -1,3 +1,4 @@
+from re import S
 from user_interactions.base_user_interaction import (BaseUserInteraction,
                                                      MessageScope)
 import telebot
@@ -5,17 +6,28 @@ from typing import Optional
 import time
 import message_text_config as msg
 
-token = "1608802403:AAELfG3U92U9XSQPqn5QdGxwTEZyLzULDUc"
+import asyncio
+from email import message
+import logging
 
+from aiogram import Bot, Dispatcher, executor, types
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.contrib.middlewares.logging import LoggingMiddleware
+from aiogram.utils.callback_data import CallbackData
+from aiogram.utils.exceptions import MessageNotModified
+
+token = "1608802403:AAELfG3U92U9XSQPqn5QdGxwTEZyLzULDUc"
 
 class UserInteraction(BaseUserInteraction):
     def __init__(self, context: 'Context'):
         super().__init__(context)
         self.index = ""
         self.bot = telebot.TeleBot(token=token)
+        self.game_log = []
 
     def send(self, msg, chat_id, token=token, reply_markup=None):
-        if msg and msg is not "\n":
+        if msg and msg != "\n":
+            self.game_log.append(msg)
             self.bot.send_message(
                 chat_id=chat_id, text=msg, reply_markup=reply_markup)
 
@@ -57,38 +69,47 @@ class UserInteraction(BaseUserInteraction):
         If input value is NOT valid - return None
         """
 
-        self.send(text, self.context.city.active_player.user.id)
+        self.index = 0
+        #self.send(text, self.context.city.active_player.user.id)
+        if text != "":
+            self.save_active(text)
+        
+        API_TOKEN = "1608802403:AAELfG3U92U9XSQPqn5QdGxwTEZyLzULDUc"
+        loop = asyncio.get_event_loop()
+        bot = Bot(token=API_TOKEN, loop=loop, parse_mode=types.ParseMode.HTML)
 
-        @self.bot.message_handler(commands=['help'])
-        def help(message):
-            text = "Чтобы получить информацию обо всех картах введите команду /cards.\n Чтобы получить информацию о конкретной карте: напишите название карты или имя владельца этой карты"
-            self.bot.send_message(message.chat.id, text)
+        storage = MemoryStorage()
+        dp = Dispatcher(bot, storage=storage)
+        dp.middleware.setup(LoggingMiddleware())
 
-        @self.bot.message_handler(commands=['cards'])
-        def cards(message):
+        keyboard = types.InlineKeyboardMarkup(row_width=4, one_time_keyboard=True)
+        inline_btns = []
+        for i in range(0, 13):
+            inline_btns.append(types.InlineKeyboardButton(i, callback_data=i))
+        
+        keyboard.row(inline_btns[0])
+        keyboard.row(inline_btns[1], inline_btns[2], inline_btns[3], inline_btns[4])
+        keyboard.row(inline_btns[5], inline_btns[6], inline_btns[7], inline_btns[8])
+        keyboard.row(inline_btns[9], inline_btns[10], inline_btns[11], inline_btns[12])
+
+        async def open_keyboard():
+            await bot.send_message(self.context.city.active_player.user.id, self.history[MessageScope.ACTIVE][-1], reply_markup=keyboard)
+            self._clear_messages()
+            
+        @dp.message_handler(commands=['cards'])
+        async def cards(message):
             text = "СПИСОК КАРТ И ЖИТЕЛЕЙ, КОТОРЫЕ ЯВЛЯЮТСЯ ИХ ВЛАДЕЛЬЦАМИ:\n\n\n"
             for citizen, card in zip(msg.Help.CITIZENS.keys(), msg.Help.CARDS.keys()):
                 text += f"{card} ({citizen}): {msg.Help.CITIZENS[citizen]}\n\n"
 
-            self.bot.send_message(message.chat.id, text)
+            await bot.send_message(message.chat.id, text)
 
-        @self.bot.message_handler(content_types=["text"])
-        def input_messages(message):
-            index_str = message.text
-            if index_str in msg.Help.CITIZENS.keys():
-                self.bot.send_message(
-                    message.chat.id, msg.Help.CITIZENS[message.text])
+        @dp.callback_query_handler(lambda message: True)
+        async def get_number(call: types.CallbackQuery):
+            self.index = int(call.data)
+            await bot.delete_message(chat_id=call.from_user.id, message_id=call.message.message_id)
+            loop.stop()
 
-            if index_str in msg.Help.CARDS.keys():
-                self.bot.send_message(
-                    message.chat.id, msg.Help.CARDS[message.text])
-
-            if index_str.isnumeric():
-                self.index = int(index_str)
-                self.bot.stop_polling()
-                return self.index
-            else:
-                index = None
-
-        self.bot.polling(interval=1, timeout=1)
+        executor.start(dp, open_keyboard())
+        executor.start_polling(dp, loop=loop, skip_updates=True)
         return self.index
