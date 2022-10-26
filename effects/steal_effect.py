@@ -1,3 +1,5 @@
+from typing import List
+
 import message_text_config as msg
 import utils
 from citizens.citizen import Citizen
@@ -20,6 +22,15 @@ class StealEffect(Effect):
 
         self.user_interaction.save_active(
             msg.StealMessages.ACTIVATION_SUCCESS.format(self.targets[0].name))
+
+        return True
+
+    def _activate_by_target_impl(self, targets) -> bool:
+        citizen = self.city.citizens[targets[0] - 1]
+        self.user_interaction.save_active(
+            msg.StealMessages.ACTIVATION_SUCCESS.format(citizen.name))
+        self.targets.append(citizen)
+        citizen.effects.append(self)
 
         return True
 

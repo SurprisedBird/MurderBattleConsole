@@ -59,7 +59,7 @@ citizens_dict = [
         "card": cards["Театральный реквизит"], "stolen_cards": []},
 
     {"name": "Сутенер", "role": "C", "hp": 1,
-        "card": cards["База данных"], "stolen_cards": []},
+        "card": cards["Проститутка"], "stolen_cards": []},
 
     {"name": "Соцработник", "role": "C", "hp": 1,
         "card": cards["Налоги"], "stolen_cards": []},

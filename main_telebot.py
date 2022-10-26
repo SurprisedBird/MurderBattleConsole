@@ -16,6 +16,7 @@ from effects.whore_effect import WhoreEffect
 from effects.witness_effect import WitnessEffect
 from game_controller import GameController
 from telegram_initializer import TelegramInitializer
+from random import shuffle
 
 cards = {
     "База данных": Card("База данных", DatabaseEffect),
@@ -46,7 +47,7 @@ citizens_dict = [
     {"name": "Надзиратель", "role": "P1", "hp": 3,
         "card": cards["Система тревоги"], "stolen_cards": []},
 
-    {"name": "Полицейский", "role": "P2", "hp": 1,
+    {"name": "Полицейский", "role": "P2", "hp": 3,
         "card": cards["Защита свидетеля"], "stolen_cards": []},
 
     {"name": "Наркоман", "role": "C", "hp": 1,
@@ -59,7 +60,7 @@ citizens_dict = [
         "card": cards["Театральный реквизит"], "stolen_cards": []},
 
     {"name": "Сутенер", "role": "C", "hp": 1,
-        "card": cards["База данных"], "stolen_cards": []},
+        "card": cards["Проститутка"], "stolen_cards": []},
 
     {"name": "Соцработник", "role": "C", "hp": 1,
         "card": cards["Налоги"], "stolen_cards": []},
@@ -76,7 +77,9 @@ if __name__ == "__main__":
         tel = TelegramInitializer()
 
         users = tel.get_users()
+        
+        shuffle(users)
 
-        gc = GameController(citizens_dict, users)
+        gc = GameController(cards, citizens_dict, users)
 
         gc.start_game()
