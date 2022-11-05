@@ -19,6 +19,11 @@ class SpyEffect(Effect):
         self.targets.append(self.city.spy)
         return True
 
+    def _activate_by_target_impl(self, targets) -> bool:
+        self.targets.append(self.city.spy)
+        self.city.spy.effects.append(self)
+        return True
+
     def _resolve_impl(self) -> bool:
         is_spy_triggered, effect = self._is_spy_triggered()
 

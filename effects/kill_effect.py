@@ -22,6 +22,13 @@ class KillEffect(Effect):
 
         return True
 
+    def _activate_by_target_impl(self, targets) -> bool:
+        citizen = self.city.citizens[targets[0] - 1]
+        self.targets.append(citizen)
+        citizen.effects.append(self)
+
+        return True
+
     def _resolve_impl(self) -> bool:
         self.logger.info(f"Target HP before resolving = {self.targets[0].hp}")
         self.targets[0].hp -= 1

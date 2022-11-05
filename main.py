@@ -40,10 +40,10 @@ citizens_dict = [
     {"name": "Ночная продавщица", "role": "C", "hp": 1,
         "card": cards["Сплетни"], "stolen_cards": []},
 
-    {"name": "Начальник охраны", "role": "P1", "hp": 3,
+    {"name": "Начальник охраны", "role": "C", "hp": 1,
         "card": cards["Видеокамера"], "stolen_cards": []},
 
-    {"name": "Надзиратель", "role": "C", "hp": 1,
+    {"name": "Надзиратель", "role": "P1", "hp": 3,
         "card": cards["Система тревоги"], "stolen_cards": []},
 
     {"name": "Полицейский", "role": "C", "hp": 1,

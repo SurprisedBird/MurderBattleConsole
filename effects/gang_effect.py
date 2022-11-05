@@ -17,6 +17,12 @@ class GangEffect(Effect):
 
         return True
 
+    def _activate_by_target_impl(self, targets) -> bool:
+        self.targets.append(self.city)
+        self.user_interaction.save_active(msg.GangMessages.ACTIVATION_SUCCESS)
+
+        return True
+
     def _resolve_impl(self) -> bool:
         if self.city.round_number == self.activation_round:
             return False

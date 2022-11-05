@@ -21,3 +21,8 @@ class Context(ABC):
     @abstractmethod
     def action_manager(self):
         pass
+
+    @property
+    @abstractmethod
+    def action_request(self):
+        pass

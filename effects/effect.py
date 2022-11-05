@@ -62,16 +62,19 @@ class Effect(ABC):
             )
             pass
 
-    def activate_by_target(self, citizen) -> None:
+    def activate_by_target(self, targets) -> None:
+        is_activated = self._activate_by_target_impl(targets)
         if (self.status == EffectStatus.CREATED):
-            self.targets.append(citizen)
-            citizen.effects.append(self)
 
-            self.status = EffectStatus.ACTIVATED
-            self.activation_round = self.city.round_number
-            self.logger.info(
-                f'Effect {self.name} has been activated by target. Current status {self.status.name}'
-            )
+            if(is_activated):
+                self.status = EffectStatus.ACTIVATED
+                self.activation_round = self.city.round_number
+                self.logger.info(
+                    f'Effect {self.name} has been activated by target. Current status {self.status.name}'
+                )
+            else:
+                self.logger.warning(f'Activatoion FAILED for {self.name.name}')
+                pass
 
         else:
             self.logger.warning(

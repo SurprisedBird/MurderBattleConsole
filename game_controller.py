@@ -3,6 +3,7 @@ from typing import Dict, List, Optional
 
 import message_text_config as msg
 from action_manager import ActionManager
+from action_request import ActionRequest
 from card import Card
 from citizens.citizen import Citizen
 from citizens.player import Player
@@ -34,6 +35,7 @@ class GameController(Context):
         self._user_interaction = UserInteraction(self)
         self._city_builder = CityBuilder(self, self.citizens_dict, self._users)
         self._action_manager = ActionManager()
+        self._action_request = ActionRequest()
         self.logger = logger.getChild(__name__)
         self.logger.disabled = False
 
@@ -157,7 +159,7 @@ class GameController(Context):
 
     def _create_effect(self, effect_type, effect_name, citizen) -> None:
         effect = effect_type(self, effect_name, citizen)
-        effect.activate_by_target(citizen)
+        effect.activate_by_target([citizen])
 
         self.logger.info(
             f'effect name = {effect_type.__name__}, effect creator = {effect.creator.name}'
@@ -178,12 +180,8 @@ class GameController(Context):
         self._show_night_state()
 
         action_confirmed = False
-        while not action_confirmed:
-            self._clear_pre_actions()
-            self._create_action()
-            self._create_card_action()
-
-            action_confirmed = self._confirm_actions()
+        self.action_confirm_by_order(action_confirmed)
+        #self.action_confirm_in_parallel(action_confirmed)
 
         self._apply_pre_actions()
         self._city.active_player.remove_used_card()
@@ -191,6 +189,19 @@ class GameController(Context):
         self._resolve_effects()
         self._clear_effects()
         self._user_interaction.show_all()
+
+    def action_confirm_in_parallel(self, action_confirmed):
+        while not action_confirmed:
+            self._clear_pre_actions()
+            self._create_pre_actions()
+            action_confirmed = self._confirm_actions()
+
+    def action_confirm_by_order(self, action_confirmed):
+        while not action_confirmed:
+            self._clear_pre_actions()
+            self._create_action()
+            self._create_card_action()
+            action_confirmed = self._confirm_actions()
 
     def _clear_pre_actions(self) -> None:
         self._action_manager.clear_pre_actions()
@@ -268,6 +279,12 @@ class GameController(Context):
         self._user_interaction.show_all()
 
         self.logger.debug(" ")
+
+    def _create_pre_actions(self) -> None:
+        effects = self._city.active_player.create_pre_actions()
+
+        for effect in effects:
+            self._action_manager.add_pre_action(effect)
 
     def _create_action(self) -> None:
         effect = self._city.active_player.create_action()
@@ -396,3 +413,7 @@ class GameController(Context):
     @property
     def action_manager(self):
         return self._action_manager
+
+    @property
+    def action_request(self):
+        return self._action_request
