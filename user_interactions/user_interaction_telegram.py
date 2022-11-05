@@ -16,7 +16,8 @@ from aiogram.contrib.middlewares.logging import LoggingMiddleware
 from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.exceptions import MessageNotModified
 
-token = "1608802403:AAELfG3U92U9XSQPqn5QdGxwTEZyLzULDUc"
+#token = "1608802403:AAELfG3U92U9XSQPqn5QdGxwTEZyLzULDUc"
+token = "5413116216:AAGN7T5uYSQl3BdmzBVbZD_ml0zgcWPt3a8"
 
 class UserInteraction(BaseUserInteraction):
     def __init__(self, context: 'Context'):
@@ -62,6 +63,31 @@ class UserInteraction(BaseUserInteraction):
 
         self._clear_messages()
 
+    def read_note(self):
+        
+        #API_TOKEN = "1608802403:AAELfG3U92U9XSQPqn5QdGxwTEZyLzULDUc"
+        API_TOKEN = "5413116216:AAGN7T5uYSQl3BdmzBVbZD_ml0zgcWPt3a8"
+        loop = asyncio.get_event_loop()
+        bot = Bot(token=API_TOKEN, loop=loop, parse_mode=types.ParseMode.HTML)
+
+        storage = MemoryStorage()
+        dp = Dispatcher(bot, storage=storage)
+        dp.middleware.setup(LoggingMiddleware())
+
+        async def start_noting():
+            await bot.send_message(self.context.city.active_player.user.id, msg.CommonMessages.NOTICE)
+            
+        @dp.message_handler(content_types=["text"])
+        async def save_notice(message):
+            if message.text == "Нет":
+                self.context.city.active_player.active_note = ""
+            else:
+                self.context.city.active_player.active_note = message.text
+            loop.stop()
+
+        executor.start(dp, start_noting())
+        executor.start_polling(dp, loop=loop, skip_updates=True)
+
     def read_number(self, text: str = "") -> Optional[int]:
         """Reading and validating inputs.
 
@@ -74,7 +100,8 @@ class UserInteraction(BaseUserInteraction):
         if text != "":
             self.save_active(text)
         
-        API_TOKEN = "1608802403:AAELfG3U92U9XSQPqn5QdGxwTEZyLzULDUc"
+        #API_TOKEN = "1608802403:AAELfG3U92U9XSQPqn5QdGxwTEZyLzULDUc"
+        API_TOKEN = "5413116216:AAGN7T5uYSQl3BdmzBVbZD_ml0zgcWPt3a8"
         loop = asyncio.get_event_loop()
         bot = Bot(token=API_TOKEN, loop=loop, parse_mode=types.ParseMode.HTML)
 

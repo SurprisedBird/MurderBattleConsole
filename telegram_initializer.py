@@ -13,7 +13,8 @@ class TelegramInitializer:
     def __init__(self):
         self.users = []
         
-        API_TOKEN = "1608802403:AAELfG3U92U9XSQPqn5QdGxwTEZyLzULDUc"
+        #API_TOKEN = "1608802403:AAELfG3U92U9XSQPqn5QdGxwTEZyLzULDUc"
+        API_TOKEN = "5413116216:AAGN7T5uYSQl3BdmzBVbZD_ml0zgcWPt3a8"
         self.loop = asyncio.get_event_loop()
         self.bot = Bot(token=API_TOKEN, loop=self.loop, parse_mode=types.ParseMode.HTML)
 

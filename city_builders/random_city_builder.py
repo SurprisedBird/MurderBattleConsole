@@ -26,6 +26,7 @@ class CityBuilder():
         self._create_citizens(avilable_citizens)
         self._create_players(avilable_citizens)
         self._create_spy(avilable_citizens)
+        self._set_order()
 
     def _create_citizens(self, avilable_citizens) -> None:
         for citizen in self.citizens_dict:

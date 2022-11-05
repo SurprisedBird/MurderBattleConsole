@@ -37,7 +37,7 @@ class KillEffect(Effect):
                 msg.KillMessages.RESOLVE_ENEMY_LOST_HP)
         else:
             self.user_interaction.save_global(
-                msg.KillMessages.RESOLVE_SUCCESS.format(self.targets[0].name))
+                msg.KillMessages.CITIZENS_DEATH_EVENTS[self.targets[0].name])
 
             citizen_card = self.targets[0].citizen_card
 

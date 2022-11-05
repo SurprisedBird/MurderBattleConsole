@@ -8,7 +8,7 @@ from citizens.citizen import Citizen
 from citizens.player import Player
 from citizens.spy import Spy
 from city import City
-from city_builders.random_city_builder import CityBuilder
+from city_builders.predefined_city_builder import CityBuilder
 from context import Context
 from custom_logger import logger
 from effects.alarm_effect import AlarmEffect
@@ -187,6 +187,7 @@ class GameController(Context):
 
         self._apply_pre_actions()
         self._city.active_player.remove_used_card()
+        self._create_note()
 
         self._resolve_effects()
         self._clear_effects()
@@ -273,12 +274,15 @@ class GameController(Context):
         effect = self._city.active_player.create_action()
         effect.activate()
         self._action_manager.add_pre_action(effect)
-
+            
     def _create_card_action(self) -> None:
         effect = self._city.active_player.create_card_action()
         effect.activate()
         self._action_manager.add_pre_action(effect)
         self.logger.info(f"{effect.name}, {effect.status.name}")
+        
+    def _create_note(self) -> None:
+        self._city.active_player.create_note()
 
     def _clear_effects(self) -> None:
         for citizen in self._city.citizens:
@@ -303,6 +307,10 @@ class GameController(Context):
         if self.user_interaction.is_global_empty():
             self.user_interaction.save_global(
                 msg.DayGeneralMessages.GLOBAL_CALM_CITIZEN)
+            
+        if self._city.active_player.active_note != "":
+            self.user_interaction.save_global("\nУбийца оставил записку: \n" + "\"" + self.city.active_player.active_note + "\"")
+            self.city.active_player.active_note = ""
 
     def _count_round(self) -> None:
         self._city.round_number += 1
@@ -336,10 +344,33 @@ class GameController(Context):
         #    "2. " + msg.NightActionTarget.ACT_CANCEL_ACTION)
         #self._user_interaction.show_all()
         
-        full_confirm_text = msg.NightActionTarget.ACT_CHOISE_INFO.format(self._action_manager.pre_actions[0].name, self._action_manager.pre_actions[1].name) + "\n"
+        first_action_effect = self._action_manager.pre_actions[0]
+        first_action = first_action_effect.name
+
+        first_targets = ""
+        for target in first_action_effect.targets:
+            first_targets += target.name + " "
+
+        second_action_effect = self._action_manager.pre_actions[1]
+        second_action = second_action_effect.name
+
+        second_targets = ""
+        for target in second_action_effect.targets:
+            second_targets += target.name + " "
+        
+        full_confirm_text = msg.NightActionTarget.ACT_CHOISE_INFO.format(first_action,
+                                                       first_targets,
+                                                       second_action,
+                                                       second_targets) + "\n"
+  
+        
+        self._user_interaction.show_active_instant(full_confirm_text)
+        
+        full_confirm_text = "Перед подтверждением введите текст в чат, чтобы оставить записку\n"
         full_confirm_text += "1. " + msg.NightActionTarget.ACT_CONFIRM_ACTION + "\n"
         full_confirm_text += "2. " + msg.NightActionTarget.ACT_CANCEL_ACTION + "\n"
         self._user_interaction.save_active(full_confirm_text)
+        #self._user_interaction.show_all()
 
         number = self._user_interaction.read_number()
 

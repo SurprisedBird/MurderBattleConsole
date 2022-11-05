@@ -4,6 +4,8 @@ from citizens.citizen import Citizen
 from citizens.player import Player
 from citizens.spy import Spy
 from custom_logger import logger
+import message_text_config as msg
+import random
 
 
 class CityBuilder():
@@ -38,3 +40,23 @@ class CityBuilder():
                 self._city.spy = Spy(
                     context=self.context, name=citizen["name"], hp=citizen["hp"])
                 self._city.citizens.append(self._city.spy)
+                
+        self._set_order()
+        
+    def _set_order(self) -> None:
+        random.shuffle(self._city.players)
+
+        self._user_interaction.save_passive(msg.PreparePhase.ACT_FIRST_TURN)
+        self._user_interaction.save_passive(
+            msg.PreparePhase.ACT_PASS_YOUR_ROLE.format(
+                self._city.players[0].name))
+        self._user_interaction.save_active(
+            msg.PreparePhase.ACT_PASS_YOUR_ROLE.format(
+                self._city.players[1].name))
+        self._user_interaction.save_global(
+            msg.PreparePhase.GLOBAL_FIRST_TURN.format(
+                self._city.players[0].user.name))
+
+        self.logger.info(
+            f"first player = {self._city.players[0].name}, second player = {self._city.players[1].name}"
+        )

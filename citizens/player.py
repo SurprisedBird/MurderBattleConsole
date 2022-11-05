@@ -46,6 +46,8 @@ class Player(Citizen):
         super().__init__(context, name, citizen_card, hp)
 
         self.logger = logger.getChild(__name__)
+        
+        self.active_note = ""
 
         self.user_interaction = self.context.user_interaction
 
@@ -219,6 +221,12 @@ class Player(Citizen):
                 (number < len(self._allowed_card_actions))
         return valid
 
+# =================================================================
+# Create card action
+# =================================================================
+
+    def create_note(self):
+        self.user_interaction.read_note()
 
 # =================================================================
 # Available options management
